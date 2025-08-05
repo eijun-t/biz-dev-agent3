@@ -35,122 +35,150 @@ biz-dev-agent3/
 ```
 app/
 ├── layout.tsx             # Root layout with providers
-├── page.tsx               # Home/dashboard page
+├── page.tsx               # Home page with auth links
 ├── globals.css            # Global styles
-├── (auth)/                # Authentication group
-│   ├── login/             # Login page
-│   └── register/          # Registration page
-├── dashboard/             # Main application
-│   ├── page.tsx           # Dashboard overview
-│   ├── new/               # New ideation flow
-│   ├── reports/           # Report listing and viewing
-│   │   ├── page.tsx       # Reports list
-│   │   └── [id]/          # Individual report
-│   └── history/           # Historical data
+├── actions/               # Server actions
+│   └── auth.ts            # Authentication actions
+├── auth/                  # Authentication pages
+│   ├── signin/            # Sign in page
+│   │   └── page.tsx
+│   └── signup/            # Sign up page
+│       └── page.tsx
+├── dashboard/             # Protected dashboard area
+│   ├── layout.tsx         # Dashboard layout with auth check
+│   └── page.tsx           # Dashboard main page
 └── api/                   # API routes
-    ├── agents/            # Agent endpoints
-    │   ├── route.ts       # Main orchestration
-    │   └── [agent]/       # Individual agent routes
-    └── reports/           # Report management
+    └── auth/              # Authentication API
+        └── signout/       # Sign out endpoint
+            └── route.ts
 ```
 
 ### `components/` - React Components
 ```
 components/
-├── ui/                    # shadcn/ui components
-│   ├── button.tsx
-│   ├── card.tsx
-│   ├── form.tsx
-│   └── ...
-├── layout/                # Layout components
-│   ├── header.tsx
-│   ├── sidebar.tsx
-│   └── footer.tsx
-├── report/                # Report-specific components
-│   ├── report-viewer.tsx
-│   ├── report-sections/   # Individual sections
-│   └── score-form.tsx
-└── agents/                # Agent UI components
-    ├── agent-status.tsx
-    └── progress-bar.tsx
+├── auth/                  # Authentication components
+│   ├── sign-in-form.tsx   # Sign in form with validation
+│   └── sign-up-form.tsx   # Sign up form with validation
+└── ui/                    # shadcn/ui components
+    ├── alert.tsx
+    ├── button.tsx
+    ├── card.tsx
+    ├── input.tsx
+    ├── label.tsx
+    ├── progress.tsx
+    ├── spinner.tsx
+    └── textarea.tsx
 ```
 
 ### `lib/` - Core Libraries
 ```
 lib/
-├── agents/                # LangGraph agent implementations
-│   ├── graph.ts          # Main orchestration graph
-│   ├── broad-researcher.ts
-│   ├── ideator.ts
-│   ├── critic.ts
-│   ├── analyst.ts
-│   └── writer.ts
-├── langchain/             # LangChain configuration
-│   ├── chains.ts
-│   ├── prompts.ts
-│   └── memory.ts
+├── interfaces/            # Core interfaces and abstractions
+│   ├── base-agent.ts      # Base agent class
+│   ├── database.ts        # Database service interface
+│   ├── event-stream.ts    # Event streaming interface
+│   ├── llm.ts            # LLM service interface
+│   └── web-search.ts      # Web search service interface
+├── services/              # Service implementations
+│   ├── agent-logger.ts    # Agent logging service
+│   └── database.ts        # Supabase database service
 ├── supabase/              # Supabase client and utilities
-│   ├── client.ts
-│   ├── server.ts
-│   └── middleware.ts
-├── utils/                 # Utility functions
-│   ├── format.ts
-│   ├── validation.ts
-│   └── constants.ts
-└── services/              # Business logic services
-    ├── report-service.ts
-    ├── score-service.ts
-    └── auth-service.ts
+│   ├── client.ts          # Browser client
+│   ├── server.ts          # Server client
+│   └── middleware.ts      # Session middleware
+├── types/                 # TypeScript type definitions
+│   ├── database.ts        # Manual database types
+│   ├── database.generated.ts # Generated Supabase types
+│   └── index.ts           # Core application types
+├── validations/           # Zod validation schemas
+│   ├── agent.ts           # Agent-related validations
+│   ├── feedback.ts        # Feedback validations
+│   ├── idea.ts           # Business idea validations
+│   ├── session.ts        # Session validations
+│   ├── user.ts           # User validations
+│   └── index.ts          # Export aggregator
+└── utils.ts              # Utility functions (cn)
 ```
 
-### `types/` - TypeScript Definitions
+### `__tests__/` - Test Files
 ```
-types/
-├── agents.ts              # Agent-related types
-├── report.ts              # Report data structures
-├── database.ts            # Database schema types
-├── api.ts                 # API request/response types
-└── supabase.ts            # Generated Supabase types
+__tests__/
+├── components/            # Component tests
+│   └── auth/             # Authentication component tests
+│       ├── sign-in-form.test.tsx
+│       └── sign-up-form.test.tsx
+└── validations/          # Validation schema tests
+    ├── idea.test.ts
+    ├── session.test.ts
+    └── user.test.ts
 ```
 
 ### `supabase/` - Database Configuration
 ```
 supabase/
 ├── migrations/            # SQL migration files
-│   ├── 001_initial_schema.sql
-│   ├── 002_auth_setup.sql
-│   └── 003_reports_table.sql
-├── seed.sql               # Initial data
-└── config.toml            # Supabase local config
+│   └── 20250108_initial_schema.sql  # Complete schema with RLS policies
+├── seed.sql               # Initial data (empty for now)
+└── config.toml            # Supabase local configuration
 ```
 
 ## Database Schema
 ```sql
 -- Main tables
-reports                    -- 生成されたレポート
-├── id
+users                      -- ユーザープロファイル (auth.usersを拡張)
+├── id (UUID)
+├── email
+├── name
+├── created_at
+└── updated_at
+
+ideation_sessions          -- アイディエーションセッション
+├── id (UUID)
 ├── user_id
+├── status (initializing/researching/generating/analyzing/completed/error)
+├── current_phase
+├── progress (0-100)
+├── created_at
+├── updated_at
+├── completed_at
+└── error_message
+
+business_ideas             -- 生成されたビジネスアイデア
+├── id (UUID)
+├── session_id
 ├── title
-├── summary
-├── content (JSON)
-├── status
+├── description
+├── market_analysis
+├── revenue_projection (BIGINT)
+├── implementation_difficulty (low/medium/high)
+├── time_to_market
+├── required_resources (TEXT[])
+├── risks (TEXT[])
+├── opportunities (TEXT[])
 └── created_at
 
-scores                     -- ユーザー評価
-├── id
-├── report_id
-├── market_score (0-50)
-├── synergy_score (0-50)
+idea_feedback              -- ユーザーフィードバック
+├── id (UUID)
+├── idea_id
+├── user_id
+├── score (1-5)
 ├── comment
 └── created_at
 
-agent_runs                 -- エージェント実行履歴
-├── id
-├── report_id
-├── agent_name
-├── input
-├── output
-├── tokens_used
+agent_logs                 -- エージェント実行ログ
+├── id (UUID)
+├── session_id
+├── agent_name (researcher/ideator/critic/analyst/writer)
+├── message
+├── data (JSONB)
+└── created_at
+
+system_logs                -- システムログ
+├── id (UUID)
+├── session_id
+├── user_id
+├── action
+├── details (JSONB)
 └── created_at
 ```
 

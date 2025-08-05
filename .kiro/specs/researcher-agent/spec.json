@@ -1,0 +1,23 @@
+{
+  "feature_name": "researcher-agent",
+  "project_description": "researcher-agent - Task 5: Broad Researcherエージェントの実装。",
+  "created_at": "2025-01-08T00:20:00Z",
+  "updated_at": "2025-01-08T00:45:00Z",
+  "language": "japanese",
+  "phase": "tasks-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": false
+    }
+  },
+  "ready_for_implementation": false
+}

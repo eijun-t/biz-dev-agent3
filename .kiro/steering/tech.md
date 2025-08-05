@@ -11,7 +11,7 @@
 - **UI Components**: shadcn/ui
 - **Styling**: TailwindCSS
 - **State Management**: React Server Components + Client Components
-- **Authentication**: Supabase Auth (Passwordless Email)
+- **Authentication**: Supabase Auth (Password-based)
 
 ## Backend Stack
 - **Runtime**: Next.js API Routes (Edge Functions)
@@ -35,7 +35,7 @@
 - **Version Control**: GitHub (Private Repository)
 - **CI/CD**: GitHub Actions
 - **Development Tools**: ESLint, Prettier, TypeScript
-- **Testing**: Jest, React Testing Library (MVP後)
+- **Testing**: Jest, React Testing Library
 
 ## Common Commands
 
@@ -46,13 +46,18 @@ npm run build            # プロダクションビルド
 npm run start            # プロダクションサーバー起動
 npm run lint             # ESLint実行
 npm run type-check       # TypeScriptチェック
+npm run format           # Prettierでコードフォーマット
+npm run test             # Jestテスト実行
+npm run test:watch       # Jestテストをwatchモードで実行
 ```
 
 ### Database
 ```bash
 npx supabase init        # Supabaseプロジェクト初期化
 npx supabase db push     # マイグレーション適用
-npx supabase gen types   # TypeScript型生成
+npm run db:types         # TypeScript型生成 (supabase gen types)
+npx supabase start       # ローカルSupabase起動
+npx supabase stop        # ローカルSupabase停止
 ```
 
 ### Deployment
@@ -90,16 +95,18 @@ SERPER_MAX_RETRIES=3      # Max retry attempts
 ## Key Dependencies
 ```json
 {
-  "next": "15.x",
-  "react": "19.x",
-  "typescript": "5.x",
-  "@langchain/core": "latest",
-  "@langchain/langgraph": "latest",
-  "@langchain/openai": "latest",
-  "@supabase/supabase-js": "2.x",
-  "@supabase/auth-helpers-nextjs": "latest",
-  "tailwindcss": "3.x",
-  "@shadcn/ui": "latest"
+  "next": "^15.4.5",
+  "react": "^19.1.1",
+  "typescript": "^5.9.2",
+  "@supabase/supabase-js": "^2.53.0",
+  "@supabase/ssr": "^0.6.1",
+  "@supabase/auth-helpers-nextjs": "^0.10.0",
+  "tailwindcss": "^4.1.11",
+  "zod": "^4.0.14",
+  "lucide-react": "^0.536.0",
+  "class-variance-authority": "^0.7.1",
+  "jest": "^30.0.5",
+  "@testing-library/react": "^16.3.0"
 }
 ```
 
@@ -115,3 +122,12 @@ SERPER_MAX_RETRIES=3      # Max retry attempts
 - **同時実行**: 最大5ループ並行処理
 - **API応答**: Edge Functionsによる低レイテンシ
 - **キャッシュ**: Vercel Edge Cache活用
+
+## Current Implementation Status
+- ✅ **基盤インフラ**: Next.js, TypeScript, Supabase設定完了
+- ✅ **認証システム**: パスワードベース認証実装済み
+- ✅ **データモデル**: 型定義とバリデーション実装済み
+- ✅ **テスト環境**: Jest + React Testing Library設定済み
+- 🚧 **AIエージェント**: LangChain/LangGraph実装待ち
+- 🚧 **Web検索**: Serper API統合待ち
+- 🚧 **レポート生成**: UI/UX実装待ち

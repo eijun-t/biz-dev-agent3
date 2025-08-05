@@ -1,60 +1,60 @@
 # Implementation Plan
 
-- [ ] 1. プロジェクトの初期セットアップとコアインターフェース定義
+- [x] 1. プロジェクトの初期セットアップとコアインターフェース定義
   - Next.js 15プロジェクトを作成し、必要な依存関係をインストール
   - TypeScript設定、ESLint、Prettierの設定を行う
   - 環境変数テンプレート（.env.example）を作成
   - shadcn/uiの初期設定とTailwindCSSの設定
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 2. Supabaseプロジェクトセットアップとデータベーススキーマ実装
-- [ ] 2.1 Supabaseプロジェクトの初期化とローカル開発環境構築
+- [x] 2. Supabaseプロジェクトセットアップとデータベーススキーマ実装
+- [x] 2.1 Supabaseプロジェクトの初期化とローカル開発環境構築
   - `supabase init`でローカルプロジェクトを初期化
   - 環境変数にSupabase URLとキーを設定
   - データベース接続をテストするスクリプトを作成
   - _Requirements: 6.1_
 
-- [ ] 2.2 認証とユーザー管理のデータベーススキーマ作成
+- [x] 2.2 認証とユーザー管理のデータベーススキーマ作成
   - migrations/001_initial_schema.sqlを作成
   - usersテーブル、reportsテーブル、scoresテーブル、agent_runsテーブルを定義
   - generation_jobsテーブルを追加
   - 必要なインデックスを作成
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 2.3 Row-Level Security (RLS)ポリシーの実装
+- [x] 2.3 Row-Level Security (RLS)ポリシーの実装
   - 各テーブルのRLSを有効化
   - ユーザーが自分のデータのみアクセスできるポリシーを作成
   - RLSポリシーのテストスクリプトを作成
   - _Requirements: 6.1, 6.2, 6.4_
 
-- [ ] 3. 型定義とデータモデルのテスト駆動実装
-- [ ] 3.1 TypeScript型定義ファイルの作成
+- [x] 3. 型定義とデータモデルのテスト駆動実装
+- [x] 3.1 TypeScript型定義ファイルの作成
   - types/user.ts、types/report.ts、types/score.tsを作成
   - types/agents.ts、types/database.ts、types/api.tsを作成
   - Supabaseから型を自動生成（`supabase gen types`）
   - _Requirements: 全般_
 
-- [ ] 3.2 データモデルのバリデーションとテスト実装
+- [x] 3.2 データモデルのバリデーションとテスト実装
   - Zodスキーマを使用してバリデーションルールを定義
   - 各モデルのユニットテストを作成（__tests__/models/）
   - バリデーションエラーのテストケースを網羅
   - _Requirements: 1.2, 4.1_
 
-- [ ] 4. 認証システムのテスト駆動実装
-- [ ] 4.1 Supabase Auth統合とミドルウェア実装
+- [x] 4. 認証システムのテスト駆動実装
+- [x] 4.1 Supabase Auth統合とミドルウェア実装
   - lib/supabase/client.tsとserver.tsを作成
   - middleware.tsでセッション検証とCSRF対策を実装
   - 認証ヘルパー関数のテストを作成
   - _Requirements: 1.1, 1.3, 6.2_
 
-- [ ] 4.2 認証APIエンドポイントの実装
+- [x] 4.2 認証APIエンドポイントの実装
   - app/api/auth/signin/route.tsを作成（パスワード認証）
   - app/api/auth/signout/route.tsを作成
   - app/api/auth/session/route.tsを作成
   - 各エンドポイントの統合テストを作成
   - _Requirements: 1.2, 1.5_
 
-- [ ] 4.3 認証UIコンポーネントの実装
+- [x] 4.3 認証UIコンポーネントの実装
   - components/auth/LoginForm.tsxを作成（shadcn/ui使用）
   - components/auth/AuthGuard.tsxを作成
   - コンポーネントテストを実装（React Testing Library）
