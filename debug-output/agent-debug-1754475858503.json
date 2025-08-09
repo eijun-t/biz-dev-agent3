@@ -1,0 +1,753 @@
+{
+  "timestamp": "2025-08-06T10:24:18.503Z",
+  "executionTime": 22137,
+  "context": {
+    "sessionId": "a483eb93-3fab-4323-b8b7-c3beaab81c59",
+    "userId": "0b50db2d-b4de-4638-9b83-a28e524d2aec",
+    "metadata": {
+      "test": true,
+      "debugMode": true,
+      "timestamp": "2025-08-06T10:23:56.363Z"
+    }
+  },
+  "input": {
+    "theme": "AIを活用した不動産価格査定の最新技術",
+    "sessionId": "a483eb93-3fab-4323-b8b7-c3beaab81c59"
+  },
+  "output": {
+    "success": true,
+    "data": {
+      "research": {
+        "theme": "AIを活用した不動産価格査定の最新技術",
+        "queries": {
+          "japanese": [
+            {
+              "query": "AI 不動産価格査定 市場規模 成長性 2023",
+              "purpose": "market_size",
+              "region": "jp",
+              "options": {
+                "gl": "jp",
+                "hl": "ja",
+                "num": 10
+              }
+            },
+            {
+              "query": "不動産価格査定 AI 主要プレーヤー 競合状況 日本",
+              "purpose": "competitors",
+              "region": "jp",
+              "options": {
+                "gl": "jp",
+                "hl": "ja",
+                "num": 10
+              }
+            },
+            {
+              "query": "不動産 AI査定 最新トレンド 技術動向 2023",
+              "purpose": "trends",
+              "region": "jp",
+              "options": {
+                "gl": "jp",
+                "hl": "ja",
+                "num": 10
+              }
+            },
+            {
+              "query": "不動産価格査定 AI 規制 政策動向 日本",
+              "purpose": "regulations",
+              "region": "jp",
+              "options": {
+                "gl": "jp",
+                "hl": "ja",
+                "num": 10
+              }
+            },
+            {
+              "query": "顧客ニーズ 不動産価格査定 AI 課題 日本市場",
+              "purpose": "needs",
+              "region": "jp",
+              "options": {
+                "gl": "jp",
+                "hl": "ja",
+                "num": 10
+              }
+            }
+          ],
+          "global": [
+            {
+              "query": "AI real estate valuation innovative startups 2023",
+              "purpose": "startups",
+              "region": "global",
+              "options": {
+                "gl": "us",
+                "hl": "en",
+                "num": 10
+              }
+            },
+            {
+              "query": "cutting-edge technology in AI real estate appraisal case studies",
+              "purpose": "technology",
+              "region": "global",
+              "options": {
+                "gl": "us",
+                "hl": "en",
+                "num": 10
+              }
+            },
+            {
+              "query": "global trends best practices AI real estate pricing 2023",
+              "purpose": "best_practices",
+              "region": "global",
+              "options": {
+                "gl": "us",
+                "hl": "en",
+                "num": 10
+              }
+            }
+          ],
+          "generatedAt": "2025-08-06T10:24:02.420Z"
+        },
+        "rawResults": {
+          "japanese": [
+            {
+              "title": "2023年最新！AI分析で判明した今後値上がりする不動産エリア",
+              "link": "https://areanet.estate/column/8854/",
+              "snippet": "本記事では、最新のAI分析技術を駆使して、今後確実に値上がりが見込まれる不動産エリアを徹底解析しています。従来の不動産投資では見落とされがちだった ...",
+              "position": 1
+            },
+            {
+              "title": "不動産テックで業界が変わる？2023年の市場規模や実情を解説",
+              "link": "https://rimawari.co.jp/blog/?p=2748",
+              "snippet": "しかし、日本の不動産市場の本質的な拡大と組み合わせると、不動産テックの市場は今後も成長する可能性が高いと考えられます。 矢野経済研究所の最新の ...",
+              "position": 2
+            },
+            {
+              "title": "2030年の不動産業界予測：AIエージェントが物件を自動売買する時代",
+              "link": "https://app.ina-gr.com/ja/archives/ai-real-estate-transformation-2030-vision",
+              "snippet": "世界の不動産AI市場の規模は、2030年までに1,803.45億ドルに達すると予測されており、2023年から2030年までの年平均成長率は35％という驚異的な成長が見込まれています。",
+              "position": 3
+            },
+            {
+              "title": "【不動産デベロッパーを徹底的にミキワメてた。】①～2023年最新 ...",
+              "link": "https://www.recme.jp/media/2024110719999/%E4%B8%8D%E5%8B%95%E7%94%A3%E3%83%87%E3%83%99%E3%83%AD%E3%83%83%E3%83%91%E3%83%BC%E3%82%92%E5%BE%B9%E5%BA%95%E7%9A%84%E3%81%AB%E3%83%9F%E3%82%AD%E3%83%AF%E3%83%A1%E3%81%A6%E3%81%9F",
+              "snippet": "これらの要因から、不動産デベロッパー業界の市場規模は、2025年までに年平均1.5%～2%の成長が見込まれています。 特に注目すべきは「スマートシティ」市場 ...",
+              "position": 4
+            },
+            {
+              "title": "不動産テックの市場規模と展望を解説！成長率から見る市場の実態 ...",
+              "link": "https://www.geekly.co.jp/column/cat-jobsearch/real-estate-tech-market/",
+              "snippet": "現状市場規模と成長率 ... 財務省の「年次別法人企業統計調査」によると、令和4年度の不動産業界全体での売上高は41兆6,245億円でした。 四半期ごとの推移を ...",
+              "position": 5
+            },
+            {
+              "title": "2024年の不動産市場規模と今後の展望：成長と課題の分析",
+              "link": "https://tsukuru-ai.co.jp/innovation/real-estate-market",
+              "snippet": "また、ビッグデータとAIを活用した不動産価格予測モデルの精度向上も進んでおり、より正確な市場分析や投資判断が可能になりつつあります。 これらの技術 ...",
+              "position": 6
+            },
+            {
+              "title": "2025年不動産業界の「課題」と、今取り組むべきコトとは！？",
+              "link": "https://lab.iyell.jp/knowledge/realestate/future-of-the-real-estate/",
+              "snippet": "□不動産業界の市場規模 財務総合政策研究所の調査によると、2019年の不動産業界の売上高が約45兆3,835億円だったところ、2023年は約56兆4,539億円でした。",
+              "position": 7
+            },
+            {
+              "title": "不動産テックとは？活用するメリットや代表的なサービスについて ...",
+              "link": "https://blog.release.estate/blogs/re-tech",
+              "snippet": "前述の矢野経済研究所の調査では。不動産テック市場規模は2025年度には2020年度比203.9％の1兆2,461億円に拡大すると予測されています。",
+              "position": 8
+            },
+            {
+              "title": "【不動産営業必読！】AI時代に生き残るための新戦略",
+              "link": "https://f-mikata.jp/rosette-440/",
+              "snippet": "公益社団法人不動産流通推進センターが2023年に公表したデータによると、もっとも導入率が高いのは「物件情報掲載・募集システム」で52.7％を占めています ...",
+              "position": 9
+            },
+            {
+              "title": "AIを不動産業界に活かす新たな視点：業界変革のカギを握る ...",
+              "link": "https://app.ina-gr.com/ja/archives/ai-in-real-estate-industry-transformative-technological-perspectives",
+              "snippet": "日本のスマートビルディング市場は2024年の7.99億ドルから2033年には31.45億ドルへと、年間成長率17.6%で急成長すると予測されています。この成長を牽引するのが、AI、IoT（ ...",
+              "position": 10
+            },
+            {
+              "title": "【2025年8月】不動産一括査定サイトおすすめ比較ランキング ...",
+              "link": "https://gro-bels.co.jp/labo/realestate-appraisal-site-recommended/",
+              "snippet": "この記事では、不動産一括査定サイトのサービスごとの比較結果、それぞれの特徴や利用するメリット、デメリットについて解説します。 この記事を読んでわかること.",
+              "position": 1
+            },
+            {
+              "title": "サイトごとの強みを解説！不動産ポータルサイト比較19選",
+              "link": "https://ielove-cloud.jp/blog/entry-02368/",
+              "snippet": "自社の強みを活かせるサイトで効率的に反響獲得しませんか？不動産ポータルサイトごとの強みを比較。自社に合ったポータルサイトを見つけられます。",
+              "position": 2
+            },
+            {
+              "title": "プロが解説【2025年最新】マンション売却査定おすすめ10選比較 ...",
+              "link": "https://news.mynavi.jp/real-estate-assessment/761",
+              "snippet": "査定価格は、競合不動産の状況や買主との価格交渉、市況などさまざまな要因に影響されて変動します。そのため、査定結果はあくまで目安としてとらえたほうがよいでしょう。",
+              "position": 3
+            },
+            {
+              "title": "[PDF] 米英のレポートに見る不動産テックの事例と日本との比較",
+              "link": "https://www.lij.jp/news/research_memo/20180201_8.pdf",
+              "snippet": "投資用ワンルームマンションの AI による推計価格の査定と自社買取り。例：HAYAGAI（Fan's. 提供）. ➢. 投資用不動産の推計利回りの提供。例：Gate ...",
+              "position": 4
+            },
+            {
+              "title": "不動産業界×ビッグデータと言えば価格査定！サービス4選",
+              "link": "https://atlicu.jp/blog/trend/682/",
+              "snippet": "「イシエル」は、東京都品川区にある株式会社リブセンスが提供する、中古マンションの市場価値をリアルタイムに査定するサービスです。約9,000万件の賃貸 ...",
+              "position": 5
+            },
+            {
+              "title": "AI不動産査定サイト！おすすめのサイトは？ - 売却コラム",
+              "link": "https://www.ohkuraya.co.jp/sell/column/article/1028",
+              "snippet": "あと特筆すべきは、該当マンションと類似マンションの成約期間を比較し、例えば「競合物件と比較すると短期で売却できる可能性が高い」等の競合状況からの ...",
+              "position": 6
+            },
+            {
+              "title": "AIマンションの価格推移・売却購入相場などの中古マンションデータ",
+              "link": "https://t23m-navi.jp/indexes/d/4190040",
+              "snippet": "マンションナビで表示される価格相場は過去10年に渡り独自に収集している2億件超の売買・賃貸事例データ(2025/08現在)に基づき算出しております。 OUTLINE ...",
+              "position": 8
+            },
+            {
+              "title": "個人情報不要！匿名・AIで不動産査定するオススメ3サイト",
+              "link": "https://lab.iyell.jp/special/sell/anonymous-realestate-assessment/",
+              "snippet": "含まれない: 競合 日本",
+              "position": 9
+            },
+            {
+              "title": "物件価格査定AIを全国展開へ エステートテクノロジーズ",
+              "link": "https://www.nikkei.com/article/DGXZQOUC280KF0Y2A720C2000000/",
+              "snippet": "含まれない: 主要 競合",
+              "position": 10
+            },
+            {
+              "title": "人が輝くAIの時代：不動産管理業のデジタル変革と人財価値の融合",
+              "link": "https://app.ina-gr.com/ja/archives/property-management-digital-transformation",
+              "snippet": "日本の不動産管理市場におけるAI実装の最新動向 日本のAIシステム市場は2023年に6,858億円（前年比34.5％増）に達し、2028年には2兆5,433億円まで拡大すると予測されています ...",
+              "position": 1
+            },
+            {
+              "title": "AIによる不動産価格査定に関する技術が特許を取得 - PR TIMES",
+              "link": "https://prtimes.jp/main/html/rd/p/000000037.000115219.html",
+              "snippet": "本システムは、東急リバブルの査定担当者と同等水準の査定価格を算出できる高精度の価格査定AIシステムです。本システムの導入により、査定業務の高度な ...",
+              "position": 5
+            },
+            {
+              "title": "不動産業界におけるAI活用事例！AI導入のメリット・デメリットも解説",
+              "link": "https://blog.release.estate/blogs/re-ai",
+              "snippet": "しかし、AI技術の導入により、物件の条件に基づいて自動で査定額を出すことも可能になります。 その仕組みは機械学習を用いて、さまざまな不動産情報と売却価格をAIが学習 ...",
+              "position": 6
+            },
+            {
+              "title": "【不動産×生成AI】海外・国内企業の成功事例と未来の展望を徹底解説",
+              "link": "https://note.com/mudnesspartners/n/n017fb73b5536",
+              "snippet": "高度な不動産査定モデル: 大量の過去データや近隣物件情報をAIが学習し、購入・再販売時の適正価格を瞬時に算出。人の手による査定よりも一貫性が高く、 ...",
+              "position": 7
+            },
+            {
+              "title": "不動産業界にもAIの波！AIを活用したサービスやできるようになった ...",
+              "link": "https://owners-style.net/article/detail/173101/",
+              "snippet": "賃貸分野では、大東建託が2023年から『審査AIシステム』による適正家賃の査定を導入。 最寄り駅や部屋の広さ、築年数などの情報を入力することで、蓄積さ ...",
+              "position": 8
+            },
+            {
+              "title": "宅建法改正でDX加速ーー不動産スタートアップの最新動向 - KEPPLE",
+              "link": "https://kepple.co.jp/articles/m5thtb3un",
+              "snippet": "AIによる物件査定やリース契約の自動化が進むほか、ブロックチェーン技術が取引の透明性向上と迅速な意思決定を支え、不動産業務全体の効率化と利便性 ...",
+              "position": 9
+            },
+            {
+              "title": "【不動産×AI】人工知能が解決する課題と不動産取引にAIを導入する ...",
+              "link": "https://blockchain-biz-consulting.com/media/fudousan-ai/",
+              "snippet": "不動産×AIは、ChatGPTなどの生成AIの発展によって、さらなる効率化や自動化、コストダウンが期待できます。また、取引の透明性や情報の信頼性を向上できる ...",
+              "position": 10
+            },
+            {
+              "title": "[PDF] 先進的な技術の活用等により 多様化するニーズへ対応 ... - 国土交通省",
+              "link": "https://www.mlit.go.jp/common/001285650.pdf",
+              "snippet": "将来、対価の提供を前提とした自動価格査定サービスに一定の存. 在意義が認められ、これが活用されるならば、鑑定評価法に基づく規制のあり方につ. いて議論を要する可能性 ...",
+              "position": 1
+            },
+            {
+              "title": "2025年不動産業界の最新動向～市場変化と成長戦略",
+              "link": "https://otm-f.co.jp/column/report/fudousan_gyokai/",
+              "snippet": "近年の円安傾向により、海外投資家から見て日本の不動産が割安になっています。 ... AIを活用した不動産価格の査定を実現; WEB接客ツール ホームページやWEB ...",
+              "position": 2
+            },
+            {
+              "title": "【2025年版 最新】不動産価格は今後どうなる？現在の推移や動向 ...",
+              "link": "https://www.homes.co.jp/satei/media/entry/2024/11/0201",
+              "snippet": "日本の不動産価格は、世界経済の動向や国内の金融政策、社会構造の変化など、様々な要因に影響を受けながら変動しています。2022年以降は、ウクライナ ...",
+              "position": 3
+            },
+            {
+              "title": "[PDF] 土地・不動産分野における DXの推進に向けて - 国土交通省",
+              "link": "https://www.mlit.go.jp/policy/shingikai/content/001590121.pdf",
+              "snippet": "今後の土地政策で重要な「土地・不動産分野におけるDX」を推進するためにすべきことは？ ▫データ、IoT、AIを活用し、不動産取引をプラットフォーム化・ ...",
+              "position": 4
+            },
+            {
+              "title": "2023年の不動産の価格推移・値動きは？見通しについてわかり ...",
+              "link": "https://www.estate-tech.co.jp/news/18677/",
+              "snippet": "本記事では、2023年の日本国内の不動産の価格推移・値動きについて国土交通省の公表しているデータを用いながらわかりやすく解説します。 不動産価格上下 ...",
+              "position": 5
+            },
+            {
+              "title": "AIによる不動産価格査定に関する技術が特許を取得～東急リバブルの ...",
+              "link": "https://www.rist.co.jp/202403056305/",
+              "snippet": "含まれない: 規制 政策 日本",
+              "position": 6
+            },
+            {
+              "title": "市場規模 5年間の推移予測不動産売買業界の2030年AI予測レポート",
+              "link": "https://service.xenobrain.jp/forecastresults/market-size/real-estate-transaction",
+              "snippet": "マイナス要因である国策・規制の具体的な要因は、政策金利利率上昇や長期国債金利上昇、円安相場継続と予測する。 →カテゴリー別の評価方法はこちら. 不動産売買業界 ...",
+              "position": 7
+            },
+            {
+              "title": "不動産テックにおける日米の動向と今後の成長領域とは | EY Japan",
+              "link": "https://www.ey.com/ja_jp/insights/real-estate-hospitality-construction/real-estate-hospitality-construction-real-estate-tech-trend-and-future-growth-for-japan-and-us",
+              "snippet": "日本の不動産市場のDXが進まない要因は、データフォーマットの不統一など共通のデータ基盤が存在しないこと。現在、官民連携で基盤構築が推進されており、 ...",
+              "position": 8
+            },
+            {
+              "title": "不動産市場の最新動向！今注目すべきポイントとは？ | コラム | 大阪 ...",
+              "link": "https://smile-home.site/blog/column/detail/20250626000002/",
+              "snippet": "特に、ビッグデータやAIを活用した市場分析が進んでおり、より正確な価格査定や投資判断が可能となっています。また、仮想現実（VR）や拡張現実（AR）を利用した物件 ...",
+              "position": 9
+            },
+            {
+              "title": "不動産業の新時代！AIで叶える売買タイミングの最適化 - 不動産覚書",
+              "link": "https://chiou.jp/ai/",
+              "snippet": "例えば、ある地域で過去10年間に売買された物件データを基に、AIがその地域の地価の変動パターンを見つけ出します。その上で、周辺の開発計画や人口の変化 ...",
+              "position": 10
+            },
+            {
+              "title": "AIを活用した不動産DX: 市場分析と価格査定の革命 - 株式会社サン",
+              "link": "https://www.kk-sun.co.jp/blog/2025/02/21/ai%E3%82%92%E6%B4%BB%E7%94%A8%E3%81%97%E3%81%9F%E4%B8%8D%E5%8B%95%E7%94%A3dx-%E5%B8%82%E5%A0%B4%E5%88%86%E6%9E%90%E3%81%A8%E4%BE%A1%E6%A0%BC%E6%9F%BB%E5%AE%9A%E3%81%AE%E9%9D%A9%E5%91%BD/",
+              "snippet": "物件情報の管理や顧客対応、価格査定など、従来は手作業で行っていた業務を、AIやデジタル技術で自動化することで、大幅な効率化が見込めます。 第三に、 ...",
+              "position": 1
+            },
+            {
+              "title": "生成AIを価格推定に活用した日本初の売却査定AIを共同開発し",
+              "link": "https://lifull.com/news/43094/",
+              "snippet": "LIFULLと不動産仲介のウィル、生成AIを価格推定に活用した日本初の売却査定AIを共同開発し、提供開始. 不動産実務ノウハウと生成AIを融合し、“対話でわかるマンション査定” ...",
+              "position": 2
+            },
+            {
+              "title": "不動産業界に革命をもたらすAI技術とは？導入事例と今後の展望",
+              "link": "https://www.j-s-p.com/webcolumn/page_1199.html",
+              "snippet": "不動産の価格査定や顧客対応、データ管理において、AIはその精度と効率性を発揮しています。 AI技術の進化により、不動産業務の効率化が進み、顧客満足度 ...",
+              "position": 3
+            },
+            {
+              "title": "大手からベンチャーまで！不動産業界におけるAI活用事例を解説",
+              "link": "https://dx-consultant.co.jp/realestate-ai-case/",
+              "snippet": "大手企業やベンチャー企業での活用事例からも分かるように、AIは業務効率化や適正価格の算出、市場分析の高度化など様々な場面で大きく貢献しています。",
+              "position": 4
+            },
+            {
+              "title": "【不動産業界×AI】業務効率化と顧客満足度アップを実現する活用事例",
+              "link": "https://facilo.jp/blog/fudousan-ai",
+              "snippet": "代表的な活用例としては、膨大なデータから顧客ごとのニーズに合わせた物件を提案するツール、過去の取引事例をベースに価格査定を行うツールなどが挙げ ...",
+              "position": 6
+            },
+            {
+              "title": "LIFULLと不動産仲介のウィル、生成AIを価格推定に活用した日本初 ...",
+              "link": "https://prtimes.jp/main/html/rd/p/000000666.000033058.html",
+              "snippet": "生成AIを活用することで、比較対象となる周辺の事例や、査定に影響を与えるプラス・マイナスの要素を整理して示すことが可能になり、ユーザーに納得感を ...",
+              "position": 8
+            },
+            {
+              "title": "不動産仲介業の未来は？AI時代に求められる新たなスキルとは - コトラ",
+              "link": "https://www.kotora.jp/c/59592/",
+              "snippet": "また、AIを活用した物件提案システムや価格査定ツールの導入により、業務の正確性や効率が向上しています。これらの変化は、顧客利便性を向上させる ...",
+              "position": 10
+            }
+          ],
+          "global": [
+            {
+              "title": "The Appraisal, April 2025 — The Top 50 AI Startups in Real Estate",
+              "link": "https://appraisal.substack.com/p/the-appraisal-april-2025-the-top",
+              "snippet": "I'm excited to release the inaugural Real Estate x AI List, highlighting the top startups building AI applications within the real estate ...",
+              "position": 1
+            },
+            {
+              "title": "AI in Real Estate: Top Companies Revolutionizing the Industry",
+              "link": "https://ascendixtech.com/ai-real-estate-solutions/",
+              "snippet": "AI real estate solutions like TRIGIGA, GeoPhy, Enodo, Autohost, and Propic automate buying, selling, and investing along with property management.",
+              "position": 2
+            },
+            {
+              "title": "Deal Momentum Cautiously Builds At The Nexus Of AI And Real ...",
+              "link": "https://news.crunchbase.com/real-estate-property-tech/venture-deal-momentum-ai-construction/",
+              "snippet": "A little more than $200 million has gone to startups applying artificial intelligence to real estate-related sectors like property management and construction.",
+              "position": 3
+            },
+            {
+              "title": "Artificial intelligence - implications for real estate | JLL Research",
+              "link": "https://www.jll.com/en-us/insights/artificial-intelligence-and-its-implications-for-real-estate",
+              "snippet": "Our latest research report examines the implications of AI for real estate and provides insights into how investor and occupier AI strategies will transform.",
+              "position": 4
+            },
+            {
+              "title": "Keep a lookout for these Top 7 Real Estate Startups in 2023 - Medium",
+              "link": "https://medium.com/@stfalconcom/keep-a-lookout-for-these-top-7-real-estate-startups-in-2023-ec24f8a220c0",
+              "snippet": "Whiterock AI was founded in 2020 in New York, USA. Utilizing AI-driven analytics, the enterprise organizes and manages real estate market data.",
+              "position": 5
+            },
+            {
+              "title": "The 7 Real Estate Startups to Watch Out in 2023 | Stfalcon",
+              "link": "https://stfalcon.com/en/blog/post/real-estate-tech-startups",
+              "snippet": "Real Estate Startups to Watch in 2023. Stfalcon has hand-picked the solutions of the 7 innovative startups that are worth your attention. We ...",
+              "position": 6
+            },
+            {
+              "title": "9 Best AI Real Estate Startups With Funding - Appic Softwares",
+              "link": "https://appicsoftwares.com/blog/9-best-ai-real-estate-startups-with-funding/",
+              "snippet": "Explore the top AI real estate startups of 2025, leading the charge in real estate development with innovative approaches and securing ...",
+              "position": 7
+            },
+            {
+              "title": "How Artificial Intelligence Is Changing The Real Estate Market",
+              "link": "https://www.forbes.com/councils/forbestechcouncil/2024/10/30/how-artificial-intelligence-is-changing-the-real-estate-market/",
+              "snippet": "For example, in 2022, AI in real estate was valued at around $163 billion. By 2023, this figure had surged to approximately $226 billion, ...",
+              "position": 8
+            },
+            {
+              "title": "The power of generative AI in real estate | McKinsey",
+              "link": "https://www.mckinsey.com/industries/real-estate/our-insights/generative-ai-can-change-real-estate-but-the-industry-must-change-to-reap-the-benefits",
+              "snippet": "Based on work by the McKinsey Global Institute (MGI), we believe that gen AI could generate $110 billion to $180 billion or more in value for ...",
+              "position": 9
+            },
+            {
+              "title": "Field Study Launch: Real Estate's Adoption of AI - Alpaca VC",
+              "link": "https://alpaca.vc/2023/08/real-estates-adoption-of-ai/",
+              "snippet": "According to Pitchbook data, VCs have invested $461.4B in AI across +40K deals since 2017. In Q1 2023 alone, there was $22.7B allocated across ...",
+              "position": 10
+            },
+            {
+              "title": "The Role of Artificial Intelligence in Real Estate Appraisals",
+              "link": "https://www.pbmares.com/the-role-of-artificial-intelligence-in-real-estate-appraisals/",
+              "snippet": "Several high-profile platforms illustrate how AI is reshaping real estate evaluations. HouseCanary uses comprehensive analytics to pinpoint property values and risk levels . Zillow's Zestimates leverage digital photos and extensive property metrics to provide quick insights for buyers, sellers, and homeowners.",
+              "position": 1
+            },
+            {
+              "title": "Use of AI in Real Estate [15 Case Studies] [2025] - DigitalDefynd",
+              "link": "https://digitaldefynd.com/IQ/ai-in-real-estate-case-studies/",
+              "snippet": "This article delves into five compelling case studies – Zillow's Zestimate, Compass' AI-powered platform, IBM Watson for real estate investment, Skyline AI's ...",
+              "position": 2
+            },
+            {
+              "title": "10 Real Estate AI Use Cases Transforming the Industry in 2025",
+              "link": "https://www.softkraft.co/real-estate-ai/",
+              "snippet": "Investors: AI can help forecast future property values, enabling investors to make strategic decisions and identify lucrative opportunities ...",
+              "position": 3
+            },
+            {
+              "title": "How to Use AI for Real Estate in 2025: Top Use Cases - Biz4Group",
+              "link": "https://www.biz4group.com/blog/how-to-use-ai-for-real-estate",
+              "snippet": "From smart contracts to chatbots, explore how AI for real estate transforms the industry. Get expert-backed solutions with Biz4Group.",
+              "position": 6
+            },
+            {
+              "title": "AI Appraisals: Embracing the Future - McKissock Learning",
+              "link": "https://www.mckissock.com/blog/appraisal/ai-appraisals-embracing-the-future/",
+              "snippet": "Missing: cutting- edge",
+              "position": 7
+            },
+            {
+              "title": "Top 20 Use Cases of Generative AI in the Real Estate Industry",
+              "link": "https://solguruz.com/blog/top-use-cases-of-generative-ai-in-the-real-estate-industry/",
+              "snippet": "Automated property valuation systems use artificial intelligence (AI) algorithms to quickly and reliably determine the market worth of real ...",
+              "position": 8
+            },
+            {
+              "title": "6 Technologies Changing the Game in Real Estate Appraisal",
+              "link": "https://www.maverickag.co/6-technologies-changing-the-game-in-real-estate-appraisal/",
+              "snippet": "AI continuously learns and adapts from new data, enhancing valuation models. This leads to more accurate property appraisals, benefiting clients ...",
+              "position": 9
+            },
+            {
+              "title": "[PDF] Putting the AI in apprAIsal | IAAO",
+              "link": "https://www.iaao.org/wp-content/uploads/Slides_Putting_the_AI_in_apprAIsal.pdf",
+              "snippet": "C3 AI Residential Property Appraisal preliminary pilot results enabled a 45%-point increase – almost doubling – of total direct enrollment. 1. 0. Number of ...",
+              "position": 10
+            },
+            {
+              "title": "AI in Real Estate: Key Trends and Predictions for 2025 - Brainvire",
+              "link": "https://www.brainvire.com/insights/ai-in-real-estate-use-cases/",
+              "snippet": "The AI-driven real estate market has experienced remarkable growth, with projections showing a substantial rise from USD 164.96 billion in 2023 ...",
+              "position": 2
+            },
+            {
+              "title": "AI's Growing Impact on Commercial Real Estate - NAIOP",
+              "link": "https://www.naiop.org/research-and-publications/magazine/2024/Winter-2024-2025/business-trends/ais-growing-impact-on-commercial-real-estate/",
+              "snippet": "CRE companies are using AI to improve efficiency in everything from lease management to building operations. A 2023 report from Fortune Business Insights ...",
+              "position": 3
+            },
+            {
+              "title": "Maximizing Real Estate Value Through AI Market Analysis Trends",
+              "link": "https://www.numberanalytics.com/blog/ai-enhanced-real-estate-decision-making",
+              "snippet": "Learn how AI technologies enhance real estate market analysis to optimize property values, forecast trends, and streamline investment ...",
+              "position": 6
+            },
+            {
+              "title": "Best Practices for Using Price Prediction AI: Strategies for Success",
+              "link": "https://www.zartis.com/best-practices-for-using-price-prediction-ai-strategies-for-success/",
+              "snippet": "Discover how price prediction AI is revolutionizing business strategies by enhancing pricing accuracy, optimizing operations, and driving growth across ...",
+              "position": 7
+            },
+            {
+              "title": "AI in Real Estate: Key Use Cases and Future Trends | Keenethics",
+              "link": "https://keenethics.com/blog/ai-in-real-estate-key-use-cases-and-future-trends",
+              "snippet": "Using machine learning algorithms, AI models can analyze historical data to provide precise property valuations and market forecasts. This ...",
+              "position": 8
+            },
+            {
+              "title": "AI in Real Estate - BDO USA",
+              "link": "https://www.bdo.com/insights/industries/real-estate-construction/ai-in-real-estate",
+              "snippet": "AI can generate property value estimates based on information about the property (e.g., location, proximity to a school, risk of flooding) and ...",
+              "position": 9
+            },
+            {
+              "title": "Global Trends and Talent Implications in Real Estate: 2023",
+              "link": "https://www.russellreynolds.com/en/insights/articles/global-trends-and-talent-implications-in-real-estate-2023",
+              "snippet": "The real estate industry is experiencing a profound transformation worldwide, driven by market dynamics, rising interest rates, and a shift in investor ...",
+              "position": 10
+            }
+          ],
+          "searchTime": 0,
+          "totalResults": 68
+        },
+        "insights": {
+          "marketSize": "世界の不動産AI市場の規模は、2030年までに1,803.45億ドルに達すると予測されており、2023年から2030年までの年平均成長率は35％という驚異的な成長が見込まれています。",
+          "competitors": [],
+          "trends": [
+            "本記事では、最新のAI分析技術を駆使して、今後確実に値上がりが見込まれる不動産エリアを徹底解析しています。従来の不動産投資では見落とされがちだった ...",
+            "この記事では、不動産一括査定サイトのサービスごとの比較結果、それぞれの特徴や利用するメリット、デメリットについて解説します。 この記事を読んでわかること.",
+            "日本の不動産管理市場におけるAI実装の最新動向 日本のAIシステム市場は2023年に6,858億円（前年比34.5％増）に達し、2028年には2兆5,433億円まで拡大すると予測されています ...",
+            "I'm excited to release the inaugural Real Estate x AI List, highlighting the top startups building AI applications within the real estate ...",
+            "しかし、日本の不動産市場の本質的な拡大と組み合わせると、不動産テックの市場は今後も成長する可能性が高いと考えられます。 矢野経済研究所の最新の ..."
+          ],
+          "regulations": [
+            "将来、対価の提供を前提とした自動価格査定サービスに一定の存. 在意義が認められ、これが活用されるならば、鑑定評価法に基づく規制のあり方につ. いて議論を要する可能性 ..."
+          ],
+          "customerNeeds": [
+            "将来、対価の提供を前提とした自動価格査定サービスに一定の存. 在意義が認められ、これが活用されるならば、鑑定評価法に基づく規制のあり方につ. いて議論を要する可能性 ..."
+          ]
+        },
+        "globalInsights": {
+          "innovations": [
+            "I'm excited to release the inaugural Real Estate x AI List, highlighting the top startups building AI applications within the real estate ...",
+            "A little more than $200 million has gone to startups applying artificial intelligence to real estate-related sectors like property management and cons"
+          ],
+          "technologies": [],
+          "bestPractices": [],
+          "applicability": "25件の海外事例を分析した結果、日本市場への適用可能性が確認されました。"
+        },
+        "sources": {
+          "japanese": [
+            "https://areanet.estate/column/8854/",
+            "https://rimawari.co.jp/blog/?p=2748",
+            "https://app.ina-gr.com/ja/archives/ai-real-estate-transformation-2030-vision",
+            "https://www.recme.jp/media/2024110719999/%E4%B8%8D%E5%8B%95%E7%94%A3%E3%83%87%E3%83%99%E3%83%AD%E3%83%83%E3%83%91%E3%83%BC%E3%82%92%E5%BE%B9%E5%BA%95%E7%9A%84%E3%81%AB%E3%83%9F%E3%82%AD%E3%83%AF%E3%83%A1%E3%81%A6%E3%81%9F",
+            "https://www.geekly.co.jp/column/cat-jobsearch/real-estate-tech-market/",
+            "https://tsukuru-ai.co.jp/innovation/real-estate-market",
+            "https://lab.iyell.jp/knowledge/realestate/future-of-the-real-estate/",
+            "https://blog.release.estate/blogs/re-tech",
+            "https://f-mikata.jp/rosette-440/",
+            "https://app.ina-gr.com/ja/archives/ai-in-real-estate-industry-transformative-technological-perspectives"
+          ],
+          "global": [
+            "https://appraisal.substack.com/p/the-appraisal-april-2025-the-top",
+            "https://ascendixtech.com/ai-real-estate-solutions/",
+            "https://news.crunchbase.com/real-estate-property-tech/venture-deal-momentum-ai-construction/",
+            "https://www.jll.com/en-us/insights/artificial-intelligence-and-its-implications-for-real-estate",
+            "https://medium.com/@stfalconcom/keep-a-lookout-for-these-top-7-real-estate-startups-in-2023-ec24f8a220c0",
+            "https://stfalcon.com/en/blog/post/real-estate-tech-startups",
+            "https://appicsoftwares.com/blog/9-best-ai-real-estate-startups-with-funding/",
+            "https://www.forbes.com/councils/forbestechcouncil/2024/10/30/how-artificial-intelligence-is-changing-the-real-estate-market/",
+            "https://www.mckinsey.com/industries/real-estate/our-insights/generative-ai-can-change-real-estate-but-the-industry-must-change-to-reap-the-benefits",
+            "https://alpaca.vc/2023/08/real-estates-adoption-of-ai/"
+          ]
+        },
+        "summary": "### 市場調査レポート要約: AIを活用した不動産価格査定の最新技術\n\n#### 1. 市場の全体像\nAIを活用した不動産価格査定市場は急速に成長しており、2030年には世界で1,803.45億ドルに達すると予測されています。年平均成長率は35％と、テクノロジーの進化とともに市場が拡大する見込みです。特に日本市場においても、AIシステム市場が急成長しており、これに伴い不動産テックの進展が期待されています。\n\n#### 2. 主要な発見事項\n- **成長予測**: 世界の不動産AI市場は2030年までに1,803.45億ドルに達し、年平均成長率は35％。\n- **日本市場の動向**: 日本のAIシステム市場は2023年に6,858億円に達し、2028年には2兆5,433億円まで拡大する見込み。\n- **顧客ニーズの変化**: 自動価格査定サービスに対する需要が高まっており、規制の見直しが必要になる可能性がある。\n- **海外事例の適用性**: 25件の海外事例を分析し、日本市場への適用可能性が確認された。\n- **競合状況**: 現在の競合情報は不明だが、スタートアップの動向が注目されている。\n\n#### 3. ビジネス機会\n- **サービスの多様化**: 自動価格査定サービスやAIを活用した不動産分析ツールの開発が求められている。\n- **規制の再構築**: 自動価格査定サービスが普及する中で、関連する法律や規制の見直しが必要となるため、これに対応するビジネスチャンスが存在。\n- **新技術の導入**: 海外の成功事例を参考にした新たな技術やサービスの提供が市場での競争優位性を高める。\n\n#### 4. 推奨アクション\n- **市場調査の深化**: 競合分析を強化し、現在の市場トレンドに基づく詳細なデータ収集を行う。\n- **技術開発への投資**: AI技術を活用した新しいサービスの開発に注力し、顧客ニーズに応える。\n- **規制に関する対話**: 業界団体や規制機関との対話を促進し、自動価格査定サービスに関する法律の見直しに関与する。 \n\nこの要約により、AIを活用した不動産価格査定市場の現状と将来の展望が明確になり、ビジネス戦略の策定に役立つ情報を提供します。",
+        "keyFindings": [],
+        "recommendations": [
+          "推奨アクション\n- **市場調査の深化**: 競合分析を強化し",
+          "現在の市場トレンドに基づく詳細なデータ収集を行う",
+          "\n- **技術開発への投資**: AI技術を活用した新しいサービスの開発に注力し"
+        ],
+        "generatedAt": "2025-08-06T10:24:18.498Z"
+      },
+      "metrics": {
+        "executionTime": 22134,
+        "tokensUsed": 1968,
+        "apiCallsCount": 10,
+        "cacheHitRate": 0,
+        "errors": []
+      }
+    },
+    "messages": [
+      {
+        "agent": "researcher",
+        "message": "リサーチを開始します: AIを活用した不動産価格査定の最新技術",
+        "timestamp": "2025-08-06T10:23:56.365Z",
+        "data": {
+          "phase": "start",
+          "theme": "AIを活用した不動産価格査定の最新技術"
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "検索クエリを生成中...",
+        "timestamp": "2025-08-06T10:23:56.365Z",
+        "data": {
+          "phase": "query_generation"
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "検索クエリを生成しました（日本: 5件、海外: 3件）",
+        "timestamp": "2025-08-06T10:24:02.420Z",
+        "data": {
+          "phase": "queries_generated",
+          "queries": {
+            "japanese": [
+              {
+                "query": "AI 不動産価格査定 市場規模 成長性 2023",
+                "purpose": "market_size",
+                "region": "jp",
+                "options": {
+                  "gl": "jp",
+                  "hl": "ja",
+                  "num": 10
+                }
+              },
+              {
+                "query": "不動産価格査定 AI 主要プレーヤー 競合状況 日本",
+                "purpose": "competitors",
+                "region": "jp",
+                "options": {
+                  "gl": "jp",
+                  "hl": "ja",
+                  "num": 10
+                }
+              },
+              {
+                "query": "不動産 AI査定 最新トレンド 技術動向 2023",
+                "purpose": "trends",
+                "region": "jp",
+                "options": {
+                  "gl": "jp",
+                  "hl": "ja",
+                  "num": 10
+                }
+              },
+              {
+                "query": "不動産価格査定 AI 規制 政策動向 日本",
+                "purpose": "regulations",
+                "region": "jp",
+                "options": {
+                  "gl": "jp",
+                  "hl": "ja",
+                  "num": 10
+                }
+              },
+              {
+                "query": "顧客ニーズ 不動産価格査定 AI 課題 日本市場",
+                "purpose": "needs",
+                "region": "jp",
+                "options": {
+                  "gl": "jp",
+                  "hl": "ja",
+                  "num": 10
+                }
+              }
+            ],
+            "global": [
+              {
+                "query": "AI real estate valuation innovative startups 2023",
+                "purpose": "startups",
+                "region": "global",
+                "options": {
+                  "gl": "us",
+                  "hl": "en",
+                  "num": 10
+                }
+              },
+              {
+                "query": "cutting-edge technology in AI real estate appraisal case studies",
+                "purpose": "technology",
+                "region": "global",
+                "options": {
+                  "gl": "us",
+                  "hl": "en",
+                  "num": 10
+                }
+              },
+              {
+                "query": "global trends best practices AI real estate pricing 2023",
+                "purpose": "best_practices",
+                "region": "global",
+                "options": {
+                  "gl": "us",
+                  "hl": "en",
+                  "num": 10
+                }
+              }
+            ],
+            "generatedAt": "2025-08-06T10:24:02.420Z"
+          }
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "Web検索を実行中...",
+        "timestamp": "2025-08-06T10:24:02.420Z",
+        "data": {
+          "phase": "searching"
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "検索完了（日本: 43件、海外: 25件）",
+        "timestamp": "2025-08-06T10:24:04.211Z",
+        "data": {
+          "phase": "search_complete",
+          "resultCount": 68
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "検索結果を分析中...",
+        "timestamp": "2025-08-06T10:24:04.211Z",
+        "data": {
+          "phase": "processing"
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "要約を生成中...",
+        "timestamp": "2025-08-06T10:24:04.214Z",
+        "data": {
+          "phase": "summarizing"
+        }
+      },
+      {
+        "agent": "researcher",
+        "message": "リサーチが完了しました",
+        "timestamp": "2025-08-06T10:24:18.498Z",
+        "data": {
+          "phase": "complete",
+          "executionTime": 22134,
+          "tokensUsed": 1968
+        }
+      }
+    ]
+  },
+  "databaseOperations": []
+}

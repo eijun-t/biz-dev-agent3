@@ -10,7 +10,11 @@ biz-dev-agent3/
 ├── next.config.js         # Next.js configuration
 ├── tailwind.config.js     # TailwindCSS configuration
 ├── .env.local             # Local environment variables
-├── .env.example           # Environment variables template
+├── postcss.config.js       # PostCSS configuration  
+├── jest.config.js          # Jest configuration
+├── jest.config.node.js     # Jest configuration for Node tests
+├── jest.setup.js           # Jest setup file
+├── middleware.ts           # Next.js middleware
 ├── .gitignore             # Git ignore patterns
 │
 ├── app/                   # Next.js App Router
@@ -19,6 +23,14 @@ biz-dev-agent3/
 ├── hooks/                 # Custom React hooks
 ├── types/                 # TypeScript type definitions
 ├── public/                # Static assets
+├── scripts/               # Utility scripts
+│   └── test-researcher-integration.ts  # 統合テストスクリプト
+├── docs/                  # Project documentation
+│   └── agents/            # Agent documentation
+│       └── broad-researcher/
+│           ├── README.md
+│           ├── api-configuration.md
+│           └── release-checklist.md
 │
 ├── .claude/               # Claude Code extension
 │   └── commands/          # Kiro slash commands
@@ -47,10 +59,22 @@ app/
 ├── dashboard/             # Protected dashboard area
 │   ├── layout.tsx         # Dashboard layout with auth check
 │   └── page.tsx           # Dashboard main page
+├── debug/                 # Debug pages
+│   └── researcher/        # Researcher debug page
+│       └── page.tsx
+├── test-enhanced-researcher/  # Test page
+│   └── page.tsx
 └── api/                   # API routes
-    └── auth/              # Authentication API
-        └── signout/       # Sign out endpoint
-            └── route.ts
+    ├── auth/              # Authentication API
+    │   └── signout/       # Sign out endpoint
+    │       └── route.ts
+    ├── agents/            # Agent API endpoints
+    │   ├── researcher/    # Researcher agent endpoint
+    │   │   └── route.ts
+    │   └── researcher-debug/  # Debug endpoint
+    │       └── route.ts
+    └── test-enhanced-researcher/  # Test endpoint
+        └── route.ts
 ```
 
 ### `components/` - React Components
@@ -70,7 +94,7 @@ components/
     └── textarea.tsx
 ```
 
-### `lib/` - Core Libraries
+### `lib/` - Core Libraries [UPDATED: 2025-01-08]
 ```
 lib/
 ├── interfaces/            # Core interfaces and abstractions
@@ -79,9 +103,25 @@ lib/
 │   ├── event-stream.ts    # Event streaming interface
 │   ├── llm.ts            # LLM service interface
 │   └── web-search.ts      # Web search service interface
+├── agents/                # Agent implementations
+│   └── broad-researcher/  # Broad Researcher Agent
+│       ├── broad-researcher-agent.ts      # Agent v1
+│       ├── broad-researcher-agent-v2.ts   # Agent v2 (深い分析)
+│       ├── production-researcher-agent.ts # 本番環境用
+│       ├── search-result-processor.ts     # 検索結果処理
+│       ├── advanced-search-processor.ts   # 高度なLLM分析
+│       ├── enhanced-output-generator.ts   # 拡張出力生成
+│       ├── edge-logger.ts                 # Edge Functions用ロガー
+│       ├── local-logger.ts                # ローカルロガー
+│       ├── performance-monitor.ts         # パフォーマンス監視
+│       └── errors.ts                      # エラー定義
 ├── services/              # Service implementations
 │   ├── agent-logger.ts    # Agent logging service
-│   └── database.ts        # Supabase database service
+│   ├── database.ts        # Supabase database service
+│   └── serper/            # Serper API integration
+│       └── serper-search-service.ts  # Serper APIサービス
+├── utils/                 # Utility functions
+│   └── rate-limiter.ts    # レートリミットユーティリティ
 ├── supabase/              # Supabase client and utilities
 │   ├── client.ts          # Browser client
 │   ├── server.ts          # Server client
@@ -89,28 +129,42 @@ lib/
 ├── types/                 # TypeScript type definitions
 │   ├── database.ts        # Manual database types
 │   ├── database.generated.ts # Generated Supabase types
-│   └── index.ts           # Core application types
+│   ├── index.ts           # Core application types
+│   ├── agents.ts          # Agent-specific types
+│   └── search.ts          # Search-related types
 ├── validations/           # Zod validation schemas
 │   ├── agent.ts           # Agent-related validations
 │   ├── feedback.ts        # Feedback validations
 │   ├── idea.ts           # Business idea validations
+│   ├── search.ts          # Search validations
 │   ├── session.ts        # Session validations
 │   ├── user.ts           # User validations
 │   └── index.ts          # Export aggregator
 └── utils.ts              # Utility functions (cn)
 ```
 
-### `__tests__/` - Test Files
+### `__tests__/` - Test Files [UPDATED: 2025-01-08]
 ```
 __tests__/
 ├── components/            # Component tests
 │   └── auth/             # Authentication component tests
 │       ├── sign-in-form.test.tsx
 │       └── sign-up-form.test.tsx
-└── validations/          # Validation schema tests
-    ├── idea.test.ts
-    ├── session.test.ts
-    └── user.test.ts
+├── agents/                # Agent tests
+│   └── broad-researcher/  # Broad Researcher tests
+│       ├── broad-researcher-agent.test.ts
+│       ├── search-result-processor.test.ts
+│       └── errors-and-performance.test.ts
+├── services/              # Service tests
+│   └── serper/            # Serper service tests
+│       └── serper-search-service.test.ts
+├── validations/          # Validation schema tests
+│   ├── idea.test.ts
+│   ├── session.test.ts
+│   └── user.test.ts
+├── basic-functionality-test.ts    # 基本機能テスト
+├── mock-integration-test.ts       # モック統合テスト
+└── simple-test.ts                 # シンプルテスト
 ```
 
 ### `supabase/` - Database Configuration

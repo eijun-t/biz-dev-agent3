@@ -1,0 +1,248 @@
+{
+  "sessionId": "session-20250109-001",
+  "evaluationResults": [
+    {
+      "ideaId": "idea-1",
+      "ideaTitle": "AI駆動型スマートビルディング管理プラットフォーム",
+      "marketScore": {
+        "total": 47,
+        "breakdown": {
+          "marketSize": 20,
+          "growthPotential": 15,
+          "profitability": 12
+        },
+        "reasoning": "国内スマートビル市場3000億円、年率15%成長、営業利益25億円見込み",
+        "evidence": [
+          "市場規模: 国内スマートビル市場3000億円",
+          "成長率: 年率15%の急成長",
+          "営業利益: 25億円（目標10億円を大幅超過）",
+          "カーボンニュートラル需要の拡大"
+        ]
+      },
+      "synergyScore": {
+        "total": 45,
+        "breakdown": {
+          "capabilityMatch": 19,
+          "synergyEffect": 14,
+          "uniqueAdvantage": 12
+        },
+        "capabilityMapping": {
+          "requiredCapabilities": [
+            {
+              "name": "不動産運営ノウハウ",
+              "importance": "critical",
+              "description": "大規模ビル群の統合管理経験"
+            },
+            {
+              "name": "テナントネットワーク",
+              "importance": "important",
+              "description": "3000社のテナント企業との関係"
+            },
+            {
+              "name": "AI/IoT技術",
+              "importance": "important",
+              "description": "スマートビル技術の実装能力"
+            }
+          ],
+          "mitsubishiCapabilities": [
+            {
+              "category": "real_estate_development",
+              "name": "丸の内30棟運営",
+              "description": "日本最大級のビジネス街区運営実績",
+              "specificAssets": [
+                "丸の内ビルディング",
+                "新丸の内ビルディング",
+                "JPタワー"
+              ]
+            },
+            {
+              "category": "operations",
+              "name": "テナント管理",
+              "description": "3000社・28万人の就業者管理",
+              "specificAssets": [
+                "テナント企業3000社",
+                "年間賃料5000億円"
+              ]
+            },
+            {
+              "category": "innovation",
+              "name": "スマートシティ推進",
+              "description": "丸の内データコンソーシアム運営",
+              "specificAssets": [
+                "ビッグデータ活用",
+                "AI・IoT実証実験"
+              ]
+            }
+          ],
+          "matchScore": 85,
+          "gaps": [
+            "AI技術者の採用・育成が必要"
+          ]
+        },
+        "synergyScenario": {
+          "scenario": "丸の内30棟を実証フィールドとして活用し、3000社のテナントとの既存関係を基盤に迅速展開。初期導入コストを最小化しながら、実績を積み上げて全国展開へ。",
+          "keyAdvantages": [
+            "丸の内エリアでの圧倒的な実績と信頼",
+            "3000社のテナントへの直接アクセス",
+            "実証実験から本格導入までワンストップ",
+            "三菱グループのシナジー効果"
+          ],
+          "synergyMultiplier": 1.3
+        },
+        "scenarioValidation": {
+          "logicalConsistency": 88,
+          "feasibility": 85,
+          "uniqueness": 82,
+          "overallCredibility": 85,
+          "validationComments": [
+            "既存アセットの活用で実現可能性が高い",
+            "テナントニーズと合致",
+            "他社には模倣困難な独自ポジション"
+          ]
+        },
+        "reasoning": "三菱地所の既存ケイパビリティと高い親和性。丸の内エリアでの実績を最大限活用可能。"
+      },
+      "totalScore": 92,
+      "rank": 1,
+      "recommendation": "強く推奨: 市場性・シナジー共に優れており、早期の事業化検討を推奨",
+      "risks": [
+        "初期投資3億円の回収期間",
+        "AI技術者の確保・育成コスト",
+        "競合他社（日立、JC）との差別化"
+      ],
+      "opportunities": [
+        "カーボンニュートラル規制強化による需要増",
+        "ESG投資の拡大",
+        "海外展開（アジア都市）の可能性",
+        "政府のDX推進補助金活用"
+      ]
+    }
+  ],
+  "selectedIdea": {
+    "ideaId": "idea-1",
+    "ideaTitle": "AI駆動型スマートビルディング管理プラットフォーム",
+    "marketScore": {
+      "total": 47,
+      "breakdown": {
+        "marketSize": 20,
+        "growthPotential": 15,
+        "profitability": 12
+      },
+      "reasoning": "国内スマートビル市場3000億円、年率15%成長、営業利益25億円見込み",
+      "evidence": [
+        "市場規模: 国内スマートビル市場3000億円",
+        "成長率: 年率15%の急成長",
+        "営業利益: 25億円（目標10億円を大幅超過）",
+        "カーボンニュートラル需要の拡大"
+      ]
+    },
+    "synergyScore": {
+      "total": 45,
+      "breakdown": {
+        "capabilityMatch": 19,
+        "synergyEffect": 14,
+        "uniqueAdvantage": 12
+      },
+      "capabilityMapping": {
+        "requiredCapabilities": [
+          {
+            "name": "不動産運営ノウハウ",
+            "importance": "critical",
+            "description": "大規模ビル群の統合管理経験"
+          },
+          {
+            "name": "テナントネットワーク",
+            "importance": "important",
+            "description": "3000社のテナント企業との関係"
+          },
+          {
+            "name": "AI/IoT技術",
+            "importance": "important",
+            "description": "スマートビル技術の実装能力"
+          }
+        ],
+        "mitsubishiCapabilities": [
+          {
+            "category": "real_estate_development",
+            "name": "丸の内30棟運営",
+            "description": "日本最大級のビジネス街区運営実績",
+            "specificAssets": [
+              "丸の内ビルディング",
+              "新丸の内ビルディング",
+              "JPタワー"
+            ]
+          },
+          {
+            "category": "operations",
+            "name": "テナント管理",
+            "description": "3000社・28万人の就業者管理",
+            "specificAssets": [
+              "テナント企業3000社",
+              "年間賃料5000億円"
+            ]
+          },
+          {
+            "category": "innovation",
+            "name": "スマートシティ推進",
+            "description": "丸の内データコンソーシアム運営",
+            "specificAssets": [
+              "ビッグデータ活用",
+              "AI・IoT実証実験"
+            ]
+          }
+        ],
+        "matchScore": 85,
+        "gaps": [
+          "AI技術者の採用・育成が必要"
+        ]
+      },
+      "synergyScenario": {
+        "scenario": "丸の内30棟を実証フィールドとして活用し、3000社のテナントとの既存関係を基盤に迅速展開。初期導入コストを最小化しながら、実績を積み上げて全国展開へ。",
+        "keyAdvantages": [
+          "丸の内エリアでの圧倒的な実績と信頼",
+          "3000社のテナントへの直接アクセス",
+          "実証実験から本格導入までワンストップ",
+          "三菱グループのシナジー効果"
+        ],
+        "synergyMultiplier": 1.3
+      },
+      "scenarioValidation": {
+        "logicalConsistency": 88,
+        "feasibility": 85,
+        "uniqueness": 82,
+        "overallCredibility": 85,
+        "validationComments": [
+          "既存アセットの活用で実現可能性が高い",
+          "テナントニーズと合致",
+          "他社には模倣困難な独自ポジション"
+        ]
+      },
+      "reasoning": "三菱地所の既存ケイパビリティと高い親和性。丸の内エリアでの実績を最大限活用可能。"
+    },
+    "totalScore": 92,
+    "rank": 1,
+    "recommendation": "強く推奨: 市場性・シナジー共に優れており、早期の事業化検討を推奨",
+    "risks": [
+      "初期投資3億円の回収期間",
+      "AI技術者の確保・育成コスト",
+      "競合他社（日立、JC）との差別化"
+    ],
+    "opportunities": [
+      "カーボンニュートラル規制強化による需要増",
+      "ESG投資の拡大",
+      "海外展開（アジア都市）の可能性",
+      "政府のDX推進補助金活用"
+    ]
+  },
+  "summary": "AI駆動型スマートビルディング管理プラットフォームが最高評価（92点）を獲得。市場規模3000億円・年率15%成長の有望市場において、営業利益25億円を見込む。三菱地所の丸の内30棟・テナント3000社の既存アセットを活用することで、他社には模倣困難な競争優位を確立可能。",
+  "metadata": {
+    "evaluationId": "eval-20250109-001",
+    "startTime": "2025-01-09T10:00:00.000Z",
+    "endTime": "2025-01-09T10:00:30.000Z",
+    "processingTime": 30000,
+    "tokensUsed": 3500,
+    "llmCalls": 6,
+    "cacheHits": 0,
+    "errors": []
+  }
+}

@@ -3,9 +3,10 @@ import { AgentMessage } from '@/lib/types'
 export interface BaseAgentContext {
   sessionId: string
   userId: string
-  model: string
-  temperature: number
-  maxTokens: number
+  model?: string
+  temperature?: number
+  maxTokens?: number
+  metadata?: Record<string, any>
 }
 
 export interface AgentExecutionResult {

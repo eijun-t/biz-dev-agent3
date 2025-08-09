@@ -1,4 +1,11 @@
-# Implementation Plan
+# Implementation Plan [UPDATED: 2025-01-08]
+
+## 実装で学んだレッスン
+1. **仕様の曖昧さ**: 「適切な要約」の定義が不明確だったため、MVPレベルの実装になった
+2. **段階的アプローチ**: v1 → v2 → Productionと段階的に機能を強化することが有効
+3. **Edge Functions対応**: 早い段階でfs依存を確認し、メモリベース実装に切り替えることが重要
+4. **デバッグツール**: 複数のデバッグ手法を用意することで問題調査が効率化
+5. **テスト構成**: JestとNode.js環境の互換性問題に注意が必要
 
 - [x] 1. プロジェクトの初期セットアップとコアインターフェース定義
   - Next.js 15プロジェクトを作成し、必要な依存関係をインストール
@@ -60,28 +67,34 @@
   - コンポーネントテストを実装（React Testing Library）
   - _Requirements: 1.1, 1.4_
 
-- [ ] 5. エージェントシステムのコア実装
-- [ ] 5.1 LangGraphとLangChainの基本設定
-  - lib/langchain/config.tsでLLM設定を実装
-  - lib/langchain/memory.tsでメモリ管理を実装
+- [ ] 5. エージェントシステムのコア実装 [PARTIALLY COMPLETED]
+- [x] 5.1 LangChainとOpenAIの基本設定 [COMPLETED]
+  - LangChainと@langchain/openaiを使用したLLM設定
+  - ChatOpenAIを使用した実装（gpt-4o-mini/gpt-4o）
   - 環境変数からOpenAI APIキーを読み込む設定
+  - usage_metadataでトークン使用量追跡
+  - LangGraphは後続タスクで実装予定
   - _Requirements: 3.6, 5.4_
 
-- [ ] 5.2 Web検索サービス（Serper API）の実装
-  - lib/services/web-search.tsを作成
-  - SerperSearchServiceクラスを実装（キャッシュ機能付き）
-  - レート制限とリトライロジックを実装
+- [x] 5.2 Web検索サービス（Serper API）の実装 [COMPLETED]
+  - lib/services/serper/serper-search-service.tsを作成
+  - SerperSearchServiceクラスを実装（LRUキャッシュ機能付き）
+  - レート制限と指数バックオフリトライを実装
   - Web検索サービスのユニットテストを作成
-  - _Requirements: 3.1_
+  - Edge Functions互換（fsモジュール不使用）
+  - _Requirements: 3.1, 9.1-9.6_
 
-- [ ] 5.3 Broad Researcherエージェントの実装
-  - lib/agents/broad-researcher.tsを作成
-  - 検索クエリ生成と並列検索実行を実装
-  - 検索結果の要約と統合機能を実装
-  - エージェントのユニットテストを作成
-  - _Requirements: 3.1_
+- [x] 5.3 Broad Researcherエージェントの実装 [COMPLETED]
+  - lib/agents/broad-researcher/ディレクトリを作成
+  - 3段階実装: v1 → v2 → ProductionResearcherAgent
+  - LLMを使用した検索クエリ生成（日本語5、英語3）
+  - SearchResultProcessorで構造化、AdvancedSearchProcessorでLLM分析
+  - EnhancedOutputGeneratorで詳細な出力データ生成
+  - EdgeLoggerでEdge Functions互換ログ
+  - 包括的なユニットテストと統合テストを作成
+  - _Requirements: 3.1, 9.1-9.6, 10.1-10.4_
 
-- [ ] 5.4 Ideatorエージェントの実装
+- [x] 5.4 Ideatorエージェントの実装
   - lib/agents/ideator.tsを作成
   - 5つのビジネスアイデア生成ロジックを実装
   - リサーチ結果を基にしたアイデア生成
@@ -235,3 +248,23 @@
   - 自動テスト実行の設定
   - ビルドとデプロイの自動化
   - _Requirements: 8.5, 8.6_
+
+## 追加タスク [ADDED: 2025-01-08]
+
+- [x] 5.3.1 デバッグツールの実装
+  - test-researcher-integration.ts: 統合テストスクリプト
+  - app/debug/researcher/page.tsx: Web UIデバッグページ
+  - view-agent-logs.ts: ログビューア
+  - _Requirements: 2.4, 8.2_
+
+- [x] 5.3.2 Edge Functions対応
+  - EdgeLoggerの実装（fsモジュール不使用）
+  - メモリ内ログ保持（最大100件）
+  - Edge Runtimeでの動作確認
+  - _Requirements: 10.1-10.4_
+
+- [x] 5.3.3 出力データ強化
+  - EnhancedOutputGeneratorの実装
+  - 事実、メトリクス、エンティティの抽出
+  - 詳細な分析データ（detailedAnalysis）の追加
+  - _Requirements: 3.1, 3.4_

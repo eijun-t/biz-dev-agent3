@@ -1,0 +1,99 @@
+{
+  "request": {
+    "numberOfIdeas": 3,
+    "temperature": 0.8,
+    "focusAreas": [
+      "中小企業",
+      "AI自動化",
+      "SaaS"
+    ],
+    "targetMarket": "日本の中小企業市場"
+  },
+  "output": {
+    "ideas": [
+      {
+        "id": "idea-002",
+        "title": "AI在庫最適化サービス「在庫マスター」",
+        "description": "小売業・飲食業向けのAI駆動在庫管理システム。需要予測と自動発注により、在庫切れと過剰在庫を同時に削減。食品ロス削減にも貢献。",
+        "targetCustomers": [
+          "小規模小売店",
+          "飲食チェーン",
+          "ECサイト運営者"
+        ],
+        "customerPains": [
+          "在庫管理の複雑さ",
+          "廃棄ロスの増大",
+          "発注業務の手間"
+        ],
+        "valueProposition": "在庫回転率30%向上、廃棄ロス50%削減を実現する次世代在庫管理",
+        "revenueModel": "初期導入費30万円＋月額利用料（売上規模に応じて3-20万円）",
+        "estimatedRevenue": 800000000,
+        "implementationDifficulty": "low",
+        "marketOpportunity": "SDGs対応とコスト削減を同時に実現できる社会的意義の高いソリューション"
+      },
+      {
+        "id": "idea-001",
+        "title": "AIビジネスアシスタント「スマートヘルパー」",
+        "description": "中小企業向けのAI搭載業務支援ツール。日常的な業務タスクを自動化し、従業員が本来の価値創造活動に集中できる環境を提供。音声認識とチャット機能で簡単操作を実現。",
+        "targetCustomers": [
+          "従業員50名以下の中小企業",
+          "個人事業主",
+          "スタートアップ"
+        ],
+        "customerPains": [
+          "人手不足による業務過多",
+          "定型業務に時間を取られる",
+          "IT導入コストが高い"
+        ],
+        "valueProposition": "プログラミング不要で即日導入可能、月額5万円から始められる業務自動化",
+        "revenueModel": "SaaS型月額課金（ベーシック5万円、プロ15万円、エンタープライズ30万円）",
+        "estimatedRevenue": 1200000000,
+        "implementationDifficulty": "medium",
+        "marketOpportunity": "中小企業のDX需要拡大とAI民主化の波に乗る絶好の機会"
+      },
+      {
+        "id": "idea-003",
+        "title": "バーチャルAI研修プラットフォーム",
+        "description": "VR技術とAIを組み合わせた没入型研修システム。製造業や医療分野での実践的なトレーニングを安全かつ効率的に実施可能。",
+        "targetCustomers": [
+          "製造業",
+          "医療機関",
+          "教育機関"
+        ],
+        "customerPains": [
+          "実地研修のコストとリスク",
+          "研修効果の測定困難",
+          "講師不足"
+        ],
+        "valueProposition": "リアルな体験学習を通じて研修効果を3倍に向上、事故リスクゼロ",
+        "revenueModel": "ライセンス販売（年間300万円）＋カスタマイズ開発費",
+        "estimatedRevenue": 1500000000,
+        "implementationDifficulty": "high",
+        "marketOpportunity": "メタバース時代の新しい教育・研修市場の開拓"
+      }
+    ],
+    "summary": "3つの革新的なビジネスアイデアを生成しました。特に中小企業向けAIソリューションは市場ニーズが高く、早期の収益化が期待できます。",
+    "metadata": {
+      "totalIdeas": 3,
+      "averageRevenue": 1166666666.6666667,
+      "marketSize": 3100000000000,
+      "generationDate": "2025-08-08T01:07:13.976Z"
+    }
+  },
+  "metrics": {
+    "tokenUsage": {
+      "promptTokens": 1500,
+      "completionTokens": 2500,
+      "totalTokens": 4000,
+      "invocationCount": 1
+    },
+    "performanceMetrics": {
+      "lastInvocationTime": 1,
+      "averageInvocationTime": 1,
+      "retryCount": 0,
+      "successCount": 1,
+      "errorCount": 0
+    }
+  },
+  "timestamp": "2025-08-08T01:07:13.988Z"
+}
