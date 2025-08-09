@@ -101,11 +101,12 @@
   - エージェントのユニットテストを作成
   - _Requirements: 3.2_
 
-- [ ] 5.5 Criticエージェントの実装
-  - lib/agents/critic.tsを作成
+- [x] 5.5 Criticエージェントの実装 [COMPLETED]
+  - lib/agents/critic/critic-agent.tsを作成
   - 市場規模（50点）とシナジー（50点）の評価ロジック
   - 最高評価アイデアの選定機能
   - エージェントのユニットテストを作成
+  - 各種サービス（evaluation-pipeline、llm-evaluator、market-scoring-service等）を実装
   - _Requirements: 3.3_
 
 - [ ] 5.6 Analystエージェントの実装
