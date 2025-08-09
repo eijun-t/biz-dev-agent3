@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ideator Agent 出力ビューア</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ideas-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .idea-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .idea-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .idea-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .idea-number {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .idea-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .idea-body {
+            padding: 20px;
+        }
+        
+        .idea-description {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .info-group {
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-label::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: #667eea;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        .info-content {
+            color: #666;
+            margin-left: 12px;
+            line-height: 1.5;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-left: 12px;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #495057;
+        }
+        
+        .revenue {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            padding: 15px;
+            background: #f0fff4;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .difficulty {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-left: 12px;
+        }
+        
+        .difficulty.low {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .difficulty.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty.high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .score-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .score-bar {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+        
+        .strengths-weaknesses {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .strength-list, .weakness-list {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .strength-list {
+            background: #d4edda;
+        }
+        
+        .weakness-list {
+            background: #fff3cd;
+        }
+        
+        .strength-list h4, .weakness-list h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .strength-list ul, .weakness-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .strength-list li, .weakness-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .strength-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .weakness-list li::before {
+            content: '⚠';
+            position: absolute;
+            left: 0;
+            color: #ffc107;
+        }
+        
+        .performance-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 30px;
+        }
+        
+        .performance-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .performance-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .performance-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .performance-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Ideator Agent 出力ビューア</h1>
+            <p>AIが生成したビジネスアイデアの詳細分析レポート</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">5</div>
+                <div class="label">生成アイデア数</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">45億円</div>
+                <div class="label">合計推定営業利益</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">9億円</div>
+                <div class="label">平均営業利益</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">3兆円</div>
+                <div class="label">対象市場規模</div>
+            </div>
+        </div>
+        
+        <div class="ideas-container">
+            <!-- アイデア1 -->
+            <div class="idea-card">
+                <div class="idea-header">
+                    <div class="idea-number">アイデア #1</div>
+                    <h3 class="idea-title">AIビジネスアシスタント「スマートヘルパー」</h3>
+                </div>
+                <div class="idea-body">
+                    <div class="idea-description">
+                        中小企業向けのAI搭載業務支援ツール。日常的な業務タスクを自動化し、従業員が本来の価値創造活動に集中できる環境を提供。音声認識とチャット機能で簡単操作を実現。
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">ターゲット顧客</div>
+                        <div class="tags">
+                            <span class="tag">従業員50名以下の中小企業</span>
+                            <span class="tag">個人事業主</span>
+                            <span class="tag">スタートアップ</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">解決する課題</div>
+                        <div class="tags">
+                            <span class="tag">人手不足による業務過多</span>
+                            <span class="tag">定型業務に時間を取られる</span>
+                            <span class="tag">IT導入コストが高い</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">提供価値</div>
+                        <div class="info-content">
+                            プログラミング不要で即日導入可能、月額5万円から始められる業務自動化
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">収益モデル</div>
+                        <div class="info-content">
+                            SaaS型月額課金（ベーシック5万円、プロ15万円、エンタープライズ30万円）
+                        </div>
+                    </div>
+                    
+                    <div class="revenue">
+                        推定営業利益: 12億円
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">実装難易度</div>
+                        <span class="difficulty medium">中（6-12ヶ月）</span>
+                    </div>
+                    
+                    <div class="score-section">
+                        <div class="info-label">品質スコア</div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: 95%;">95/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="strengths-weaknesses">
+                        <div class="strength-list">
+                            <h4>強み</h4>
+                            <ul>
+                                <li>高い収益性</li>
+                                <li>幅広い顧客層</li>
+                                <li>安定的な収益モデル</li>
+                            </ul>
+                        </div>
+                        <div class="weakness-list">
+                            <h4>改善点</h4>
+                            <ul>
+                                <li>競合との差別化</li>
+                                <li>初期開発コスト</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- アイデア2 -->
+            <div class="idea-card">
+                <div class="idea-header">
+                    <div class="idea-number">アイデア #2</div>
+                    <h3 class="idea-title">AI在庫最適化「在庫マスター」</h3>
+                </div>
+                <div class="idea-body">
+                    <div class="idea-description">
+                        小売業・飲食業向けのAI駆動在庫管理システム。需要予測と自動発注により、在庫切れと過剰在庫を同時に削減。食品ロス削減にも貢献。
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">ターゲット顧客</div>
+                        <div class="tags">
+                            <span class="tag">小規模小売店</span>
+                            <span class="tag">飲食チェーン</span>
+                            <span class="tag">ECサイト運営者</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">解決する課題</div>
+                        <div class="tags">
+                            <span class="tag">在庫管理の複雑さ</span>
+                            <span class="tag">廃棄ロスの増大</span>
+                            <span class="tag">発注業務の手間</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">提供価値</div>
+                        <div class="info-content">
+                            在庫回転率30%向上、廃棄ロス50%削減を実現する次世代在庫管理
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">収益モデル</div>
+                        <div class="info-content">
+                            初期導入費30万円＋月額利用料（売上規模に応じて3-20万円）
+                        </div>
+                    </div>
+                    
+                    <div class="revenue">
+                        推定営業利益: 8億円
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">実装難易度</div>
+                        <span class="difficulty low">低（3-6ヶ月）</span>
+                    </div>
+                    
+                    <div class="score-section">
+                        <div class="info-label">品質スコア</div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: 88%;">88/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="strengths-weaknesses">
+                        <div class="strength-list">
+                            <h4>強み</h4>
+                            <ul>
+                                <li>短期間での実現可能</li>
+                                <li>SDGs対応</li>
+                                <li>明確なROI</li>
+                            </ul>
+                        </div>
+                        <div class="weakness-list">
+                            <h4>改善点</h4>
+                            <ul>
+                                <li>市場規模の制約</li>
+                                <li>既存システムとの統合</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- アイデア3 -->
+            <div class="idea-card">
+                <div class="idea-header">
+                    <div class="idea-number">アイデア #3</div>
+                    <h3 class="idea-title">バーチャルAI研修プラットフォーム</h3>
+                </div>
+                <div class="idea-body">
+                    <div class="idea-description">
+                        VR技術とAIを組み合わせた没入型研修システム。製造業や医療分野での実践的なトレーニングを安全かつ効率的に実施可能。
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">ターゲット顧客</div>
+                        <div class="tags">
+                            <span class="tag">製造業</span>
+                            <span class="tag">医療機関</span>
+                            <span class="tag">教育機関</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">解決する課題</div>
+                        <div class="tags">
+                            <span class="tag">実地研修のコストとリスク</span>
+                            <span class="tag">研修効果の測定困難</span>
+                            <span class="tag">講師不足</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">提供価値</div>
+                        <div class="info-content">
+                            リアルな体験学習を通じて研修効果を3倍に向上、事故リスクゼロ
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">収益モデル</div>
+                        <div class="info-content">
+                            ライセンス販売（年間300万円）＋カスタマイズ開発費
+                        </div>
+                    </div>
+                    
+                    <div class="revenue">
+                        推定営業利益: 15億円
+                    </div>
+                    
+                    <div class="info-group">
+                        <div class="info-label">実装難易度</div>
+                        <span class="difficulty high">高（12ヶ月以上）</span>
+                    </div>
+                    
+                    <div class="score-section">
+                        <div class="info-label">品質スコア</div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: 92%;">92/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="strengths-weaknesses">
+                        <div class="strength-list">
+                            <h4>強み</h4>
+                            <ul>
+                                <li>最高の収益性</li>
+                                <li>革新的な技術</li>
+                                <li>高い参入障壁</li>
+                            </ul>
+                        </div>
+                        <div class="weakness-list">
+                            <h4>改善点</h4>
+                            <ul>
+                                <li>開発期間が長い</li>
+                                <li>初期投資が大きい</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="performance-section">
+            <h2>📊 パフォーマンスメトリクス</h2>
+            <div class="performance-grid">
+                <div class="performance-item">
+                    <div class="performance-value">1,500</div>
+                    <div class="performance-label">プロンプトトークン</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">2,500</div>
+                    <div class="performance-label">生成トークン</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">4,000</div>
+                    <div class="performance-label">合計トークン</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">$0.12</div>
+                    <div class="performance-label">推定コスト</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">3.2秒</div>
+                    <div class="performance-label">処理時間</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">GPT-4</div>
+                    <div class="performance-label">使用モデル</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

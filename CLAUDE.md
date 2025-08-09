@@ -19,6 +19,7 @@ Kiro-style Spec Driven Development implementation using claude code slash comman
 - Use `/kiro:spec-status [feature-name]` to check progress
 - **autonomous-ideation-agent**: 自律型アイディエーションエージェントAI - 新事業創出支援システム
 - **researcher-agent**: Broad Researcherエージェント - Task 5: Web検索による情報収集エージェント
+- **critic-agent**: Criticエージェント - ビジネスアイデア評価・選定エージェント
 
 ## Development Guidelines
 - Think in English, but generate responses in Japanese (思考は英語、回答の生成は日本語で行うように)
@@ -51,13 +52,15 @@ Kiro-style Spec Driven Development implementation using claude code slash comman
 
 ## Steering Configuration
 
-### Current Steering Files
+### Current Steering Files [UPDATED: 2025-01-08]
 Managed by `/kiro:steering` command. Updates here reflect command changes.
+- Major update: Broad Researcher Agent implementation complete
+- Added: LangChain/OpenAI integration, Serper API, Edge Functions support
 
 ### Active Steering Files
 - `product.md`: Always included - 自律型アイディエーションエージェントAI製品仕様
-- `tech.md`: Always included - Next.js/LangChain技術スタック
-- `structure.md`: Always included - Next.jsアプリケーション構造
+- `tech.md`: Always included - Next.js/LangChain/OpenAI技術スタック（更新済）
+- `structure.md`: Always included - Next.jsアプリケーション構造（拡張済）
 
 ### Custom Steering Files
 <!-- Added by /kiro:steering-custom command -->

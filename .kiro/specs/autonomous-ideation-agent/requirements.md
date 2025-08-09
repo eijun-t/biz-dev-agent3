@@ -37,12 +37,12 @@
 
 #### Acceptance Criteria
 
-1. WHEN Broad Researcherエージェントが起動する THEN システムは Web検索を実行して関連情報を収集する SHALL
+1. WHEN Broad Researcherエージェントが起動する THEN システムは Serper APIを使用してWeb検索を実行し、日本市場と海外市場の両方から関連情報を収集する SHALL
 2. WHEN Ideatorエージェントが起動する THEN システムは 収集された情報を基に5つのビジネスモデル案を生成する SHALL
 3. WHEN Criticエージェントが起動する THEN システムは 各ビジネスモデルを市場規模（50点）とシナジー（50点）で評価する SHALL
 4. WHEN Analystエージェントが起動する THEN システムは 最高評価のビジネスモデルについてTAM/PAM/SAM分析と競合分析を実行する SHALL
 5. WHEN Writerエージェントが起動する THEN システムは HTML形式でタブ区切りのレポートを生成する SHALL
-6. WHILE エージェントが処理中 THE SYSTEM SHALL 各エージェントの入出力とトークン使用量を記録する
+6. WHILE エージェントが処理中 THE SYSTEM SHALL 各エージェントの入出力とトークン使用量をagent_runsテーブルに記録し、EdgeLoggerでメモリ内ログも保持する
 7. IF APIコストが月額上限（3,000円）に達した THEN システムは 新規生成を一時停止する SHALL
 
 ### Requirement 4: レポート管理・表示
@@ -92,6 +92,30 @@
 3. WHERE Edge Functions実行環境 THE SYSTEM SHALL 低レイテンシでAPIレスポンスを返す
 4. WHEN 静的アセットへのアクセスが発生する THEN システムは Vercel Edge Cacheを活用する SHALL
 5. IF システム負荷が高い場合 THEN システムは 処理優先度に基づいてリソースを配分する SHALL
+
+### Requirement 8: 開発・運用サポート
+
+### Requirement 9: Web検索API統合 [ADDED: 2025-01-08]
+**User Story:** システムとして、効率的かつ信頼性の高いWeb検索を実行し、最新の市場情報を収集したい
+
+#### Acceptance Criteria
+
+1. WHEN Serper APIを初期化する THEN システムは APIキーの有効性を検証する SHALL
+2. WHEN 検索を実行する THEN システムは キャッシュを確認し、1時間以内の同一クエリ結果を再利用する SHALL
+3. IF 検索がエラーになった場合 THEN システムは 最大3回まで指数バックオフでリトライする SHALL
+4. WHEN 日本市場を検索する THEN システムは gl=jp, hl=jaパラメータを使用する SHALL
+5. WHEN 海外市場を検索する THEN システムは gl=us, hl=enパラメータを使用する SHALL
+6. IF レート制限（1分100リクエスト）に達した場合 THEN システムは 適切な待機時間後に再実行する SHALL
+
+### Requirement 10: Edge Functions互換性 [ADDED: 2025-01-08]
+**User Story:** システム管理者として、Edge Functions環境で動作する軽量で高速なアプリケーションを維持したい
+
+#### Acceptance Criteria
+
+1. WHEN エージェントがログを記録する THEN システムは ファイルシステムを使用せずメモリ内に保持する SHALL
+2. WHEN デプロイされる THEN システムは Node.js固有のモジュール（fs、path等）を含まない SHALL
+3. WHERE Edge Functions実行時 THE SYSTEM SHALL 50KB以下のバンドルサイズを維持する
+4. WHEN エラーが発生する THEN システムは EdgeLoggerを使用してメモリ内ログを記録する SHALL
 
 ### Requirement 8: 開発・運用サポート
 **User Story:** 開発者として、効率的に開発・デバッグ・デプロイできる環境が欲しい

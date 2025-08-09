@@ -617,7 +617,14 @@ class JobQueue {
 - **バンドルサイズ**: Tree shakingとコード分割
 - **ストリーミング**: Server-Sent Eventsによる効率的な通信
 
-## Web Search API Integration
+## Web Search API Integration [IMPLEMENTATION UPDATE: 2025-01-08]
+
+### 実装で学んだポイント
+1. **キャッシュ機構**: LRU方式のインメモリキャッシュがAPIコスト削減に非常に効果的
+2. **エラーハンドリング**: 指数バックオフ付きリトライが一時的なネットワークエラーに有効
+3. **Edge Functions互換**: fsモジュール依存を除去し、メモリベースの実装が必須
+4. **日本語検索最適化**: gl=jp, hl=jaパラメータで日本固有の情報を収集
+5. **並列検索**: Promise.allで複数クエリを並列実行することで大幅な時間短縮
 
 ### Serper API選定理由
 - **シンプルなREST API**: 複雑な認証やSDK不要、HTTPリクエストのみで利用可能
@@ -626,11 +633,11 @@ class JobQueue {
 - **レート制限の寛容さ**: 1分100リクエスト、月間2,500クエリの無料枠
 - **低レイテンシ**: 平均応答時間 < 500ms
 
-### API実装詳細
+### API実装詳細 [UPDATED WITH PRODUCTION CODE]
 
 #### 1. 基本的な検索実装
 ```typescript
-// lib/services/web-search.ts
+// lib/services/serper/serper-search-service.ts
 import { z } from 'zod';
 
 const SerperResponseSchema = z.object({
@@ -656,7 +663,9 @@ const SerperResponseSchema = z.object({
 export class SerperSearchService implements WebSearchService {
   private readonly apiKey: string;
   private readonly baseUrl = 'https://google.serper.dev/search';
-  private cache = new Map<string, { data: SearchResult[], timestamp: number }>();
+  private cache: Map<string, CacheEntry> = new Map()
+  private cacheOrder: string[] = [] // LRU用
+  private readonly MAX_CACHE_SIZE = 100
   private readonly CACHE_TTL = 60 * 60 * 1000; // 1時間
 
   constructor(apiKey: string) {
@@ -705,9 +714,9 @@ export class SerperSearchService implements WebSearchService {
 }
 ```
 
-#### 2. Broad Researcherエージェントでの使用
+#### 2. Production Researcher Agentでの実装 [ACTUAL IMPLEMENTATION]
 ```typescript
-// lib/agents/broad-researcher.ts
+// lib/agents/broad-researcher/production-researcher-agent.ts
 export class BroadResearcherAgent {
   constructor(
     private searchService: WebSearchService,
@@ -756,7 +765,13 @@ export class BroadResearcherAgent {
 }
 ```
 
-### エージェント別の検索戦略
+### エージェント別の検索戦略 [UPDATED WITH IMPLEMENTATION]
+
+#### Broad Researcher Agentの実装パターン
+1. **3段階アプローチ**: v1(基本) → v2(深い分析) → Production(最適化)
+2. **検索クエリ生成**: LLMを使用して日本語5クエリ、英語3クエリを生成
+3. **結果処理**: SearchResultProcessorで構造化、AdvancedSearchProcessorでLLM分析
+4. **出力強化**: EnhancedOutputGeneratorで事実、メトリクス、エンティティを抽出
 
 | エージェント | 検索目的 | クエリタイプ | 結果数 |
 |-------------|---------|------------|--------|
@@ -797,6 +812,14 @@ SERPER_API_TIMEOUT=5000           # 5秒タイムアウト
 SERPER_CACHE_TTL=3600000          # 1時間キャッシュ
 SERPER_MAX_RETRIES=3              # 最大リトライ回数
 ```
+
+## Testing Strategy [UPDATED WITH IMPLEMENTATION LEARNINGS]
+
+### 実装で学んだテスト戦略
+1. **ts-jest設定**: Node.js環境でのテストにjest.config.node.jsが必要
+2. **モック戦略**: 外部APIは完全にモック化、統合テストは別スクリプト
+3. **デバッグツール**: 3種類のデバッグ手法（スクリプト、Web UI、ログビューア）
+4. **Edge Functionsテスト**: fs依存を除去したコードのテストが重要
 
 ## Testing Strategy
 

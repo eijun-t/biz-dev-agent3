@@ -10,7 +10,16 @@
       "Bash(npm run dev:*)",
       "Bash(touch:*)",
       "Bash(npm test)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(chmod:*)",
+      "Bash(test:*)",
+      "Bash(./scripts/deploy-researcher-agent.sh:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(rm:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:python.langchain.com)"
     ],
     "deny": []
   }

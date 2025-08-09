@@ -1,0 +1,23 @@
+{
+  "feature_name": "critic-agent",
+  "project_description": "Task 5.5: Criticエージェント - Ideatorが生成した5つのビジネスアイデアを評価・選定するエージェント。市場規模（50点）と三菱地所シナジー（50点）の2軸で各アイデアを評価し、最高評価のアイデアを選定する。autonomous-ideation-agentシステムの重要な判断機能を担う。",
+  "created_at": "2025-01-08T10:10:00Z",
+  "updated_at": "2025-01-08T11:00:00Z",
+  "language": "japanese",
+  "phase": "tasks-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  },
+  "ready_for_implementation": true
+}

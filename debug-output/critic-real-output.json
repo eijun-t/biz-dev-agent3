@@ -1,0 +1,250 @@
+{
+  "sessionId": "session-1754744024370",
+  "evaluationResults": [
+    {
+      "ideaId": "idea-1",
+      "ideaTitle": "AI駆動型スマートビルディング管理プラットフォーム",
+      "marketScore": {
+        "total": 46,
+        "breakdown": {
+          "marketSize": 18,
+          "growthPotential": 14,
+          "profitability": 14
+        },
+        "reasoning": "AI駆動型スマートビルディング管理プラットフォームは、国内スマートビル市場が3000億円と大きく、AIとIoTを活用したDX関連の事業であるため成長性も高い。想定営業利益が25億円と収益性も十分にあることから、高評価となる。",
+        "evidence": [
+          "国内スマートビル市場の規模は3000億円である。",
+          "AIとIoTを活用したDX関連事業は成長が期待されている。"
+        ]
+      },
+      "synergyScore": {
+        "total": 45,
+        "breakdown": {
+          "capabilityMatch": 18,
+          "synergyEffect": 14,
+          "uniqueAdvantage": 13
+        },
+        "capabilityMapping": {
+          "requiredCapabilities": [
+            {
+              "name": "不動産運営ノウハウ",
+              "importance": "critical",
+              "description": "核となる能力"
+            }
+          ],
+          "mitsubishiCapabilities": [
+            {
+              "category": "real_estate_development",
+              "name": "丸の内エリア運営",
+              "description": "30棟の運営実績",
+              "specificAssets": [
+                "丸の内ビルディング"
+              ]
+            }
+          ],
+          "matchScore": 90,
+          "gaps": [
+            "AIとIoT技術の導入に伴う初期投資と運用コスト",
+            "プラットフォームの導入に対するテナントの理解と協力の確保"
+          ]
+        },
+        "synergyScenario": {
+          "scenario": "三菱地所はAI駆動型スマートビルディング管理プラットフォームを活用し、丸の内エリアのビル群のエネルギー効率を大幅に改善し、テナント満足度を向上させることができる。これにより、RE100やネットゼロ目標の達成を加速し、持続可能な都市開発のリーダーシップを強化する。",
+          "keyAdvantages": [
+            "丸の内エリアのビル運営における既存のインフラとテナントネットワークの活用",
+            "FINOLAB等のイノベーション拠点を通じた技術革新の促進"
+          ],
+          "synergyMultiplier": 1.3
+        },
+        "scenarioValidation": {
+          "logicalConsistency": 85,
+          "feasibility": 82,
+          "uniqueness": 80,
+          "overallCredibility": 82,
+          "validationComments": [
+            "実現可能性が高い"
+          ]
+        },
+        "reasoning": "三菱地所の強みを活かせる"
+      },
+      "totalScore": 91,
+      "recommendation": "強く推奨: 市場性・シナジー共に優れており、早期の事業化検討を推奨",
+      "risks": [
+        "技術的な障壁やセキュリティリスクが存在する。",
+        "競合他社の参入による価格競争の可能性。"
+      ],
+      "opportunities": [
+        "エネルギー効率の改善によるコスト削減ニーズの高まり。",
+        "テナント満足度向上による長期的な契約獲得。"
+      ],
+      "rank": 1
+    },
+    {
+      "ideaId": "idea-2",
+      "ideaTitle": "丸の内イノベーションエコシステム構築サービス",
+      "marketScore": {
+        "total": 41,
+        "breakdown": {
+          "marketSize": 16,
+          "growthPotential": 13,
+          "profitability": 12
+        },
+        "reasoning": "丸の内イノベーションエコシステム構築サービスは、オープンイノベーション市場の中で競争力を持つ可能性があります。市場規模は800億円と大きく、AI/DX関連の成長性も高いです。営業利益も十分に高く、収益性が期待できます。",
+        "evidence": [
+          "オープンイノベーション市場は近年急速に拡大しており、企業の競争力強化に寄与している。",
+          "AIやDXは企業の効率化や新規事業創出に不可欠であり、今後も成長が見込まれる分野である。"
+        ]
+      },
+      "synergyScore": {
+        "total": 45,
+        "breakdown": {
+          "capabilityMatch": 18,
+          "synergyEffect": 14,
+          "uniqueAdvantage": 13
+        },
+        "capabilityMapping": {
+          "requiredCapabilities": [
+            {
+              "name": "イノベーション支援",
+              "importance": "critical",
+              "description": "核となる能力"
+            }
+          ],
+          "mitsubishiCapabilities": [
+            {
+              "category": "real_estate_development",
+              "name": "丸の内エリア運営",
+              "description": "30棟の運営実績",
+              "specificAssets": [
+                "丸の内ビルディング"
+              ]
+            }
+          ],
+          "matchScore": 90,
+          "gaps": [
+            "スタートアップ支援における専門的知識の不足",
+            "イノベーションエコシステムの持続可能性の確保"
+          ]
+        },
+        "synergyScenario": {
+          "scenario": "三菱地所は丸の内エリアにおけるビル運営とテナントネットワークを活用し、イノベーションエコシステムを構築することで、スタートアップと大企業の協業を促進します。FINOLABやxLINKなどの施設を活用した実証実験支援により、テナント企業に新たなビジネス機会を提供し、地域全体の競争力を高めることが可能です。",
+          "keyAdvantages": [
+            "丸の内エリアにおける強固なテナントネットワーク",
+            "FINOLAB等のイノベーション拠点の活用"
+          ],
+          "synergyMultiplier": 1.3
+        },
+        "scenarioValidation": {
+          "logicalConsistency": 85,
+          "feasibility": 82,
+          "uniqueness": 80,
+          "overallCredibility": 82,
+          "validationComments": [
+            "実現可能性が高い"
+          ]
+        },
+        "reasoning": "三菱地所の強みを活かせる"
+      },
+      "totalScore": 86,
+      "recommendation": "強く推奨: 市場性・シナジー共に優れており、早期の事業化検討を推奨",
+      "risks": [
+        "市場競争が激化し、他社との差別化が難しくなる可能性。",
+        "経済状況の変動により、企業の投資意欲が減退するリスク。"
+      ],
+      "opportunities": [
+        "丸の内という立地を活かし、多くの企業とスタートアップの連携を促進できる。",
+        "FINOLABやxLINKといった既存の施設を活用することで、初期投資を抑えつつ迅速にサービスを展開できる。"
+      ],
+      "rank": 2
+    }
+  ],
+  "selectedIdea": {
+    "ideaId": "idea-1",
+    "ideaTitle": "AI駆動型スマートビルディング管理プラットフォーム",
+    "marketScore": {
+      "total": 46,
+      "breakdown": {
+        "marketSize": 18,
+        "growthPotential": 14,
+        "profitability": 14
+      },
+      "reasoning": "AI駆動型スマートビルディング管理プラットフォームは、国内スマートビル市場が3000億円と大きく、AIとIoTを活用したDX関連の事業であるため成長性も高い。想定営業利益が25億円と収益性も十分にあることから、高評価となる。",
+      "evidence": [
+        "国内スマートビル市場の規模は3000億円である。",
+        "AIとIoTを活用したDX関連事業は成長が期待されている。"
+      ]
+    },
+    "synergyScore": {
+      "total": 45,
+      "breakdown": {
+        "capabilityMatch": 18,
+        "synergyEffect": 14,
+        "uniqueAdvantage": 13
+      },
+      "capabilityMapping": {
+        "requiredCapabilities": [
+          {
+            "name": "不動産運営ノウハウ",
+            "importance": "critical",
+            "description": "核となる能力"
+          }
+        ],
+        "mitsubishiCapabilities": [
+          {
+            "category": "real_estate_development",
+            "name": "丸の内エリア運営",
+            "description": "30棟の運営実績",
+            "specificAssets": [
+              "丸の内ビルディング"
+            ]
+          }
+        ],
+        "matchScore": 90,
+        "gaps": [
+          "AIとIoT技術の導入に伴う初期投資と運用コスト",
+          "プラットフォームの導入に対するテナントの理解と協力の確保"
+        ]
+      },
+      "synergyScenario": {
+        "scenario": "三菱地所はAI駆動型スマートビルディング管理プラットフォームを活用し、丸の内エリアのビル群のエネルギー効率を大幅に改善し、テナント満足度を向上させることができる。これにより、RE100やネットゼロ目標の達成を加速し、持続可能な都市開発のリーダーシップを強化する。",
+        "keyAdvantages": [
+          "丸の内エリアのビル運営における既存のインフラとテナントネットワークの活用",
+          "FINOLAB等のイノベーション拠点を通じた技術革新の促進"
+        ],
+        "synergyMultiplier": 1.3
+      },
+      "scenarioValidation": {
+        "logicalConsistency": 85,
+        "feasibility": 82,
+        "uniqueness": 80,
+        "overallCredibility": 82,
+        "validationComments": [
+          "実現可能性が高い"
+        ]
+      },
+      "reasoning": "三菱地所の強みを活かせる"
+    },
+    "totalScore": 91,
+    "recommendation": "強く推奨: 市場性・シナジー共に優れており、早期の事業化検討を推奨",
+    "risks": [
+      "技術的な障壁やセキュリティリスクが存在する。",
+      "競合他社の参入による価格競争の可能性。"
+    ],
+    "opportunities": [
+      "エネルギー効率の改善によるコスト削減ニーズの高まり。",
+      "テナント満足度向上による長期的な契約獲得。"
+    ],
+    "rank": 1
+  },
+  "summary": "AI駆動型スマートビルディング管理プラットフォームが最高評価（91点）を獲得。市場スコア46点、シナジースコア45点。AI駆動型スマートビルディング管理プラットフォームは、国内スマートビル市場が3000億円と大きく、AIとIoTを活用したDX関連の事業であるため成長性も高い。想定営業利益が25億円と収益性も十分にあることから、高評価となる。 三菱地所の強みを活かせる",
+  "metadata": {
+    "evaluationId": "5e8f62c7-8ad2-40a4-a896-563c1976e93a",
+    "startTime": "2025-08-09T12:53:44.370Z",
+    "endTime": "2025-08-09T12:54:10.445Z",
+    "processingTime": 26075,
+    "tokensUsed": 3000,
+    "llmCalls": 4,
+    "cacheHits": 0,
+    "errors": []
+  }
+}

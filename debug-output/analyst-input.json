@@ -1,0 +1,96 @@
+{
+  "sessionId": "session-1754744024370",
+  "selectedIdea": {
+    "id": "idea-1",
+    "title": "AI駆動型スマートビルディング管理プラットフォーム",
+    "description": "AIとIoTセンサーを活用して、丸の内エリア30棟のビル群を統合管理。エネルギー効率を30%改善し、テナント満足度を向上させるプラットフォーム。",
+    "targetCustomer": "大規模ビルオーナー、不動産管理会社",
+    "customerProblem": "ビル管理コストの増大、カーボンニュートラル対応の圧力",
+    "proposedSolution": "AI予測制御による空調・照明の最適化、故障予測による予防保全",
+    "revenueModel": "SaaS月額課金＋省エネ成果報酬",
+    "estimatedRevenue": 2500000000,
+    "marketSize": "国内スマートビル市場3000億円",
+    "criticEvaluation": {
+      "totalScore": 91,
+      "marketScore": {
+        "total": 46,
+        "breakdown": {
+          "marketSize": 18,
+          "growthPotential": 14,
+          "profitability": 14
+        },
+        "reasoning": "AI駆動型スマートビルディング管理プラットフォームは、国内スマートビル市場が3000億円と大きく、AIとIoTを活用したDX関連の事業であるため成長性も高い。想定営業利益が25億円と収益性も十分にあることから、高評価となる。",
+        "evidence": [
+          "国内スマートビル市場の規模は3000億円である。",
+          "AIとIoTを活用したDX関連事業は成長が期待されている。"
+        ]
+      },
+      "synergyScore": {
+        "total": 45,
+        "breakdown": {
+          "capabilityMatch": 18,
+          "synergyEffect": 14,
+          "uniqueAdvantage": 13
+        },
+        "capabilityMapping": {
+          "requiredCapabilities": [
+            {
+              "name": "不動産運営ノウハウ",
+              "importance": "critical",
+              "description": "核となる能力"
+            }
+          ],
+          "mitsubishiCapabilities": [
+            {
+              "category": "real_estate_development",
+              "name": "丸の内エリア運営",
+              "description": "30棟の運営実績",
+              "specificAssets": [
+                "丸の内ビルディング"
+              ]
+            }
+          ],
+          "matchScore": 90,
+          "gaps": [
+            "AIとIoT技術の導入に伴う初期投資と運用コスト",
+            "プラットフォームの導入に対するテナントの理解と協力の確保"
+          ]
+        },
+        "synergyScenario": {
+          "scenario": "三菱地所はAI駆動型スマートビルディング管理プラットフォームを活用し、丸の内エリアのビル群のエネルギー効率を大幅に改善し、テナント満足度を向上させることができる。これにより、RE100やネットゼロ目標の達成を加速し、持続可能な都市開発のリーダーシップを強化する。",
+          "keyAdvantages": [
+            "丸の内エリアのビル運営における既存のインフラとテナントネットワークの活用",
+            "FINOLAB等のイノベーション拠点を通じた技術革新の促進"
+          ],
+          "synergyMultiplier": 1.3
+        },
+        "scenarioValidation": {
+          "logicalConsistency": 85,
+          "feasibility": 82,
+          "uniqueness": 80,
+          "overallCredibility": 82,
+          "validationComments": [
+            "実現可能性が高い"
+          ]
+        },
+        "reasoning": "三菱地所の強みを活かせる"
+      },
+      "recommendation": "強く推奨: 市場性・シナジー共に優れており、早期の事業化検討を推奨",
+      "risks": [
+        "技術的な障壁やセキュリティリスクが存在する。",
+        "競合他社の参入による価格競争の可能性。"
+      ],
+      "opportunities": [
+        "エネルギー効率の改善によるコスト削減ニーズの高まり。",
+        "テナント満足度向上による長期的な契約獲得。"
+      ]
+    }
+  },
+  "analysisConfig": {
+    "includeTAMSAMSOM": true,
+    "includeCompetitorAnalysis": true,
+    "includeMarketTrends": true,
+    "includeImplementationPlan": true,
+    "depth": "detailed"
+  }
+}
