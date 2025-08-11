@@ -109,11 +109,12 @@
   - 各種サービス（evaluation-pipeline、llm-evaluator、market-scoring-service等）を実装
   - _Requirements: 3.3_
 
-- [ ] 5.6 Analystエージェントの実装
-  - lib/agents/analyst.tsを作成
-  - TAM/PAM/SAM分析機能を実装
-  - 競合分析機能を実装
-  - エージェントのユニットテストを作成
+- [x] 5.6 Analystエージェントの実装 [COMPLETED]
+  - lib/agents/analyst/analyst-agent.ts を作成（ディレクトリ構成に合わせて実装）
+  - TAM/PAM/SAM分析機能を実装（`analyzers/market-analyzer.ts` ほか）
+  - 競合分析機能を実装（`analyzers/competitor-analyzer.ts` ほか）
+  - 補助サービスの実装（`services/analyst-llm-service.ts`, `services/analyst-search-service.ts`）
+  - エージェントのユニット/統合テストを追加（`scripts/test-analyst-*`, `scripts/test-real-analyst-api.js` など）
   - _Requirements: 3.4_
 
 - [ ] 5.7 Writerエージェントの実装
