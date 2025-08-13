@@ -17,9 +17,12 @@ Kiro-style Spec Driven Development implementation using claude code slash comman
 ### Active Specifications
 - Check `.kiro/specs/` for active specifications
 - Use `/kiro:spec-status [feature-name]` to check progress
-- **autonomous-ideation-agent**: 自律型アイディエーションエージェントAI - 新事業創出支援システム
-- **researcher-agent**: Broad Researcherエージェント - Task 5: Web検索による情報収集エージェント
-- **critic-agent**: Criticエージェント - ビジネスアイデア評価・選定エージェント
+- **autonomous-ideation-agent**: システム全体仕様 - 自律型アイディエーションエージェントAI新事業創出支援システム
+- **researcher-agent**: Task 5.1 Broad Researcherエージェント - Web検索による情報収集
+- **ideator-agent**: Task 5.2 Ideatorエージェント - ビジネスアイデア生成
+- **critic-agent**: Task 5.3 Criticエージェント - ビジネスアイデア評価・選定
+- **analyst-agent**: Task 5.6 Analystエージェント - 詳細市場分析とビジネス戦略深堀り
+- **writer-agent**: Task 5.7 Writerエージェント - ビジネスアイデアを構造化レポートに変換
 
 ## Development Guidelines
 - Think in English, but generate responses in Japanese (思考は英語、回答の生成は日本語で行うように)

@@ -11,13 +11,15 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^@/lib/agents/writer/services/report-generator$': '<rootDir>/__mocks__/lib/agents/writer/services/report-generator.ts',
+    '^@/lib/agents/writer/services/performance-monitor$': '<rootDir>/__mocks__/lib/agents/writer/services/performance-monitor.ts',
   },
   testMatch: [
     '**/__tests__/**/*.(ts|tsx|js)',
     '**/*.(test|spec).(ts|tsx|js)'
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(node-fetch)/)',
+    'node_modules/(?!(node-fetch|isows|@supabase)/)',
   ],
   testEnvironmentOptions: {
     url: 'http://localhost:3000',
