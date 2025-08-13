@@ -23,11 +23,12 @@ import { z } from 'zod';
 export class WriterAgent extends BaseAgent {
   private maxRetries = 3;
   private retryDelay = 1000; // milliseconds
-  private generationTimeout = 5000; // 5 seconds
+  private generationTimeout: number; // configurable timeout
   private reportGeneratorService: ReportGeneratorService;
   
-  constructor(context: BaseAgentContext) {
+  constructor(context: BaseAgentContext & { timeout?: number }) {
     super(context);
+    this.generationTimeout = context.timeout || 5000; // default 5 seconds
     this.reportGeneratorService = getReportGeneratorService();
   }
 

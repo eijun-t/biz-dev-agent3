@@ -5,7 +5,7 @@ description: Analyze implementation content, generate and execute E2E test cases
 
 ## Context
 - Current project status: !`git status`
-- Recent changes: !`git diff HEAD~5..HEAD`
+- Recent changes: !`git show --stat HEAD`
 - Package information: !`cat package.json`
 - Existing test files: !`git ls-files '**/*.test.*' '**/*.spec.*' | head -10`
 
