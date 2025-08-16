@@ -43,7 +43,7 @@ export interface SearchOptions {
   type?: 'search' | 'news' | 'images'  // Search type
 }
 
-// WebSearchResult is imported from index.ts
+import { WebSearchResult } from './index'
 
 /**
  * Search results categorized by region

@@ -71,7 +71,7 @@ export class IdeatorAgent {
    * ビジネスアイデアを生成
    */
   async generateIdeas(
-    researchOutput: EnhancedOutput,
+    researchOutput: any, // ResearcherOutputまたはEnhancedOutputを受け入れる
     request?: IdeationRequest
   ): Promise<IdeatorOutput> {
     try {
@@ -230,19 +230,59 @@ export class IdeatorAgent {
   /**
    * コンテキストを構築
    */
-  private buildContext(researchOutput: EnhancedOutput): IdeationContext {
-    const opportunities = this.promptBuilder.extractOpportunities(researchOutput);
-    const customerPains = this.promptBuilder.identifyCustomerPains(researchOutput);
-    const trends = this.promptBuilder.extractTrends(researchOutput);
-    const competitiveLandscape = this.promptBuilder.summarizeCompetitiveLandscape(researchOutput);
+  private buildContext(researchOutput: any): IdeationContext {
+    // ResearcherOutputの場合は、実際のresearchデータを取得
+    const actualResearch = researchOutput.research || researchOutput;
+    
+    // 最小限の有効なEnhancedOutput構造を作成
+    const enhancedOutput = {
+      processedResearch: actualResearch,
+      facts: actualResearch.keyFindings || [],
+      metrics: {
+        marketSize: this.parseMarketSize(actualResearch.insights?.marketSize || ''),
+        growthRate: this.parseGrowthRate(actualResearch.insights?.growthRate || '')
+      },
+      entities: this.extractEntities(actualResearch),
+      detailedAnalysis: actualResearch.detailedAnalysis || {
+        opportunities: actualResearch.insights?.customerNeeds || [],
+        competitiveLandscape: actualResearch.insights?.competitors?.join(', ') || ''
+      }
+    };
+    
+    const opportunities = this.promptBuilder.extractOpportunities(enhancedOutput);
+    const customerPains = this.promptBuilder.identifyCustomerPains(enhancedOutput);
+    const trends = this.promptBuilder.extractTrends(enhancedOutput);
+    const competitiveLandscape = this.promptBuilder.summarizeCompetitiveLandscape(enhancedOutput);
 
     return {
       opportunities,
       customerPains,
       trends,
       competitiveLandscape,
-      researchSummary: researchOutput.processedResearch.summary
+      researchSummary: actualResearch.summary || ''
     };
+  }
+  
+  private parseMarketSize(marketSizeStr: string): number {
+    const match = marketSizeStr.match(/(\d+[\d,]*)\s*(億|兆)/);
+    if (!match) return 0;
+    const num = parseFloat(match[1].replace(/,/g, ''));
+    return match[2] === '兆' ? num * 1000000000000 : num * 100000000;
+  }
+  
+  private parseGrowthRate(growthRateStr: string): number {
+    const match = growthRateStr.match(/(\d+[\d.]*)/);
+    return match ? parseFloat(match[1]) : 10;
+  }
+  
+  private extractEntities(research: any): any[] {
+    const entities = [];
+    if (research.insights?.competitors) {
+      research.insights.competitors.forEach((name: string) => {
+        entities.push({ type: 'competitor', name });
+      });
+    }
+    return entities;
   }
 
   /**

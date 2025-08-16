@@ -207,7 +207,7 @@ export class CapabilityMatcher {
   /**
    * ケイパビリティのスコアリング（4大カテゴリ別）
    */
-  scoreByCate gory(capabilities: MitsubishiCapability[]): {
+  scoreByCategory(capabilities: MitsubishiCapability[]): {
     realEstateDevelopment: number;
     operations: number;
     finance: number;

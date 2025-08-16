@@ -22,33 +22,42 @@ export class SectionGeneratorService {
   async generateExecutiveSummary(data: any): Promise<ReportSection> {
     const { businessIdea, marketAnalysis, synergyAnalysis, validationPlan } = data;
     
+    // デバッグ: データ内容を確認
+    console.log('[SectionGenerator] Executive Summary data:', {
+      hasBusinessIdea: !!businessIdea,
+      businessTitle: businessIdea?.title,
+      tam: marketAnalysis?.tam,
+      synergyScore: synergyAnalysis?.totalScore || synergyAnalysis?.score,
+      hasPlan: !!validationPlan
+    });
+    
     const formatCurrency = this.dataIntegrationService.formatCurrency.bind(this.dataIntegrationService);
     
     const content = `
-      <p><strong>${this.escapeHtml(businessIdea.title)}</strong>は、${this.escapeHtml(businessIdea.description)}を実現する新規事業提案です。</p>
+      <p><strong>${this.escapeHtml(businessIdea?.title || 'ビジネスアイデア')}</strong>は、${this.escapeHtml(businessIdea?.description || '革新的なビジネスモデル')}を実現する新規事業提案です。</p>
       
       <h3>ビジネス機会</h3>
       <ul>
-        <li>総市場規模（TAM）: ${formatCurrency(marketAnalysis.tam)}</li>
-        <li>獲得可能市場（SAM）: ${formatCurrency(marketAnalysis.sam)}</li>
-        <li>市場成長率: ${marketAnalysis.growthRate}%</li>
+        <li>総市場規模（TAM）: ${formatCurrency(marketAnalysis?.tam || 0)}</li>
+        <li>獲得可能市場（SAM）: ${formatCurrency(marketAnalysis?.sam || 0)}</li>
+        <li>市場成長率: ${marketAnalysis?.growthRate || 0}%</li>
       </ul>
       
       <h3>競争優位性</h3>
-      <p>${businessIdea.valueProposition.uniqueValue}を核とした独自の価値提供により、${businessIdea.valueProposition.competitiveAdvantage.join('、')}という競争優位性を確立します。</p>
+      <p>${businessIdea?.valueProposition?.uniqueValue || '独自の価値提供'}を核とした独自の価値提供により、${(businessIdea?.valueProposition?.competitiveAdvantage || ['競争優位性']).join('、')}という競争優位性を確立します。</p>
       
       <h3>三菱地所とのシナジー</h3>
-      <p>シナジースコア: <strong>${synergyAnalysis.totalScore}点</strong></p>
+      <p>シナジースコア: <strong>${synergyAnalysis?.totalScore || synergyAnalysis?.score || 0}点</strong></p>
       <ul>
-        <li>不動産活用: ${synergyAnalysis.breakdown.realEstateUtilization}点</li>
-        <li>顧客基盤活用: ${synergyAnalysis.breakdown.customerBaseUtilization}点</li>
-        <li>ブランド価値向上: ${synergyAnalysis.breakdown.brandValueEnhancement}点</li>
+        <li>不動産活用: ${synergyAnalysis?.breakdown?.realEstateUtilization || 0}点</li>
+        <li>顧客基盤活用: ${synergyAnalysis?.breakdown?.customerBaseUtilization || 0}点</li>
+        <li>ブランド価値向上: ${synergyAnalysis?.breakdown?.brandValueEnhancement || 0}点</li>
       </ul>
       
       <h3>実装計画</h3>
-      <p>総期間: <strong>${validationPlan.totalDuration}ヶ月</strong> / 必要予算: <strong>${formatCurrency(validationPlan.requiredBudget)}</strong></p>
+      <p>総期間: <strong>${validationPlan?.totalDuration || 0}ヶ月</strong> / 必要予算: <strong>${formatCurrency(validationPlan?.requiredBudget || 0)}</strong></p>
       ${this.htmlTemplateService.generateHighlight(`
-        <strong>推奨事項:</strong> ${this.generateRecommendation(synergyAnalysis.totalScore, marketAnalysis.growthRate)}
+        <strong>推奨事項:</strong> ${this.generateRecommendation(synergyAnalysis?.totalScore || synergyAnalysis?.score || 0, marketAnalysis?.growthRate || 0)}
       `)}
     `;
 
@@ -69,6 +78,14 @@ export class SectionGeneratorService {
    */
   async generateBusinessIdea(data: any): Promise<ReportSection> {
     const { businessIdea } = data;
+    
+    // デバッグ: データ内容を確認
+    console.log('[SectionGenerator] Business Idea data:', {
+      hasBusinessIdea: !!businessIdea,
+      title: businessIdea?.title,
+      hasTargetCustomer: !!businessIdea?.targetCustomer,
+      hasValueProp: !!businessIdea?.valueProposition
+    });
     
     const content = `
       <h3>事業概要</h3>

@@ -25,6 +25,10 @@ export abstract class BaseAgent {
   
   abstract execute(input: any): Promise<AgentExecutionResult>
   
+  updateContext(updates: Partial<BaseAgentContext>): void {
+    this.context = { ...this.context, ...updates }
+  }
+  
   protected createMessage(message: string, data?: any): AgentMessage {
     return {
       agent: this.getAgentName(),

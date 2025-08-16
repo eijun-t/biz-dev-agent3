@@ -23,6 +23,7 @@ Kiro-style Spec Driven Development implementation using claude code slash comman
 - **critic-agent**: Task 5.3 Criticエージェント - ビジネスアイデア評価・選定
 - **analyst-agent**: Task 5.6 Analystエージェント - 詳細市場分析とビジネス戦略深堀り
 - **writer-agent**: Task 5.7 Writerエージェント - ビジネスアイデアを構造化レポートに変換
+- **agent-orchestration**: Task 6.1-6.3 エージェントオーケストレーション - LangGraphによるマルチエージェント統合
 
 ## Development Guidelines
 - Think in English, but generate responses in Japanese (思考は英語、回答の生成は日本語で行うように)

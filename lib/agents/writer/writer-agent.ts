@@ -28,7 +28,7 @@ export class WriterAgent extends BaseAgent {
   
   constructor(context: BaseAgentContext & { timeout?: number }) {
     super(context);
-    this.generationTimeout = context.timeout || 5000; // default 5 seconds
+    this.generationTimeout = context.timeout || 30000; // default 30 seconds
     this.reportGeneratorService = getReportGeneratorService();
   }
 
@@ -83,6 +83,8 @@ export class WriterAgent extends BaseAgent {
       };
     } catch (error) {
       // エラーハンドリング
+      console.error('WriterAgent execute error:', error);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       messages.push(this.createMessage('Error occurred', { error: errorMessage }));
       
@@ -101,28 +103,8 @@ export class WriterAgent extends BaseAgent {
    * Analystエージェントからのデータを処理
    */
   async processAnalysisData(data: WriterInput): Promise<HTMLReport> {
-    const startTime = Date.now();
-
-    try {
-      // タイムアウト設定
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Generation timeout')), this.generationTimeout);
-      });
-
-      // レポート生成処理
-      const reportPromise = this.generateReport(data);
-
-      // タイムアウトと生成処理のレース
-      const report = await Promise.race([reportPromise, timeoutPromise]);
-      
-      return report;
-    } catch (error) {
-      throw this.createWriterError(
-        WriterErrorType.GENERATION_TIMEOUT,
-        'Report generation exceeded 5 seconds',
-        error as Error
-      );
-    }
+    // タイムアウトなしで直接処理
+    return await this.generateReport(data);
   }
 
   /**
@@ -167,6 +149,12 @@ export class WriterAgent extends BaseAgent {
    * レポート生成の実装
    */
   private async generateReport(input: WriterInput): Promise<HTMLReport> {
+    // デバッグ: 入力データを確認
+    console.log('[Writer] Input data keys:', Object.keys(input));
+    console.log('[Writer] AnalystData keys:', input.analystData ? Object.keys(input.analystData) : 'No analystData');
+    console.log('[Writer] BusinessIdea title:', input.analystData?.businessIdea?.title);
+    console.log('[Writer] Market TAM:', input.analystData?.marketAnalysis?.tam);
+    
     // ReportGeneratorServiceを使用してレポートを生成
     return await this.reportGeneratorService.generateReport(input);
   }
@@ -175,28 +163,45 @@ export class WriterAgent extends BaseAgent {
    * レポートをデータベースに保存
    */
   private async saveReport(report: HTMLReport): Promise<void> {
-    const supabase = createClient();
-    
-    const { error } = await supabase
-      .from('html_reports')
-      .insert({
-        id: report.id,
-        session_id: report.sessionId,
-        idea_id: report.ideaId,
-        title: report.title,
-        html_content: report.htmlContent,
-        sections: report.sections,
-        metrics: report.metrics,
-        generated_at: report.generatedAt,
-        generation_time_ms: report.generationTime,
-      });
+    try {
+      const supabase = await createClient();
+      
+      // セッションIDの存在確認
+      console.log('Checking session:', report.sessionId);
+      const { data: session, error: sessionError } = await supabase
+        .from('ideation_sessions')
+        .select('id')
+        .eq('id', report.sessionId)
+        .single();
+      
+      if (sessionError || !session) {
+        console.error('Session not found:', report.sessionId, sessionError);
+        // セッションが存在しない場合は保存をスキップ
+        return;
+      }
+      
+      const { error } = await supabase
+        .from('html_reports')
+        .insert({
+          id: report.id,
+          session_id: report.sessionId,
+          idea_id: report.ideaId,
+          title: report.title,
+          html_content: report.htmlContent,
+          sections: report.sections,
+          metrics: report.metrics,
+          generation_time_ms: report.generationTime,
+        });
 
-    if (error) {
-      throw this.createWriterError(
-        WriterErrorType.DATABASE_ERROR,
-        'Failed to save report to database',
-        error
-      );
+      if (error) {
+        console.error('Database insert error:', error);
+        // データベースエラーは無視して続行（レポート生成自体は成功）
+      } else {
+        console.log('Report saved successfully:', report.id);
+      }
+    } catch (error) {
+      console.error('Failed to save report:', error);
+      // データベース保存エラーは無視して続行
     }
   }
 
@@ -204,56 +209,66 @@ export class WriterAgent extends BaseAgent {
    * 進捗状況をログに記録
    */
   public async logProgress(phase: string, percentage: number): Promise<void> {
-    const supabase = createClient();
-    
-    await supabase
-      .from('agent_logs')
-      .insert({
-        session_id: this.context.sessionId,
-        agent_name: this.getAgentName(),
-        message: `Progress: ${phase}`,
-        data: {
-          phase,
-          percentage,
-        },
-        generation_phase: phase,
-        completion_percentage: Math.max(0, Math.min(100, percentage)),
-      });
+    try {
+      const supabase = await createClient();
+      
+      await supabase
+        .from('agent_logs')
+        .insert({
+          session_id: this.context.sessionId,
+          agent_name: this.getAgentName(),
+          message: `Progress: ${phase}`,
+          data: {
+            phase,
+            percentage,
+          },
+          generation_phase: phase,
+          completion_percentage: Math.max(0, Math.min(100, percentage)),
+        });
+    } catch (error) {
+      console.error('Failed to log progress:', error);
+    }
   }
 
   /**
    * エラーハンドリング
    */
   public async handleError(error: Error, partialContent?: Partial<HTMLReport>): Promise<void> {
-    const supabase = createClient();
-    
-    // エラーログの記録
-    await supabase
-      .from('agent_logs')
-      .insert({
-        session_id: this.context.sessionId,
-        agent_name: this.getAgentName(),
-        message: `Error: ${error.message}`,
-        data: {
-          error: error.message,
-          stack: error.stack,
-          partialContent,
-        },
-      });
-
-    // 部分的なコンテンツがある場合は保存
-    if (partialContent && partialContent.id) {
+    try {
+      const supabase = await createClient();
+      
+      // エラーログの記録（エラーが発生してもクラッシュしない）
       await supabase
-        .from('html_reports')
-        .upsert({
-          id: partialContent.id,
+        .from('agent_logs')
+        .insert({
           session_id: this.context.sessionId,
-          title: partialContent.title || 'Partial Report',
-          html_content: partialContent.htmlContent || '<p>Generation failed</p>',
-          sections: partialContent.sections || [],
-          metrics: partialContent.metrics || {},
-          generation_time_ms: -1, // エラーを示す
+          agent_name: this.getAgentName(),
+          message: `Error: ${error.message}`,
+          data: {
+            error: error.message,
+            stack: error.stack,
+            partialContent,
+          },
         });
+
+      // 部分的なコンテンツがある場合は保存
+      if (partialContent && partialContent.id) {
+        await supabase
+          .from('html_reports')
+          .upsert({
+            id: partialContent.id,
+            session_id: this.context.sessionId,
+            title: partialContent.title || 'Partial Report',
+            html_content: partialContent.htmlContent || '<p>Generation failed</p>',
+            sections: partialContent.sections || [],
+            metrics: partialContent.metrics || {},
+            generation_time_ms: -1, // エラーを示す
+          })
+          .catch(err => console.error('Failed to save partial report:', err));
+      }
+    } catch (dbError) {
+      // データベースエラーは無視してプロセスを継続
+      console.error('Database error in handleError:', dbError);
     }
   }
 

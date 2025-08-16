@@ -1,0 +1,23 @@
+{
+  "feature_name": "agent-orchestration",
+  "project_description": "Task 6.1-6.3: LangGraphを使用したマルチエージェントシステムの統合実装。5つのエージェント（Researcher、Ideator、Critic、Analyst、Writer）を連携させ、エンドツーエンドの自動実行を実現する。エージェント間のデータフロー管理、状態遷移、ジョブキュー、並行処理管理、リアルタイム進捗追跡を含む。",
+  "created_at": "2025-01-13T08:42:00Z",
+  "updated_at": "2025-01-13T09:20:00Z",
+  "language": "japanese",
+  "phase": "design-approved",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": false,
+      "approved": false
+    }
+  },
+  "ready_for_implementation": false
+}

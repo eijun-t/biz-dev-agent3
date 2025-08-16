@@ -140,11 +140,16 @@ export interface HTMLReport {
 }
 
 /**
+ * セクションタイプ
+ */
+export type SectionType = 'summary' | 'business_model' | 'market' | 'synergy' | 'validation' | 'executive_summary' | 'business_idea' | 'market_analysis' | 'synergy_analysis' | 'validation_plan';
+
+/**
  * レポートセクション
  */
 export interface ReportSection {
   id: string;
-  type: 'summary' | 'business_model' | 'market' | 'synergy' | 'validation';
+  type: SectionType;
   title: string;
   content: string; // HTML string
   order: number;

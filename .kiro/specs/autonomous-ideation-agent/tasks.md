@@ -117,11 +117,17 @@
   - エージェントのユニット/統合テストを追加（`scripts/test-analyst-*`, `scripts/test-real-analyst-api.js` など）
   - _Requirements: 3.4_
 
-- [ ] 5.7 Writerエージェントの実装
-  - lib/agents/writer.tsを作成
-  - HTML形式のレポート生成機能
-  - 5つのタブセクション構成の実装
+- [x] 5.7 Writerエージェントの実装 [COMPLETED]
+  - lib/agents/writer/writer-agent.tsを作成
+  - HTML形式のレポート生成機能（report-generator-service.ts）
+  - 5つのタブセクション構成の実装（components/reports/tabs/）
+  - データ統合サービス（data-integration-service.ts）
+  - HTMLテンプレートサービス（html-template-service.ts）
+  - UIコンポーネント（ReportLayout.tsx、TabNavigation.tsx）
+  - APIエンドポイント（app/api/agents/writer/、app/api/reports/）
+  - データベーステーブル（html_reports）
   - エージェントのユニットテストを作成
+  - E2Eテスト環境整備（Playwright）
   - _Requirements: 3.5, 4.1_
 
 - [ ] 6. LangGraphオーケストレーションの実装

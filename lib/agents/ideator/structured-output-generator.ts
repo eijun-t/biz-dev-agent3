@@ -5,6 +5,7 @@
 
 import { z } from 'zod';
 import { PromptTemplate } from '@langchain/core/prompts';
+import { v4 as uuidv4 } from 'uuid';
 import type {
   BusinessIdea,
   IdeatorOutput,
@@ -305,10 +306,10 @@ ${focus ? `特に「${focus}」に焦点を当ててください。` : ''}
     output: IdeatorOutput,
     context: IdeationContext
   ): Promise<IdeatorOutput> {
-    // 各アイデアにIDを確保
+    // 各アイデアにIDを確保（UUID形式）
     const enrichedIdeas = output.ideas.map((idea, index) => ({
       ...idea,
-      id: idea.id || `idea-${Date.now()}-${index}`,
+      id: idea.id || uuidv4(),
       marketOpportunity: idea.marketOpportunity || 
         context.opportunities[0]?.description || 
         '市場機会の詳細分析が必要'

@@ -189,12 +189,148 @@ export interface Database {
           created_at?: string
         }
       }
+      generation_jobs: {
+        Row: {
+          id: string
+          user_id: string
+          session_id: string
+          status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
+          priority: number
+          input: Json
+          output: Json | null
+          error: string | null
+          created_at: string
+          updated_at: string
+          started_at: string | null
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          session_id: string
+          status?: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
+          priority?: number
+          input: Json
+          output?: Json | null
+          error?: string | null
+          created_at?: string
+          updated_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          session_id?: string
+          status?: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
+          priority?: number
+          input?: Json
+          output?: Json | null
+          error?: string | null
+          created_at?: string
+          updated_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+        }
+      }
+      checkpoints: {
+        Row: {
+          id: string
+          session_id: string
+          state: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          state: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          state?: Json
+          created_at?: string
+        }
+      }
+      progress_events: {
+        Row: {
+          id: string
+          session_id: string
+          event_type: string
+          event_data: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          event_type: string
+          event_data: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          event_type?: string
+          event_data?: Json
+          created_at?: string
+        }
+      }
+      html_reports: {
+        Row: {
+          id: string
+          session_id: string
+          idea_id: string
+          html_content: string
+          metadata: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          idea_id: string
+          html_content: string
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          idea_id?: string
+          html_content?: string
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      dequeue_job: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          user_id: string
+          session_id: string
+          status: string
+          priority: number
+          input: Json
+          output: Json | null
+          error: string | null
+          created_at: string
+          updated_at: string
+          started_at: string | null
+          completed_at: string | null
+        } | null
+      }
+      get_active_job_count: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
