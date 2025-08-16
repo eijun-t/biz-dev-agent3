@@ -37,9 +37,11 @@ export class CreativePromptBuilder {
       });
     }
 
-    // factsから追加の機会を特定
-    const additionalOpportunities = this.identifyOpportunitiesFromFacts(data.facts);
-    opportunities.push(...additionalOpportunities);
+    // factsから追加の機会を特定（factsが存在する場合のみ）
+    if (data.facts && Array.isArray(data.facts)) {
+      const additionalOpportunities = this.identifyOpportunitiesFromFacts(data.facts);
+      opportunities.push(...additionalOpportunities);
+    }
 
     return opportunities;
   }
@@ -64,9 +66,11 @@ export class CreativePromptBuilder {
       });
     }
 
-    // factsから追加の課題を特定
-    const additionalPains = this.identifyPainsFromFacts(data.facts);
-    pains.push(...additionalPains);
+    // factsから追加の課題を特定（factsが存在する場合のみ）
+    if (data.facts && Array.isArray(data.facts)) {
+      const additionalPains = this.identifyPainsFromFacts(data.facts);
+      pains.push(...additionalPains);
+    }
 
     return pains;
   }

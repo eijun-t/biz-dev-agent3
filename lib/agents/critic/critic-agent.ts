@@ -11,6 +11,7 @@ import {
   CriticError,
   CriticErrorCode,
 } from '@/lib/types/critic';
+import { ChatOpenAI } from '@langchain/openai';
 import { criticInputSchema, criticOutputSchema } from '@/lib/validations/critic';
 import { EvaluationPipeline } from './services/evaluation-pipeline';
 import { toCriticError, formatErrorMessage } from './errors';
@@ -51,10 +52,10 @@ export class CriticAgent extends BaseAgent<CriticInput, CriticOutput> {
       const validatedInput = await this.validateInput(input);
       
       // ログ記録
-      await this.logExecution('start', { 
-        ideaCount: validatedInput.ideas.length,
-        sessionId: validatedInput.sessionId,
-      });
+      // await this.logExecution('start', { 
+      //   ideaCount: validatedInput.ideas.length,
+      //   sessionId: validatedInput.sessionId,
+      // });
 
       // 評価パイプライン実行
       const output = await this.pipeline.evaluate(validatedInput);
@@ -63,11 +64,11 @@ export class CriticAgent extends BaseAgent<CriticInput, CriticOutput> {
       const validatedOutput = await this.validateOutput(output);
       
       // 成功ログ
-      await this.logExecution('success', {
-        selectedIdea: validatedOutput.selectedIdea.ideaTitle,
-        totalScore: validatedOutput.selectedIdea.totalScore,
-        processingTime: validatedOutput.metadata.processingTime,
-      });
+      // await this.logExecution('success', {
+      //   selectedIdea: validatedOutput.selectedIdea.ideaTitle,
+      //   totalScore: validatedOutput.selectedIdea.totalScore,
+      //   processingTime: validatedOutput.metadata.processingTime,
+      // });
 
       return validatedOutput;
     } catch (error) {
@@ -75,11 +76,11 @@ export class CriticAgent extends BaseAgent<CriticInput, CriticOutput> {
       const criticError = toCriticError(error);
       
       // エラーログ
-      await this.logExecution('error', {
-        error: criticError.message,
-        code: criticError.code,
-        isRetryable: criticError.isRetryable,
-      });
+      // await this.logExecution('error', {
+      //   error: criticError.message,
+      //   code: criticError.code,
+      //   isRetryable: criticError.isRetryable,
+      // });
 
       // ユーザーフレンドリーなメッセージでエラーを投げる
       throw new Error(formatErrorMessage(criticError));
@@ -119,6 +120,141 @@ export class CriticAgent extends BaseAgent<CriticInput, CriticOutput> {
   }
 
   /**
+   * アイデアを評価
+   */
+  async evaluate(input: CriticInput): Promise<CriticOutput> {
+    const llm = new ChatOpenAI({
+      modelName: this.config.model,
+      temperature: 0.3,
+      maxTokens: this.config.maxTokens,
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const evaluationPrompt = `あなたは三菱地所の新事業評価の専門家です。
+以下のビジネスアイデアを厳密に評価してください。
+
+# 評価基準（100点満点）
+1. 市場規模とポテンシャル (35点)
+2. 三菱地所とのシナジー (40点)
+3. 実現可能性 (15点)
+4. 独自性・競争優位性 (10点)
+
+# アイデア一覧
+${input.ideas.map((idea, i) => `
+## アイデア${i + 1}: ${idea.title}
+説明: ${idea.description}
+対象市場: ${idea.targetMarket}
+ビジネスモデル: ${idea.businessModel}
+独自価値: ${idea.uniqueValue}
+`).join('\n')}
+
+JSON形式で回答:
+{
+  "evaluations": [
+    {
+      "ideaIndex": 0,
+      "ideaId": "ID",
+      "title": "タイトル",
+      "marketScore": {
+        "total": 30,
+        "breakdown": {
+          "marketSize": 12,
+          "growthPotential": 9,
+          "profitability": 9
+        },
+        "reasoning": "理由"
+      },
+      "synergyScore": {
+        "total": 35,
+        "breakdown": {
+          "capabilityMatch": 18,
+          "synergyEffect": 9,
+          "uniqueAdvantage": 8
+        },
+        "reasoning": "理由"
+      },
+      "feasibilityScore": 12,
+      "uniquenessScore": 8,
+      "totalScore": 85,
+      "recommendation": "推奨事項",
+      "risks": ["リスク1"],
+      "opportunities": ["機会1"]
+    }
+  ],
+  "selectedIndex": 0,
+  "summary": "サマリー"
+}`;
+
+    console.log('[CriticAgent] 🤖 Calling OpenAI GPT-4 to evaluate ideas...');
+    const response = await llm.invoke(evaluationPrompt);
+    console.log('[CriticAgent] ✅ GPT-4 evaluation completed');
+    const content = response.content.toString();
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Failed to parse evaluation response');
+    }
+    
+    const evaluation = JSON.parse(jsonMatch[0]);
+    const evaluationResults = evaluation.evaluations.map((item: any) => ({
+      ideaId: item.ideaId || input.ideas[item.ideaIndex]?.id,
+      ideaTitle: item.title,
+      marketScore: item.marketScore,
+      synergyScore: {
+        ...item.synergyScore,
+        capabilityMapping: {
+          requiredCapabilities: [],
+          mitsubishiCapabilities: [],
+          matchScore: item.synergyScore.total * 2.5,
+          gaps: [],
+        },
+        synergyScenario: {
+          scenario: item.synergyScore.reasoning,
+          keyAdvantages: item.opportunities || [],
+          synergyMultiplier: 1.0 + (item.synergyScore.total / 100),
+        },
+        scenarioValidation: {
+          logicalConsistency: 80,
+          feasibility: item.feasibilityScore * 6.67,
+          uniqueness: item.uniquenessScore * 10,
+          overallCredibility: item.totalScore,
+          validationComments: [item.recommendation],
+        },
+      },
+      totalScore: item.totalScore,
+      rank: 0,
+      recommendation: item.recommendation,
+      risks: item.risks || [],
+      opportunities: item.opportunities || [],
+    }));
+
+    evaluationResults.sort((a, b) => b.totalScore - a.totalScore);
+    evaluationResults.forEach((result, index) => {
+      result.rank = index + 1;
+    });
+
+    const selectedIdea = evaluationResults[0];
+    const selectedIdeas = evaluationResults.slice(0, 3);
+
+    return {
+      sessionId: input.sessionId,
+      evaluationResults,
+      selectedIdea,
+      selectedIdeas,
+      summary: evaluation.summary,
+      metadata: {
+        evaluationId: `eval-${Date.now()}`,
+        startTime: new Date(),
+        endTime: new Date(),
+        processingTime: Date.now(),
+        tokensUsed: 0,
+        llmCalls: 1,
+        cacheHits: 0,
+        errors: [],
+      },
+    };
+  }
+
+  /**
    * 評価設定を更新
    */
   updateConfig(config: Partial<CriticConfig>): void {
@@ -154,77 +290,6 @@ export class CriticAgent extends BaseAgent<CriticInput, CriticOutput> {
     };
   }
 
-  /**
-   * テスト用のモック評価
-   */
-  async mockEvaluate(input: CriticInput): Promise<CriticOutput> {
-    // テスト用のモック実装
-    const mockResults = input.ideas.map((idea, index) => ({
-      ideaId: idea.id,
-      ideaTitle: idea.title,
-      marketScore: {
-        total: 35 + index * 5,
-        breakdown: {
-          marketSize: 15,
-          growthPotential: 10 + index * 2,
-          profitability: 10 + index * 3,
-        },
-        reasoning: 'モック評価',
-        evidence: ['テストエビデンス'],
-      },
-      synergyScore: {
-        total: 40 - index * 3,
-        breakdown: {
-          capabilityMatch: 15,
-          synergyEffect: 13 - index,
-          uniqueAdvantage: 12 - index * 2,
-        },
-        capabilityMapping: {
-          requiredCapabilities: [],
-          mitsubishiCapabilities: [],
-          matchScore: 80,
-          gaps: [],
-        },
-        synergyScenario: {
-          scenario: 'テストシナリオ',
-          keyAdvantages: ['テスト優位性'],
-          synergyMultiplier: 1.2,
-        },
-        scenarioValidation: {
-          logicalConsistency: 85,
-          feasibility: 80,
-          uniqueness: 75,
-          overallCredibility: 80,
-          validationComments: ['テストコメント'],
-        },
-        reasoning: 'モックシナジー評価',
-      },
-      totalScore: 75 + index * 2,
-      rank: index + 1,
-      recommendation: 'テスト推奨',
-      risks: ['テストリスク'],
-      opportunities: ['テスト機会'],
-    }));
-
-    const selectedIdea = mockResults[0];
-
-    return {
-      sessionId: input.sessionId,
-      evaluationResults: mockResults,
-      selectedIdea,
-      summary: 'モック評価完了',
-      metadata: {
-        evaluationId: 'mock-eval-id',
-        startTime: new Date(),
-        endTime: new Date(),
-        processingTime: 1000,
-        tokensUsed: 500,
-        llmCalls: 3,
-        cacheHits: 0,
-        errors: [],
-      },
-    };
-  }
 }
 
 /**

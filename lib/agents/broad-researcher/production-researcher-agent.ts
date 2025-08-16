@@ -19,7 +19,8 @@ import {
   ResearchSummary 
 } from '@/lib/types/search'
 import { WebSearchResult } from '@/lib/types'
-import { SerperSearchService } from '@/lib/services/serper/serper-search-service'
+// import { SerperSearchService } from '@/lib/services/serper/serper-search-service'
+import { GoogleSearchService } from '@/lib/services/google/google-search-service'
 import { SearchResultProcessor } from './search-result-processor'
 import { BaseChatModel } from '@langchain/core/language_models/chat'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
@@ -42,7 +43,7 @@ export class ProductionResearcherAgent extends BaseAgent {
 
   constructor(
     context: any,
-    private searchService: SerperSearchService,
+    private searchService: GoogleSearchService,
     private llm: BaseChatModel,
     private db: any
   ) {
@@ -59,6 +60,11 @@ export class ProductionResearcherAgent extends BaseAgent {
    * Execute research with optimized flow
    */
   async execute(input: ResearcherInput): Promise<AgentExecutionResult> {
+    console.log('=== ProductionResearcherAgent.execute CALLED ===')
+    console.log('Input theme:', input.theme)
+    console.log('LLM available:', !!this.llm)
+    console.log('Search service available:', !!this.searchService)
+    
     const startTime = Date.now()
     const messages: AgentMessage[] = []
 
@@ -175,10 +181,12 @@ export class ProductionResearcherAgent extends BaseAgent {
 }`
 
     try {
+      console.log('[ResearcherAgent] 🤖 Calling OpenAI GPT-4 to generate search queries...');
       const response = await this.llm.invoke([
         new SystemMessage(systemPrompt),
         new HumanMessage(userPrompt)
       ])
+      console.log('[ResearcherAgent] ✅ GPT-4 queries generated');
 
       this.metrics.apiCallsCount++
       this.metrics.tokensUsed += response.usage_metadata?.total_tokens || 0
@@ -205,7 +213,7 @@ export class ProductionResearcherAgent extends BaseAgent {
 
     } catch (error) {
       console.error('Query generation error:', error)
-      return this.generateFallbackQueries(theme)
+      throw new Error(`Failed to generate search queries: ${error.message}`)
     }
   }
 
@@ -346,22 +354,7 @@ ${JSON.stringify(categorized, null, 2)}
 
     } catch (error) {
       console.error('Deep analysis error:', error)
-      // フォールバック
-      return {
-        insights: {
-          marketSize: categorized.market[0]?.content || '情報なし',
-          competitors: categorized.competitor.map((i: any) => i.content).slice(0, 3),
-          trends: categorized.trend.map((i: any) => i.content).slice(0, 3),
-          regulations: categorized.regulation.map((i: any) => i.content).slice(0, 2),
-          customerNeeds: categorized.need.map((i: any) => i.content).slice(0, 3)
-        },
-        globalInsights: {
-          innovations: categorized.innovation.map((i: any) => i.content).slice(0, 2),
-          technologies: [],
-          bestPractices: [],
-          applicability: '海外事例の日本市場への適用可能性があります'
-        }
-      }
+      throw new Error(`Failed to perform deep analysis: ${error.message}`)
     }
   }
 
@@ -416,13 +409,7 @@ ${JSON.stringify(processed.globalInsights, null, 2)}
 
     } catch (error) {
       console.error('Summary generation error:', error)
-      // フォールバック
-      return {
-        ...processed,
-        summary: this.generateFallbackSummary(processed),
-        keyFindings: ['市場調査を完了しました'],
-        generatedAt: new Date()
-      }
+      throw new Error(`Failed to generate summary: ${error.message}`)
     }
   }
 
@@ -486,6 +473,7 @@ ${JSON.stringify(processed.globalInsights, null, 2)}
         ...query.options
       }).catch(error => {
         console.error(`Search error for query "${query.query}":`, error)
+        
         this.metrics.errors.push({
           timestamp: new Date(),
           type: 'SearchError',
@@ -524,47 +512,6 @@ ${JSON.stringify(processed.globalInsights, null, 2)}
     }
   }
 
-  /**
-   * Fallback query generation
-   */
-  private generateFallbackQueries(theme: string): SearchQuerySet {
-    return {
-      japanese: [
-        { query: `${theme} 市場規模`, purpose: 'market_size', region: 'jp', options: { gl: 'jp', hl: 'ja', num: 10 } },
-        { query: `${theme} 企業 ランキング`, purpose: 'competitors', region: 'jp', options: { gl: 'jp', hl: 'ja', num: 10 } },
-        { query: `${theme} 最新動向 2024`, purpose: 'trends', region: 'jp', options: { gl: 'jp', hl: 'ja', num: 10 } },
-        { query: `${theme} 規制 法律`, purpose: 'regulations', region: 'jp', options: { gl: 'jp', hl: 'ja', num: 10 } },
-        { query: `${theme} 課題 ニーズ`, purpose: 'needs', region: 'jp', options: { gl: 'jp', hl: 'ja', num: 10 } }
-      ],
-      global: [
-        { query: `${theme} unicorn startups`, purpose: 'startups', region: 'global', options: { gl: 'us', hl: 'en', num: 10 } },
-        { query: `${theme} innovation technology`, purpose: 'technology', region: 'global', options: { gl: 'us', hl: 'en', num: 10 } },
-        { query: `${theme} best practices`, purpose: 'best_practices', region: 'global', options: { gl: 'us', hl: 'en', num: 10 } }
-      ],
-      generatedAt: new Date()
-    }
-  }
-
-  /**
-   * Generate fallback summary
-   */
-  private generateFallbackSummary(processed: ProcessedResearch): string {
-    return `### ${processed.theme}に関する市場調査
-
-**市場概況**
-${processed.insights.marketSize || '市場規模の詳細情報は収集中です。'}
-
-**主要プレーヤー**
-${processed.insights.competitors?.join(', ') || '主要企業の情報を収集中です。'}
-
-**トレンド**
-${processed.insights.trends?.join(', ') || 'トレンド情報を収集中です。'}
-
-**推奨事項**
-- さらなる詳細調査の実施
-- 競合分析の深堀り
-- 顧客ニーズの検証`
-  }
 
   /**
    * Create message

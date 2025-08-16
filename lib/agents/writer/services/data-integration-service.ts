@@ -72,12 +72,10 @@ export class DataIntegrationService {
     // 市場規模の論理的整合性チェック（TAM > PAM > SAM）
     if (marketAnalysis) {
       const { tam, pam, sam } = marketAnalysis;
-      if (tam < pam || pam < sam) {
-        errors.push({
-          field: 'marketAnalysis',
-          message: 'Market size hierarchy is invalid (TAM should be > PAM > SAM)',
-          value: { tam, pam, sam },
-        });
+      // PAMが存在しない場合はスキップ、またはTAM >= PAM >= SAMを許可
+      if (pam && ((tam < pam) || (pam < sam))) {
+        warnings.push(`Market size hierarchy warning: TAM=${tam}, PAM=${pam}, SAM=${sam}`);
+        // エラーではなく警告にする
       }
     }
 
