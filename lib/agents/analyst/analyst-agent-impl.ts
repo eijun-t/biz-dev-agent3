@@ -7,9 +7,11 @@ import { BaseAgent, BaseAgentContext, AgentExecutionResult } from '@/lib/interfa
 import { ChatOpenAI } from '@langchain/openai';
 import type { AnalystInput, AnalystOutput } from '@/lib/types/orchestration';
 import { v4 as uuidv4 } from 'uuid';
+import { createAgentLogger } from '@/lib/utils/logger';
 
 export class AnalystAgentImpl extends BaseAgent {
   private llm: ChatOpenAI;
+  private logger = createAgentLogger('AnalystAgent');
 
   constructor(context: BaseAgentContext) {
     super(context);
@@ -132,10 +134,36 @@ ${JSON.stringify(input.researchData?.research || input.researchData, null, 2)}
         analysisData = JSON.parse(jsonStr);
         console.log('[Analyst] Successfully parsed analysis data');
       } catch (parseError) {
-        console.error('[Analyst] JSON parse error:', parseError);
-        console.error('[Analyst] Attempted to parse:', jsonStr.substring(0, 200));
+        this.logger.error('JSON parse error', parseError as Error, {
+          attemptedString: jsonStr.substring(0, 200),
+          businessIdea: input.businessIdea?.title
+        });
         // エラーを再スロー（フォールバックを使用しない）
         throw new Error(`Failed to parse JSON response: ${parseError.message}`);
+      }
+
+      // 数値フィールドを確実に数値型に変換
+      if (analysisData.marketAnalysis) {
+        analysisData.marketAnalysis.tam = Number(analysisData.marketAnalysis.tam);
+        analysisData.marketAnalysis.pam = Number(analysisData.marketAnalysis.pam);
+        analysisData.marketAnalysis.sam = Number(analysisData.marketAnalysis.sam);
+        analysisData.marketAnalysis.growthRate = Number(analysisData.marketAnalysis.growthRate);
+        
+        if (analysisData.marketAnalysis.competitors) {
+          analysisData.marketAnalysis.competitors = analysisData.marketAnalysis.competitors.map((comp: any) => ({
+            ...comp,
+            marketShare: Number(comp.marketShare)
+          }));
+        }
+      }
+
+      if (analysisData.synergyAnalysis) {
+        analysisData.synergyAnalysis.totalScore = Number(analysisData.synergyAnalysis.totalScore);
+        if (analysisData.synergyAnalysis.breakdown) {
+          analysisData.synergyAnalysis.breakdown.realEstateUtilization = Number(analysisData.synergyAnalysis.breakdown.realEstateUtilization);
+          analysisData.synergyAnalysis.breakdown.customerBaseUtilization = Number(analysisData.synergyAnalysis.breakdown.customerBaseUtilization);
+          analysisData.synergyAnalysis.breakdown.brandValueEnhancement = Number(analysisData.synergyAnalysis.breakdown.brandValueEnhancement);
+        }
       }
       
       // AnalystOutput形式に整形
@@ -264,7 +292,10 @@ ${JSON.stringify(input.researchData?.research || input.researchData, null, 2)}
         },
       };
     } catch (error) {
-      console.error('[Analyst] Error:', error);
+      this.logger.error('Analysis execution failed', error as Error, {
+        businessIdea: input.businessIdea?.title,
+        sessionId: input.sessionId
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Analysis failed',

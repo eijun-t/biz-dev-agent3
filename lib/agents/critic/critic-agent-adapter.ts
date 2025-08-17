@@ -9,6 +9,7 @@ import { CriticAgent as CoreCriticAgent } from './critic-agent';
 import type { CriticInput, CriticOutput } from '@/lib/types/critic';
 import type { ResearcherOutput } from '@/lib/types/agents';
 import type { IdeatorOutput } from '@/lib/types/ideator';
+import { createAgentLogger } from '@/lib/utils/logger';
 
 /**
  * Criticエージェントの入力型（アダプター用）
@@ -24,6 +25,7 @@ export interface CriticAgentInput {
  */
 export class CriticAgentAdapter extends BaseAgent {
   private coreAgent: CoreCriticAgent;
+  private logger = createAgentLogger('CriticAgentAdapter');
 
   constructor(context: BaseAgentContext) {
     super(context);
@@ -53,7 +55,7 @@ export class CriticAgentAdapter extends BaseAgent {
       
       // 入力の検証
       if (!input?.ideatorOutput?.ideas || !Array.isArray(input.ideatorOutput.ideas)) {
-        console.error('Invalid input structure:', {
+        this.logger.error('Invalid input structure', undefined, {
           hasIdeatorOutput: !!input?.ideatorOutput,
           hasIdeas: !!input?.ideatorOutput?.ideas,
           isArray: Array.isArray(input?.ideatorOutput?.ideas),

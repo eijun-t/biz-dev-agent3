@@ -68,10 +68,22 @@ const competitorSchema = z.object({
  * 市場分析スキーマ
  */
 export const marketAnalysisSchema = z.object({
-  tam: z.number().min(0, 'TAMは0以上である必要があります'),
-  pam: z.number().min(0, 'PAMは0以上である必要があります'),
-  sam: z.number().min(0, 'SAMは0以上である必要があります'),
-  growthRate: z.number().min(-100).max(1000, '成長率は妥当な範囲内である必要があります'),
+  tam: z.union([
+    z.number(),
+    z.string().transform((val) => parseFloat(val))
+  ]).refine((val) => !isNaN(Number(val)) && Number(val) >= 0, 'TAMは0以上である必要があります'),
+  pam: z.union([
+    z.number(),
+    z.string().transform((val) => parseFloat(val))
+  ]).refine((val) => !isNaN(Number(val)) && Number(val) >= 0, 'PAMは0以上である必要があります'),
+  sam: z.union([
+    z.number(),
+    z.string().transform((val) => parseFloat(val))
+  ]).refine((val) => !isNaN(Number(val)) && Number(val) >= 0, 'SAMは0以上である必要があります'),
+  growthRate: z.union([
+    z.number(),
+    z.string().transform((val) => parseFloat(val))
+  ]).refine((val) => !isNaN(Number(val)) && Number(val) >= -100 && Number(val) <= 1000, '成長率は妥当な範囲内である必要があります'),
   competitors: z.array(competitorSchema).max(10, '競合は最大10社までです'),
   marketTrends: z.array(z.string()),
   regulations: z.array(z.string()),

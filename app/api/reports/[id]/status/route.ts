@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { createAPILogger } from '@/lib/utils/logger'
+
+const logger = createAPILogger('/api/reports/[id]/status')
 
 export async function GET(
   request: NextRequest,
@@ -26,7 +29,9 @@ export async function GET(
       .limit(1)
 
     if (fetchError) {
-      console.error('Error fetching status:', fetchError)
+      logger.error('Error fetching status', fetchError as Error, {
+        reportId: params.id
+      })
       return NextResponse.json(
         { error: 'Failed to fetch status' },
         { status: 500 }
@@ -57,7 +62,9 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error('Status API error:', error)
+    logger.error('Status API error', error as Error, {
+      reportId: params.id
+    })
     
     return NextResponse.json(
       { 

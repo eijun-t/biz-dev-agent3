@@ -9,6 +9,7 @@ import { IdeatorAgent as CoreIdeatorAgent } from './ideator-agent';
 import type { IdeatorOutput } from '@/lib/types/ideator';
 import type { ResearcherOutput } from '@/lib/types/agents';
 import { ChatOpenAI } from '@langchain/openai';
+import { createAgentLogger } from '@/lib/utils/logger';
 
 /**
  * Ideatorエージェントの入力型
@@ -26,6 +27,7 @@ export interface IdeatorInput {
  */
 export class IdeatorAgentAdapter extends BaseAgent {
   private coreAgent: CoreIdeatorAgent;
+  private logger = createAgentLogger('IdeatorAgentAdapter');
 
   constructor(context: BaseAgentContext) {
     super(context);
@@ -92,7 +94,7 @@ export class IdeatorAgentAdapter extends BaseAgent {
 
       // 結果の検証
       if (!result || !result.ideas || !Array.isArray(result.ideas)) {
-        console.error('Invalid result from generateIdeas:', result);
+        this.logger.error('Invalid result from generateIdeas', undefined, { result });
         throw new Error('Failed to generate ideas: Invalid result structure');
       }
 

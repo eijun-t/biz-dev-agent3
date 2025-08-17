@@ -4,6 +4,9 @@ import { cookies } from 'next/headers'
 import { WriterAgent } from '@/lib/agents/writer/writer-agent'
 import { writerInputSchema } from '@/lib/validations/writer'
 import { z } from 'zod'
+import { createAPILogger } from '@/lib/utils/logger'
+
+const logger = createAPILogger('/api/agents/writer')
 
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 const RATE_LIMIT = 10
@@ -86,7 +89,9 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (saveError) {
-        console.error('Error saving report:', saveError)
+        logger.error('Error saving report', saveError as Error, {
+          sessionId: validatedInput.sessionId
+        })
         return NextResponse.json(
           { error: 'Failed to save report' },
           { status: 500 }
@@ -126,7 +131,9 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Writer API error:', error)
+    logger.error('Writer API error', error as Error, {
+      path: request.url
+    })
     
     return NextResponse.json(
       { 

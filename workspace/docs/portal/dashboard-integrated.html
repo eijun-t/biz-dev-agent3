@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>統合ダッシュボード - AI Agent Platform</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --warning: #f6ad55;
+            --danger: #fc8181;
+            --info: #4299e1;
+            --dark: #2d3748;
+            --light: #f7fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        /* ヘッダー */
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .connection-status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-badge.connected {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-badge.disconnected {
+            background: var(--danger);
+            color: white;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* KPIバー */
+        .kpi-bar {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .kpi-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .kpi-progress {
+            background: #e2e8f0;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .kpi-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .kpi-segments {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            pointer-events: none;
+        }
+
+        .kpi-segment {
+            flex: 1;
+            text-align: center;
+            color: #718096;
+            font-size: 0.75rem;
+            border-right: 2px solid #cbd5e0;
+        }
+
+        .kpi-segment:last-child {
+            border-right: none;
+        }
+
+        /* 3カラムレイアウト */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .column {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .column-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .column-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .worker-label {
+            background: var(--info);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: auto;
+        }
+
+        /* Portalカラム */
+        .portal-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .doc-list {
+            list-style: none;
+        }
+
+        .doc-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f7fafc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .doc-item:hover {
+            transform: translateX(5px);
+            background: #edf2f7;
+        }
+
+        .doc-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .doc-status.complete {
+            background: var(--success);
+            color: white;
+        }
+
+        .doc-status.in-progress {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* エラーログカラム */
+        .error-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .error-log {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #1a202c;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .log-entry.error {
+            background: rgba(252, 129, 129, 0.1);
+            border-left: 3px solid var(--danger);
+        }
+
+        .log-entry.warning {
+            background: rgba(246, 173, 85, 0.1);
+            border-left: 3px solid var(--warning);
+        }
+
+        .log-entry.info {
+            background: rgba(66, 153, 225, 0.1);
+            border-left: 3px solid var(--info);
+        }
+
+        .log-time {
+            color: #718096;
+            font-size: 0.8rem;
+        }
+
+        .log-level {
+            font-weight: bold;
+            margin: 0 8px;
+        }
+
+        .log-level.error { color: var(--danger); }
+        .log-level.warning { color: var(--warning); }
+        .log-level.info { color: var(--info); }
+
+        .log-message {
+            color: #e2e8f0;
+        }
+
+        /* パフォーマンスカラム */
+        .perf-metrics {
+            display: grid;
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .metric-name {
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .metric-chart {
+            height: 60px;
+            background: linear-gradient(to right, transparent, var(--primary));
+            opacity: 0.1;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .metric-sparkline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"><polyline points="0,35 20,30 40,25 60,28 80,15 100,20" stroke="%23667eea" stroke-width="2" fill="none"/></svg>');
+            background-size: cover;
+        }
+
+        .metric-trend {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .metric-trend.up {
+            background: var(--success);
+            color: white;
+        }
+
+        .metric-trend.down {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* リアルタイム更新インジケーター */
+        .update-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .update-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .column {
+                max-height: none;
+            }
+        }
+
+        /* スクロールバー美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <h1>
+            <span>🎯</span>
+            統合ダッシュボード
+        </h1>
+        <div class="connection-status">
+            <span class="status-badge connected" id="ws-status">
+                <span class="pulse"></span>
+                WebSocket Connected
+            </span>
+            <span class="status-badge connected" id="api-status">
+                <span class="pulse"></span>
+                API Online
+            </span>
+            <span id="current-time">14:15:30</span>
+        </div>
+    </header>
+
+    <!-- KPIプログレスバー -->
+    <div class="kpi-bar">
+        <div class="kpi-title">🚀 プロジェクト全体KPI進捗</div>
+        <div class="kpi-progress">
+            <div class="kpi-fill" id="kpi-fill" style="width: 13%;">
+                13% → 24%
+            </div>
+            <div class="kpi-segments">
+                <div class="kpi-segment">基礎構築<br>5%</div>
+                <div class="kpi-segment">個別実装<br>8%</div>
+                <div class="kpi-segment">統合<br>9%</div>
+                <div class="kpi-segment">シナジー<br>2%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3カラムダッシュボード -->
+    <div class="dashboard-grid">
+        <!-- Portal Documentation (Worker1) -->
+        <div class="column">
+            <div class="column-header">
+                <div class="column-icon">📚</div>
+                <div class="column-title">Portal Documentation</div>
+                <span class="worker-label">Worker1</span>
+            </div>
+            
+            <div class="portal-stats">
+                <div class="stat-card">
+                    <div class="stat-label">完成度</div>
+                    <div class="stat-value" id="portal-completion">92%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ドキュメント数</div>
+                    <div class="stat-value" id="doc-count">12</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">API仕様</div>
+                    <div class="stat-value" id="api-specs">8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">品質スコア</div>
+                    <div class="stat-value" id="quality-score">95</div>
+                </div>
+            </div>
+
+            <h3 style="margin: 20px 0 10px;">📄 作成済みドキュメント</h3>
+            <ul class="doc-list" id="doc-list">
+                <li class="doc-item">
+                    <span>README.md</span>
+                    <span class="doc-status complete">完成</span>
+                </li>
+                <li class="doc-item">
+                    <span>API Reference</span>
+                    <span class="doc-status complete">完成</span>
+                </li>
+                <li class="doc-item">
+                    <span>Developer Portal</span>
+                    <span class="doc-status complete">完成</span>
+                </li>
+                <li class="doc-item">
+                    <span>Quick Start Guide</span>
+                    <span class="doc-status in-progress">作業中</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Error Monitoring (Worker2) -->
+        <div class="column">
+            <div class="column-header">
+                <div class="column-icon">🔍</div>
+                <div class="column-title">Error Monitoring</div>
+                <span class="worker-label">Worker2</span>
+            </div>
+
+            <div class="error-filters">
+                <button class="filter-btn active" onclick="filterLogs('all')">All</button>
+                <button class="filter-btn" onclick="filterLogs('error')">Errors</button>
+                <button class="filter-btn" onclick="filterLogs('warning')">Warnings</button>
+                <button class="filter-btn" onclick="filterLogs('info')">Info</button>
+            </div>
+
+            <div class="error-log" id="error-log">
+                <!-- ログエントリーが動的に追加される -->
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div class="stat-card">
+                    <div class="stat-label">エラー率</div>
+                    <div class="stat-value" style="color: var(--danger);" id="error-rate">2.3%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics (Worker3) -->
+        <div class="column">
+            <div class="column-header">
+                <div class="column-icon">📊</div>
+                <div class="column-title">Performance Metrics</div>
+                <span class="worker-label">Worker3</span>
+            </div>
+
+            <div class="perf-metrics">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-name">Response Time</span>
+                        <span class="metric-trend up">↓ 15%</span>
+                    </div>
+                    <div class="metric-value" id="response-time">1.2s</div>
+                    <div class="metric-chart">
+                        <div class="metric-sparkline"></div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-name">CPU Usage</span>
+                        <span class="metric-trend down">↑ 5%</span>
+                    </div>
+                    <div class="metric-value" id="cpu-usage">45%</div>
+                    <div class="metric-chart">
+                        <div class="metric-sparkline"></div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-name">Memory Usage</span>
+                        <span class="metric-trend up">↓ 8%</span>
+                    </div>
+                    <div class="metric-value" id="memory-usage">2.3GB</div>
+                    <div class="metric-chart">
+                        <div class="metric-sparkline"></div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-name">API Calls/min</span>
+                        <span class="metric-trend up">↑ 20%</span>
+                    </div>
+                    <div class="metric-value" id="api-calls">342</div>
+                    <div class="metric-chart">
+                        <div class="metric-sparkline"></div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-name">Success Rate</span>
+                        <span class="metric-trend up">↑ 2%</span>
+                    </div>
+                    <div class="metric-value" id="success-rate">99.7%</div>
+                    <div class="metric-chart">
+                        <div class="metric-sparkline"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- リアルタイム更新インジケーター -->
+    <div class="update-indicator">
+        <span class="update-dot"></span>
+        <span>リアルタイム更新中</span>
+        <span id="update-count">0</span>
+    </div>
+
+    <script>
+        // WebSocket接続
+        let ws = null;
+        let updateCount = 0;
+
+        function connectWebSocket() {
+            // 実際の環境では ws://localhost:3000/dashboard/stream を使用
+            console.log('WebSocket connecting to ws://localhost:3000/dashboard/stream');
+            
+            // デモ用シミュレーション
+            simulateWebSocket();
+        }
+
+        function simulateWebSocket() {
+            // WebSocketシミュレーション
+            setInterval(() => {
+                handleWebSocketMessage({
+                    type: 'update',
+                    data: {
+                        portal: {
+                            completion: 92 + Math.random() * 3,
+                            docCount: 12 + Math.floor(Math.random() * 3),
+                            apiSpecs: 8,
+                            qualityScore: 95
+                        },
+                        errors: generateRandomLog(),
+                        performance: {
+                            responseTime: (0.8 + Math.random() * 0.8).toFixed(1) + 's',
+                            cpuUsage: Math.floor(40 + Math.random() * 20) + '%',
+                            memoryUsage: (2.0 + Math.random() * 0.5).toFixed(1) + 'GB',
+                            apiCalls: Math.floor(300 + Math.random() * 100),
+                            successRate: (99 + Math.random()).toFixed(1) + '%'
+                        }
+                    }
+                });
+            }, 2000);
+        }
+
+        function handleWebSocketMessage(message) {
+            updateCount++;
+            document.getElementById('update-count').textContent = updateCount;
+
+            if (message.data.portal) {
+                updatePortalStats(message.data.portal);
+            }
+
+            if (message.data.errors) {
+                addLogEntry(message.data.errors);
+            }
+
+            if (message.data.performance) {
+                updatePerformanceMetrics(message.data.performance);
+            }
+
+            // KPI更新
+            updateKPI();
+        }
+
+        function updatePortalStats(data) {
+            document.getElementById('portal-completion').textContent = 
+                Math.floor(data.completion) + '%';
+            document.getElementById('doc-count').textContent = data.docCount;
+            document.getElementById('api-specs').textContent = data.apiSpecs;
+            document.getElementById('quality-score').textContent = data.qualityScore;
+        }
+
+        function generateRandomLog() {
+            const levels = ['error', 'warning', 'info'];
+            const messages = [
+                'API rate limit warning',
+                'Connection established to database',
+                'Cache cleared successfully',
+                'Authentication token expired',
+                'Request timeout after 30s',
+                'Agent execution completed',
+                'Memory usage threshold exceeded',
+                'WebSocket connection restored'
+            ];
+
+            return {
+                level: levels[Math.floor(Math.random() * levels.length)],
+                message: messages[Math.floor(Math.random() * messages.length)],
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        function addLogEntry(log) {
+            const logContainer = document.getElementById('error-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${log.level}`;
+            
+            const time = new Date(log.timestamp).toLocaleTimeString('ja-JP');
+            
+            entry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-level ${log.level}">[${log.level.toUpperCase()}]</span>
+                <span class="log-message">${log.message}</span>
+            `;
+            
+            logContainer.insertBefore(entry, logContainer.firstChild);
+            
+            // 最大50件まで保持
+            if (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        function updatePerformanceMetrics(data) {
+            document.getElementById('response-time').textContent = data.responseTime;
+            document.getElementById('cpu-usage').textContent = data.cpuUsage;
+            document.getElementById('memory-usage').textContent = data.memoryUsage;
+            document.getElementById('api-calls').textContent = data.apiCalls;
+            document.getElementById('success-rate').textContent = data.successRate;
+        }
+
+        function updateKPI() {
+            const currentKPI = 13;
+            const targetKPI = 24;
+            const progress = currentKPI + (updateCount * 0.1);
+            const displayProgress = Math.min(progress, targetKPI);
+            
+            const kpiFill = document.getElementById('kpi-fill');
+            kpiFill.style.width = displayProgress + '%';
+            kpiFill.textContent = Math.floor(displayProgress) + '% → ' + targetKPI + '%';
+        }
+
+        function filterLogs(level) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const logs = document.querySelectorAll('.log-entry');
+            logs.forEach(log => {
+                if (level === 'all' || log.classList.contains(level)) {
+                    log.style.display = 'block';
+                } else {
+                    log.style.display = 'none';
+                }
+            });
+        }
+
+        // 時刻更新
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = 
+                now.toLocaleTimeString('ja-JP');
+        }
+
+        setInterval(updateTime, 1000);
+
+        // 初期化
+        window.addEventListener('load', () => {
+            updateTime();
+            connectWebSocket();
+            
+            // 初期ログ
+            for (let i = 0; i < 10; i++) {
+                addLogEntry(generateRandomLog());
+            }
+        });
+
+        // Portal Status API呼び出し
+        async function fetchPortalStatus() {
+            try {
+                const response = await fetch('/api/portal/status');
+                const data = await response.json();
+                updatePortalStats(data);
+            } catch (error) {
+                console.error('Portal status fetch error:', error);
+            }
+        }
+
+        // 定期的にAPIステータスを取得
+        setInterval(fetchPortalStatus, 5000);
+    </script>
+</body>
+</html>

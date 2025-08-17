@@ -13,6 +13,7 @@ import type {
 } from '@/lib/types/orchestration';
 import { StateManager } from './state-manager';
 import { createServiceClient } from '@/lib/supabase/service';
+import { createServiceLogger } from '@/lib/utils/logger';
 
 export interface RetryConfig {
   maxRetries: number;
@@ -85,6 +86,7 @@ const ERROR_CATEGORIES: Record<string, ErrorCategory> = {
 export class OrchestrationErrorHandler {
   private retryConfig: RetryConfig;
   private supabase;
+  private logger = createServiceLogger('OrchestrationErrorHandler');
   
   constructor(retryConfig?: Partial<RetryConfig>) {
     this.retryConfig = {
@@ -307,7 +309,10 @@ export class OrchestrationErrorHandler {
           created_at: error.timestamp.toISOString()
         });
     } catch (logError) {
-      console.error('Failed to log error:', logError);
+      this.logger.error('Failed to log error', logError as Error, {
+        originalError: error.message,
+        sessionId
+      });
     }
   }
   
@@ -495,7 +500,7 @@ export class ErrorRecoveryStrategy {
       })
       .eq('id', sessionId);
     
-    console.error(`Aborted session ${sessionId}: ${error.message}`);
+    this.logger.error('Aborted session', error, { sessionId });
   }
   
   /**

@@ -1,0 +1,42 @@
+# Development Dockerfile for Biz-Dev-Agent3
+# Optimized for hot-reload and debugging
+
+FROM node:20-alpine AS development
+
+# Install additional tools for development
+RUN apk add --no-cache \
+    git \
+    curl \
+    vim \
+    bash
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including devDependencies)
+RUN npm ci && \
+    npm cache clean --force
+
+# Copy application code
+COPY . .
+
+# Create directories for workspace
+RUN mkdir -p workspace/tests workspace/docs workspace/shared
+
+# Expose ports
+EXPOSE 3000
+# Next.js dev server websocket port
+EXPOSE 3001
+
+# Environment variables
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV WATCHPACK_POLLING=true
+
+# Volume mount points (defined in docker-compose.yml)
+VOLUME ["/app/node_modules", "/app/.next"]
+
+# Development command
+CMD ["npm", "run", "dev"]

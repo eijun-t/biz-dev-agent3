@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { createServiceLogger } from '@/lib/utils/logger'
 
 export type GenerationPhase = 
   | 'initializing'
@@ -28,6 +29,7 @@ export class WriterLogger {
   private userId: string
   private currentPhase: GenerationPhase = 'initializing'
   private startTime: number
+  private logger = createServiceLogger('WriterLogger')
 
   constructor(config: {
     supabaseUrl: string
@@ -89,10 +91,10 @@ export class WriterLogger {
         })
 
       if (error) {
-        console.error('Error logging phase start:', error)
+        this.logger.debug('Error logging phase start', { error: (error as Error).message })
       }
     } catch (error) {
-      console.error('Failed to log phase start:', error)
+      this.logger.debug('Failed to log phase start', { error: (error as Error).message })
     }
   }
 
@@ -125,10 +127,10 @@ export class WriterLogger {
         })
 
       if (error) {
-        console.error('Error logging phase complete:', error)
+        this.logger.debug('Error logging phase complete', { error: (error as Error).message })
       }
     } catch (error) {
-      console.error('Failed to log phase complete:', error)
+      this.logger.debug('Failed to log phase complete', { error: (error as Error).message })
     }
   }
 
@@ -163,10 +165,10 @@ export class WriterLogger {
         })
 
       if (logError) {
-        console.error('Error logging error:', logError)
+        this.logger.debug('Error logging error', { error: (logError as Error).message })
       }
     } catch (error) {
-      console.error('Failed to log error:', error)
+      this.logger.debug('Failed to log error', { error: (error as Error).message })
     }
   }
 

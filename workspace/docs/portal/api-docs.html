@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent API Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --background: #fafafa;
+            --surface: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --code-background: #f9fafb;
+            --sidebar-width: 300px;
+            --header-height: 60px;
+        }
+
+        [data-theme="dark"] {
+            --background: #111827;
+            --surface: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+            --code-background: #111827;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text-primary);
+            width: 300px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--code-background);
+            color: var(--text-primary);
+        }
+
+        .container {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            position: fixed;
+            height: calc(100vh - var(--header-height));
+            z-index: 999;
+        }
+
+        .sidebar-content {
+            padding: 2rem 1rem;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .intro {
+            margin-bottom: 3rem;
+        }
+
+        .intro h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .intro p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+
+        .endpoint-section {
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .endpoint-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+
+        .endpoint-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-description {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 1rem;
+        }
+
+        .method-post { background: #10b981; color: white; }
+        .method-get { background: #3b82f6; color: white; }
+        .method-put { background: #f59e0b; color: white; }
+        .method-delete { background: #ef4444; color: white; }
+
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .endpoint-content {
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-block {
+            background: var(--code-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            border: none;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .try-it-section {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        [data-theme="dark"] .try-it-section {
+            background: #1f2937;
+        }
+
+        .try-it-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s ease;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .execute-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .execute-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .execute-button:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .response-section {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .response-section.show {
+            display: block;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-200 { background: #dcfce7; color: #166534; }
+        .status-400 { background: #fee2e2; color: #991b1b; }
+        .status-500 { background: #fef3c7; color: #92400e; }
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .highlight {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 3px;
+        }
+
+        .mobile-menu-button {
+            display: none;
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .intro h1 {
+                font-size: 1.875rem;
+            }
+
+            .endpoint-content {
+                padding: 1rem;
+            }
+
+            .try-it-section {
+                padding: 1rem;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .json-key { color: #6366f1; }
+        .json-string { color: #059669; }
+        .json-number { color: #dc2626; }
+        .json-boolean { color: #7c3aed; }
+        .json-null { color: #6b7280; }
+    </style>
+</head>
+<body data-theme="light">
+    <header class="header">
+        <div class="logo">🤖 AI Agent API</div>
+        <div class="header-controls">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search endpoints..." id="searchInput">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+            <button class="mobile-menu-button" id="mobileMenuButton">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <div class="nav-section">
+                    <div class="nav-title">はじめに</div>
+                    <a href="#overview" class="nav-item active">概要</a>
+                    <a href="#authentication" class="nav-item">認証</a>
+                    <a href="#rate-limits" class="nav-item">レート制限</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-title">エージェント API</div>
+                    <a href="#execute-all" class="nav-item">全エージェント実行</a>
+                    <a href="#researcher" class="nav-item">Researcher Agent</a>
+                    <a href="#ideator" class="nav-item">Ideator Agent</a>
+                    <a href="#critic" class="nav-item">Critic Agent</a>
+                    <a href="#analyst" class="nav-item">Analyst Agent</a>
+                    <a href="#writer" class="nav-item">Writer Agent</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-title">システム API</div>
+                    <a href="#health" class="nav-item">ヘルスチェック</a>
+                    <a href="#status" class="nav-item">エージェントステータス</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="intro fade-in">
+                <h1>AI Agent API Documentation</h1>
+                <p>AIエージェントを活用した新事業創出支援システムのAPIドキュメントです。リサーチからアイデア生成、評価、分析、レポート作成まで一連のワークフローを自動化できます。</p>
+            </div>
+
+            <section id="overview" class="endpoint-section fade-in">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">API概要</div>
+                    <div class="endpoint-description">基本的な使用方法と設定について</div>
+                </div>
+                <div class="endpoint-content">
+                    <h3>ベースURL</h3>
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>Development: http://localhost:3000/api
+Staging: https://staging.example.com/api
+Production: https://api.example.com/api</code></pre>
+                    </div>
+
+                    <h3>認証</h3>
+                    <p>すべてのAPIリクエストにはBearerトークンによる認証が必要です。</p>
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>Authorization: Bearer {your_token}
+Content-Type: application/json</code></pre>
+                    </div>
+
+                    <h3>レート制限</h3>
+                    <ul style="margin: 1rem 0; padding-left: 2rem;">
+                        <li>開発環境: 無制限</li>
+                        <li>本番環境: 1000 req/hour per IP</li>
+                        <li>認証済み: 10000 req/hour per user</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="execute-all" class="endpoint-section fade-in">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-path">/api/agents/execute</span>
+                    </div>
+                    <div class="endpoint-description">全エージェントを順次実行して完全なビジネス分析レポートを生成</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(this, 'execute-all-overview')">概要</button>
+                        <button class="tab" onclick="switchTab(this, 'execute-all-request')">リクエスト</button>
+                        <button class="tab" onclick="switchTab(this, 'execute-all-response')">レスポンス</button>
+                        <button class="tab" onclick="switchTab(this, 'execute-all-try')">Try it out</button>
+                        <button class="tab" onclick="switchTab(this, 'execute-all-examples')">コード例</button>
+                    </div>
+
+                    <div id="execute-all-overview" class="tab-content active">
+                        <p>このエンドポイントは、Researcher → Ideator → Critic → Analyst → Writer の順番で全エージェントを実行し、包括的なビジネス分析レポートを生成します。</p>
+                        <h4>主な機能</h4>
+                        <ul style="margin: 1rem 0; padding-left: 2rem;">
+                            <li>市場調査とトレンド分析</li>
+                            <li>ビジネスアイデアの生成</li>
+                            <li>アイデアの評価と選定</li>
+                            <li>詳細な市場分析</li>
+                            <li>構造化されたレポート生成</li>
+                        </ul>
+                    </div>
+
+                    <div id="execute-all-request" class="tab-content">
+                        <h4>リクエストボディ</h4>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "projectId": "uuid",
+  "topic": "スマートシティ市場調査",
+  "config": {
+    "depth": "comprehensive",
+    "timeout": 90000,
+    "streaming": true
+  }
+}</code></pre>
+                        </div>
+                        <h4>パラメータ</h4>
+                        <ul style="margin: 1rem 0; padding-left: 2rem;">
+                            <li><strong>projectId</strong> (string, optional): プロジェクトID</li>
+                            <li><strong>topic</strong> (string, required): 調査するトピック</li>
+                            <li><strong>config.depth</strong> (string): 分析の深度 (standard, comprehensive)</li>
+                            <li><strong>config.timeout</strong> (number): タイムアウト時間（ミリ秒）</li>
+                            <li><strong>config.streaming</strong> (boolean): ストリーミングレスポンスの有効化</li>
+                        </ul>
+                    </div>
+
+                    <div id="execute-all-response" class="tab-content">
+                        <h4>成功レスポンス (200)</h4>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "success": true,
+  "data": {
+    "projectId": "uuid",
+    "status": "completed",
+    "results": {
+      "research": {
+        "summary": "市場概要...",
+        "marketAnalysis": {...}
+      },
+      "ideas": [...],
+      "selectedIdeas": [...],
+      "analysis": {...},
+      "report": {...}
+    },
+    "executionTime": 87500,
+    "timestamp": "2025-01-17T10:00:00Z"
+  }
+}</code></pre>
+                        </div>
+                        <h4>エラーレスポンス (400/500)</h4>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "success": false,
+  "error": {
+    "code": "AGENT_TIMEOUT",
+    "message": "Agent execution timed out",
+    "details": {
+      "agent": "researcher",
+      "timeout": 30000
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div id="execute-all-try" class="tab-content">
+                        <div class="try-it-section">
+                            <h3 class="try-it-title">🧪 Try it out</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Authorization Token</label>
+                                <input type="text" class="form-input" id="execute-all-token" placeholder="Bearer token...">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Base URL</label>
+                                <input type="text" class="form-input" id="execute-all-baseurl" value="http://localhost:3000">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Request Body</label>
+                                <textarea class="form-textarea" id="execute-all-body">{
+  "topic": "スマートシティ市場調査",
+  "config": {
+    "depth": "standard",
+    "timeout": 60000,
+    "streaming": false
+  }
+}</textarea>
+                            </div>
+
+                            <button class="execute-button" onclick="executeRequest('execute-all')">Execute</button>
+
+                            <div class="response-section" id="execute-all-response-section">
+                                <div class="response-header">
+                                    <h4>Response</h4>
+                                    <span class="status-badge" id="execute-all-status"></span>
+                                    <span class="loading" id="execute-all-loading" style="display: none;">
+                                        <span class="spinner"></span>
+                                        Processing...
+                                    </span>
+                                </div>
+                                <div class="code-block">
+                                    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                                    <pre><code id="execute-all-response-body"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="execute-all-examples" class="tab-content">
+                        <h4>cURL</h4>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code>curl -X POST http://localhost:3000/api/agents/execute \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "topic": "スマートシティ市場調査",
+    "config": {"depth": "standard"}
+  }'</code></pre>
+                        </div>
+
+                        <h4>JavaScript</h4>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code>const response = await fetch('/api/agents/execute', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    topic: 'スマートシティ市場調査',
+    config: { depth: 'standard' }
+  })
+});
+
+const data = await response.json();</code></pre>
+                        </div>
+
+                        <h4>Python</h4>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code>import requests
+
+response = requests.post(
+    'http://localhost:3000/api/agents/execute',
+    headers={
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'topic': 'スマートシティ市場調査',
+        'config': {'depth': 'standard'}
+    }
+)
+
+data = response.json()</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="researcher" class="endpoint-section fade-in">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-path">/api/agents/researcher/run</span>
+                    </div>
+                    <div class="endpoint-description">市場調査とトレンド分析を実行</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(this, 'researcher-overview')">概要</button>
+                        <button class="tab" onclick="switchTab(this, 'researcher-request')">リクエスト</button>
+                        <button class="tab" onclick="switchTab(this, 'researcher-response')">レスポンス</button>
+                        <button class="tab" onclick="switchTab(this, 'researcher-try')">Try it out</button>
+                    </div>
+
+                    <div id="researcher-overview" class="tab-content active">
+                        <p>Web検索を活用して指定されたトピックの市場調査を行い、最新のトレンドや機会を分析します。</p>
+                    </div>
+
+                    <div id="researcher-request" class="tab-content">
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "topic": "スマートシティ市場",
+  "scope": {
+    "industries": ["IoT", "インフラ"],
+    "regions": ["日本", "アジア"],
+    "timeframe": "2024-2030"
+  },
+  "depth": "standard",
+  "keywords": ["デジタルツイン", "5G"]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div id="researcher-response" class="tab-content">
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "success": true,
+  "data": {
+    "summary": {
+      "overview": "市場概要...",
+      "keyFindings": ["発見1", "発見2"],
+      "opportunities": ["機会1", "機会2"]
+    },
+    "marketAnalysis": {
+      "size": 5000000000,
+      "growth": 15.5,
+      "trends": [...]
+    },
+    "sources": [...]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div id="researcher-try" class="tab-content">
+                        <div class="try-it-section">
+                            <h3 class="try-it-title">🧪 Try it out</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Authorization Token</label>
+                                <input type="text" class="form-input" id="researcher-token" placeholder="Bearer token...">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Request Body</label>
+                                <textarea class="form-textarea" id="researcher-body">{
+  "topic": "AI市場",
+  "scope": {
+    "industries": ["AI", "機械学習"],
+    "regions": ["日本"],
+    "timeframe": "2024-2025"
+  },
+  "depth": "standard"
+}</textarea>
+                            </div>
+
+                            <button class="execute-button" onclick="executeRequest('researcher')">Execute</button>
+
+                            <div class="response-section" id="researcher-response-section">
+                                <div class="response-header">
+                                    <h4>Response</h4>
+                                    <span class="status-badge" id="researcher-status"></span>
+                                    <span class="loading" id="researcher-loading" style="display: none;">
+                                        <span class="spinner"></span>
+                                        Processing...
+                                    </span>
+                                </div>
+                                <div class="code-block">
+                                    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                                    <pre><code id="researcher-response-body"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="health" class="endpoint-section fade-in">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-path">/api/health</span>
+                    </div>
+                    <div class="endpoint-description">システムの健康状態を確認</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(this, 'health-overview')">概要</button>
+                        <button class="tab" onclick="switchTab(this, 'health-response')">レスポンス</button>
+                        <button class="tab" onclick="switchTab(this, 'health-try')">Try it out</button>
+                    </div>
+
+                    <div id="health-overview" class="tab-content active">
+                        <p>APIサーバーと関連サービスの稼働状況を確認できます。認証は不要です。</p>
+                    </div>
+
+                    <div id="health-response" class="tab-content">
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "status": "healthy",
+  "version": "1.0.0",
+  "uptime": 86400,
+  "services": {
+    "database": "connected",
+    "openai": "available",
+    "serper": "available"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div id="health-try" class="tab-content">
+                        <div class="try-it-section">
+                            <h3 class="try-it-title">🧪 Try it out</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Base URL</label>
+                                <input type="text" class="form-input" id="health-baseurl" value="http://localhost:3000">
+                            </div>
+
+                            <button class="execute-button" onclick="executeRequest('health')">Execute</button>
+
+                            <div class="response-section" id="health-response-section">
+                                <div class="response-header">
+                                    <h4>Response</h4>
+                                    <span class="status-badge" id="health-status"></span>
+                                    <span class="loading" id="health-loading" style="display: none;">
+                                        <span class="spinner"></span>
+                                        Loading...
+                                    </span>
+                                </div>
+                                <div class="code-block">
+                                    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                                    <pre><code id="health-response-body"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="status" class="endpoint-section fade-in">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-path">/api/agents/status</span>
+                    </div>
+                    <div class="endpoint-description">各エージェントの稼働状況を確認</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(this, 'status-overview')">概要</button>
+                        <button class="tab" onclick="switchTab(this, 'status-response')">レスポンス</button>
+                        <button class="tab" onclick="switchTab(this, 'status-try')">Try it out</button>
+                    </div>
+
+                    <div id="status-overview" class="tab-content active">
+                        <p>各エージェントの現在の状態、最終実行時刻、平均実行時間を確認できます。</p>
+                    </div>
+
+                    <div id="status-response" class="tab-content">
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                            <pre><code class="json">{
+  "agents": {
+    "researcher": {
+      "status": "ready",
+      "lastRun": "2025-01-17T09:30:00Z",
+      "avgExecutionTime": 25000
+    },
+    "ideator": {
+      "status": "ready",
+      "lastRun": "2025-01-17T09:35:00Z",
+      "avgExecutionTime": 15000
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div id="status-try" class="tab-content">
+                        <div class="try-it-section">
+                            <h3 class="try-it-title">🧪 Try it out</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Authorization Token</label>
+                                <input type="text" class="form-input" id="status-token" placeholder="Bearer token...">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Base URL</label>
+                                <input type="text" class="form-input" id="status-baseurl" value="http://localhost:3000">
+                            </div>
+
+                            <button class="execute-button" onclick="executeRequest('status')">Execute</button>
+
+                            <div class="response-section" id="status-response-section">
+                                <div class="response-header">
+                                    <h4>Response</h4>
+                                    <span class="status-badge" id="status-status"></span>
+                                    <span class="loading" id="status-loading" style="display: none;">
+                                        <span class="spinner"></span>
+                                        Loading...
+                                    </span>
+                                </div>
+                                <div class="code-block">
+                                    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                                    <pre><code id="status-response-body"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+
+        // Mobile menu
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Close sidebar when clicking on main content on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            navItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const parentSection = item.closest('.nav-section');
+                
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    item.innerHTML = highlightText(item.textContent, searchTerm);
+                    parentSection.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                    item.innerHTML = item.textContent;
+                }
+            });
+
+            // Hide sections with no visible items
+            document.querySelectorAll('.nav-section').forEach(section => {
+                const visibleItems = section.querySelectorAll('.nav-item[style*="block"]');
+                if (visibleItems.length === 0 && searchTerm !== '') {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = 'block';
+                }
+            });
+        });
+
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        // Navigation
+        const navLinks = document.querySelectorAll('.nav-item');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active state
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Scroll to section
+                const targetId = link.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                
+                // Close mobile menu
+                sidebar.classList.remove('open');
+            });
+        });
+
+        // Tab switching
+        function switchTab(tabButton, contentId) {
+            const tabContainer = tabButton.closest('.endpoint-content');
+            const tabs = tabContainer.querySelectorAll('.tab');
+            const contents = tabContainer.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            tabButton.classList.add('active');
+            document.getElementById(contentId).classList.add('active');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = 'rgba(16, 185, 129, 0.2)';
+                button.style.color = '#059669';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    button.style.color = '';
+                }, 2000);
+            });
+        }
+
+        // API request execution
+        async function executeRequest(endpoint) {
+            const loading = document.getElementById(`${endpoint}-loading`);
+            const responseSection = document.getElementById(`${endpoint}-response-section`);
+            const statusBadge = document.getElementById(`${endpoint}-status`);
+            const responseBody = document.getElementById(`${endpoint}-response-body`);
+            const executeButton = document.querySelector(`button[onclick="executeRequest('${endpoint}')"]`);
+            
+            // Show loading state
+            loading.style.display = 'flex';
+            responseSection.classList.add('show');
+            executeButton.disabled = true;
+            responseBody.textContent = '';
+            statusBadge.textContent = '';
+            statusBadge.className = 'status-badge';
+
+            try {
+                let url, options = {};
+                
+                // Configure request based on endpoint
+                switch (endpoint) {
+                    case 'execute-all':
+                        const executeToken = document.getElementById('execute-all-token').value;
+                        const executeBaseUrl = document.getElementById('execute-all-baseurl').value;
+                        const executeBody = document.getElementById('execute-all-body').value;
+                        
+                        url = `${executeBaseUrl}/api/agents/execute`;
+                        options = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(executeToken && { 'Authorization': `Bearer ${executeToken}` })
+                            },
+                            body: executeBody
+                        };
+                        break;
+                        
+                    case 'researcher':
+                        const researcherToken = document.getElementById('researcher-token').value;
+                        const researcherBody = document.getElementById('researcher-body').value;
+                        
+                        url = 'http://localhost:3000/api/agents/researcher/run';
+                        options = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(researcherToken && { 'Authorization': `Bearer ${researcherToken}` })
+                            },
+                            body: researcherBody
+                        };
+                        break;
+                        
+                    case 'health':
+                        const healthBaseUrl = document.getElementById('health-baseurl').value;
+                        url = `${healthBaseUrl}/api/health`;
+                        options = { method: 'GET' };
+                        break;
+                        
+                    case 'status':
+                        const statusToken = document.getElementById('status-token').value;
+                        const statusBaseUrl = document.getElementById('status-baseurl').value;
+                        
+                        url = `${statusBaseUrl}/api/agents/status`;
+                        options = {
+                            method: 'GET',
+                            headers: {
+                                ...(statusToken && { 'Authorization': `Bearer ${statusToken}` })
+                            }
+                        };
+                        break;
+                }
+
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                // Update status badge
+                statusBadge.textContent = response.status;
+                if (response.ok) {
+                    statusBadge.classList.add('status-200');
+                } else if (response.status >= 400 && response.status < 500) {
+                    statusBadge.classList.add('status-400');
+                } else {
+                    statusBadge.classList.add('status-500');
+                }
+                
+                // Format and display response
+                responseBody.textContent = JSON.stringify(data, null, 2);
+                applyJsonSyntaxHighlighting(responseBody);
+                
+            } catch (error) {
+                statusBadge.textContent = 'Error';
+                statusBadge.classList.add('status-500');
+                responseBody.textContent = JSON.stringify({
+                    error: error.message || 'Network error occurred'
+                }, null, 2);
+            } finally {
+                loading.style.display = 'none';
+                executeButton.disabled = false;
+            }
+        }
+
+        // JSON syntax highlighting
+        function applyJsonSyntaxHighlighting(element) {
+            let html = element.innerHTML;
+            
+            // Highlight different JSON elements
+            html = html.replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:');
+            html = html.replace(/:\s*"([^"]*)"/g, ': <span class="json-string">"$1"</span>');
+            html = html.replace(/:\s*(\d+\.?\d*)/g, ': <span class="json-number">$1</span>');
+            html = html.replace(/:\s*(true|false)/g, ': <span class="json-boolean">$1</span>');
+            html = html.replace(/:\s*(null)/g, ': <span class="json-null">$1</span>');
+            
+            element.innerHTML = html;
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.endpoint-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Update navigation based on scroll position
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.endpoint-section');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            let currentSection = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    currentSection = section.id;
+                }
+            });
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${currentSection}`) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Auto-resize textareas
+        document.querySelectorAll('.form-textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            const loadTime = performance.now();
+            if (loadTime < 2000) {
+                console.log(`✅ Page loaded in ${loadTime.toFixed(0)}ms (target: <2000ms)`);
+            } else {
+                console.warn(`⚠️ Page load time ${loadTime.toFixed(0)}ms exceeds 2s target`);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next
+out
+dist
+
+# Testing
+coverage
+*.test.js
+*.spec.js
+__tests__
+test-results
+workspace/tests/*-report-*.json
+
+# Git
+.git
+.gitignore
+.github
+
+# Documentation
+*.md
+docs
+README.md
+CHANGELOG.md
+LICENSE
+
+# Development
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.example
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+jenkins
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Logs
+logs
+*.log
+
+# Cache
+.cache
+.npm
+.eslintcache
+
+# Temporary files
+tmp
+temp
+*.tmp
+*.temp
+
+# Build tools
+.turbo
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Agent communication logs
+tools/ccc/logs/

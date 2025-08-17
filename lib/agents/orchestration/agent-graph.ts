@@ -26,6 +26,7 @@ import { CriticAgentAdapter } from '../critic/critic-agent-adapter';
 import { AnalystAgent } from '../analyst/analyst-agent';
 import { WriterAgent } from '../writer/writer-agent';
 import { SerperSearchService } from '@/lib/services/serper/serper-search-service';
+import { createServiceLogger } from '@/lib/utils/logger';
 
 /**
  * エージェントグラフの設定オプション
@@ -60,6 +61,7 @@ export class AgentGraph {
   private checkpointer: CheckpointerAdapter;
   private options: Required<AgentGraphOptions>;
   private retryDelay: number = 1000; // milliseconds
+  private logger = createServiceLogger('AgentGraph');
   private agents!: {
     researcher: ProductionResearcherAgent;
     ideator: IdeatorAgentAdapter;
@@ -558,7 +560,11 @@ export class AgentGraph {
       return finalState;
 
     } catch (error) {
-      console.error('AgentGraph execution error:', error);
+      this.logger.error('AgentGraph execution error', error as Error, {
+        sessionId,
+        startingAgent,
+        mode
+      });
       if (this.options.onError) {
         await this.options.onError({
           type: OrchestrationErrorType.AGENT_FAILURE,

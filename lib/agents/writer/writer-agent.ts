@@ -15,6 +15,7 @@ import { writerInputSchema } from '@/lib/validations/writer';
 import { createClient } from '@/lib/supabase/server';
 import { ReportGeneratorService, getReportGeneratorService } from './services/report-generator';
 import { z } from 'zod';
+import { createAgentLogger } from '@/lib/utils/logger';
 
 /**
  * WriterAgentクラス
@@ -25,6 +26,7 @@ export class WriterAgent extends BaseAgent {
   private retryDelay = 1000; // milliseconds
   private generationTimeout: number; // configurable timeout
   private reportGeneratorService: ReportGeneratorService;
+  private logger = createAgentLogger('WriterAgent');
   
   constructor(context: BaseAgentContext & { timeout?: number }) {
     super(context);
@@ -83,8 +85,10 @@ export class WriterAgent extends BaseAgent {
       };
     } catch (error) {
       // エラーハンドリング
-      console.error('WriterAgent execute error:', error);
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+      this.logger.error('WriterAgent execute error', error as Error, {
+        sessionId: input.sessionId,
+        businessIdea: input.businessIdea?.title
+      });
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       messages.push(this.createMessage('Error occurred', { error: errorMessage }));
       
@@ -175,7 +179,9 @@ export class WriterAgent extends BaseAgent {
         .single();
       
       if (sessionError || !session) {
-        console.error('Session not found:', report.sessionId, sessionError);
+        this.logger.error('Session not found', sessionError as Error, {
+          sessionId: report.sessionId
+        });
         // セッションが存在しない場合は保存をスキップ
         return;
       }
@@ -194,13 +200,18 @@ export class WriterAgent extends BaseAgent {
         });
 
       if (error) {
-        console.error('Database insert error:', error);
+        this.logger.error('Database insert error', error as Error, {
+          sessionId: report.sessionId,
+          title: report.title
+        });
         // データベースエラーは無視して続行（レポート生成自体は成功）
       } else {
         console.log('Report saved successfully:', report.id);
       }
     } catch (error) {
-      console.error('Failed to save report:', error);
+      this.logger.error('Failed to save report', error as Error, {
+        sessionId: report.sessionId
+      });
       // データベース保存エラーは無視して続行
     }
   }
@@ -226,7 +237,9 @@ export class WriterAgent extends BaseAgent {
           completion_percentage: Math.max(0, Math.min(100, percentage)),
         });
     } catch (error) {
-      console.error('Failed to log progress:', error);
+      this.logger.debug('Failed to log progress', {
+        error: (error as Error).message
+      });
     }
   }
 
@@ -264,11 +277,11 @@ export class WriterAgent extends BaseAgent {
             metrics: partialContent.metrics || {},
             generation_time_ms: -1, // エラーを示す
           })
-          .catch(err => console.error('Failed to save partial report:', err));
+          .catch(err => this.logger.error('Failed to save partial report', err as Error));
       }
     } catch (dbError) {
       // データベースエラーは無視してプロセスを継続
-      console.error('Database error in handleError:', dbError);
+      this.logger.error('Database error in handleError', dbError as Error);
     }
   }
 

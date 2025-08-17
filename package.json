@@ -1,7 +1,7 @@
 {
   "name": "biz-dev-agent3",
   "version": "1.0.0",
-  "description": "",
+  "description": "自律型アイディエーションエージェントAI - LangGraphを活用したマルチエージェントシステムによる新事業創出支援",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -10,14 +10,29 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
-    "db:types": "supabase gen types typescript --local > lib/types/database.ts"
+    "db:types": "supabase gen types typescript --local > lib/types/database.ts",
+    "test": "echo \"Error: no test specified yet\" && exit 1",
+    "test:agents": "node scripts/test-all-agents.js",
+    "setup": "npm install && cp .env.example .env",
+    "clean": "rm -rf .next node_modules",
+    "reinstall": "npm run clean && npm install"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eijun-t/biz-dev-agent3.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "langchain",
+    "langgraph",
+    "ai-agents",
+    "business-development",
+    "ideation",
+    "multi-agent-system",
+    "nextjs",
+    "supabase",
+    "openai"
+  ],
+  "author": "Eijun Tei",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {

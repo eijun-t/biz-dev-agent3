@@ -14,6 +14,9 @@ import { ChatOpenAI } from '@langchain/openai';
 import { GoogleSearchService } from '@/lib/services/google/google-search-service';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
+import { createServiceLogger } from '@/lib/utils/logger';
+
+const logger = createServiceLogger('OrchestrationMain');
 
 export interface OrchestrationConfig {
   sessionId: string;
@@ -98,7 +101,9 @@ export class MainOrchestration {
         researcherOutput: results.researcher
       });
       if (!criticResult.success) {
-        console.error('Critic failed:', criticResult.error);
+        logger.error('Critic failed', new Error(criticResult.error || 'Unknown error'), {
+          sessionId: config.sessionId
+        });
         throw new Error(`Evaluation failed: ${criticResult.error}`);
       }
       results.critic = criticResult.data;
@@ -156,8 +161,10 @@ export class MainOrchestration {
       
       const writerResult = await writer.execute(writerInput);
       if (!writerResult.success) {
-        console.error('Writer failed:', writerResult.error);
-        console.error('Writer input data:', {
+        logger.error('Writer failed', new Error(writerResult.error || 'Unknown error'), {
+          sessionId: config.sessionId
+        });
+        logger.debug('Writer input data', {
           hasSelectedIdeas: !!results.critic.selectedIdeas,
           selectedIdeasCount: results.critic.selectedIdeas?.length,
           hasAnalysisData: !!results.analyst,
@@ -171,7 +178,10 @@ export class MainOrchestration {
       return { success: true, data: results };
       
     } catch (error) {
-      console.error('Orchestration error:', error);
+      logger.error('Orchestration error', error as Error, {
+        sessionId: config.sessionId,
+        topic: config.topic
+      });
       return { 
         success: false, 
         error: error instanceof Error ? error.message : 'Unknown error'

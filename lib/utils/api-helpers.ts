@@ -11,6 +11,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import type { ErrorResponse } from '@/lib/validations/orchestration';
+import { createServiceLogger } from '@/lib/utils/logger';
+
+const logger = createServiceLogger('APIHelpers');
 
 /**
  * CORS ヘッダーを設定
@@ -82,7 +85,7 @@ export async function getAuthenticatedUser(request?: NextRequest): Promise<{
     console.log('getAuthenticatedUser - User authenticated:', user.id);
     return { user };
   } catch (error) {
-    console.error('Authentication error:', error);
+    logger.error('Authentication error', error as Error, { path: request.url });
     return { user: null, error: '認証の確認に失敗しました' };
   }
 }
@@ -98,7 +101,7 @@ export async function parseRequestBody<T>(request: NextRequest): Promise<{
     const body = await request.json();
     return { data: body };
   } catch (error) {
-    console.error('Request body parsing error:', error);
+    logger.error('Request body parsing error', error as Error, { path: request.url });
     return { error: 'リクエストボディの解析に失敗しました' };
   }
 }
@@ -159,7 +162,10 @@ export function generateErrorCode(error: Error): string {
  * エラーハンドリングミドルウェア
  */
 export function handleApiError(error: unknown): NextResponse {
-  console.error('API Error:', error);
+  logger.error('API Error', error instanceof Error ? error : new Error(String(error)), {
+    statusCode,
+    path: typeof window !== 'undefined' ? window.location.pathname : 'unknown'
+  });
   
   if (error instanceof Error) {
     const statusCode = getErrorStatusCode(error);

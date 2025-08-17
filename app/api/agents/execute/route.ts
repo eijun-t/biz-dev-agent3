@@ -6,6 +6,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { MainOrchestration } from '@/lib/orchestration/main';
 import { v4 as uuidv4 } from 'uuid';
+import { createAPILogger } from '@/lib/utils/logger';
+
+const logger = createAPILogger('/api/agents/execute');
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,7 +42,10 @@ export async function POST(request: NextRequest) {
     });
     
     if (insertError) {
-      console.error('Failed to create session:', insertError);
+      logger.error('Failed to create session', insertError as Error, {
+        sessionId,
+        userId
+      });
       return NextResponse.json({ error: 'セッション作成に失敗しました' }, { status: 500 });
     }
     
@@ -80,7 +86,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
     
   } catch (error) {
-    console.error('Execution error:', error);
+    logger.error('Execution error', error as Error, {
+      path: request.url
+    });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

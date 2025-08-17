@@ -9,6 +9,7 @@ import { RunnableConfig } from '@langchain/core/runnables';
 import { CheckpointTuple, Checkpoint, CheckpointMetadata } from '@langchain/langgraph';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { GraphState } from '@/lib/types/orchestration';
+import { createServiceLogger } from '@/lib/utils/logger';
 
 /**
  * Supabaseベースのチェックポイントセーバー
@@ -16,6 +17,7 @@ import type { GraphState } from '@/lib/types/orchestration';
  */
 export class CheckpointerAdapter extends BaseCheckpointSaver {
   private supabase: SupabaseClient;
+  private logger = createServiceLogger('CheckpointerAdapter');
 
   constructor(supabase: SupabaseClient) {
     super();
@@ -46,7 +48,7 @@ export class CheckpointerAdapter extends BaseCheckpointSaver {
         parentConfig: data.parent_config ? JSON.parse(data.parent_config) : undefined,
       };
     } catch (error) {
-      console.error('Failed to get checkpoint:', error);
+      this.logger.error('Failed to get checkpoint', error as Error, { sessionId: config.configurable?.sessionId });
       return undefined;
     }
   }
@@ -97,7 +99,7 @@ export class CheckpointerAdapter extends BaseCheckpointSaver {
         };
       }
     } catch (error) {
-      console.error('Failed to list checkpoints:', error);
+      this.logger.error('Failed to list checkpoints', error as Error);
       return;
     }
   }
@@ -144,7 +146,7 @@ export class CheckpointerAdapter extends BaseCheckpointSaver {
         },
       };
     } catch (error) {
-      console.error('Failed to put checkpoint:', error);
+      this.logger.error('Failed to put checkpoint', error as Error, { sessionId: config.configurable?.sessionId });
       throw error;
     }
   }
@@ -163,7 +165,7 @@ export class CheckpointerAdapter extends BaseCheckpointSaver {
         throw new Error(`Failed to delete checkpoints: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to delete checkpoints:', error);
+      this.logger.error('Failed to delete checkpoints', error as Error, { sessionId: config.configurable?.sessionId });
       throw error;
     }
   }
@@ -189,7 +191,7 @@ export class CheckpointerAdapter extends BaseCheckpointSaver {
       const checkpoint = data.checkpoint as Checkpoint;
       return checkpoint.channel_values as GraphState;
     } catch (error) {
-      console.error('Failed to get latest checkpoint:', error);
+      this.logger.error('Failed to get latest checkpoint', error as Error, { sessionId });
       return null;
     }
   }
@@ -211,7 +213,7 @@ export class CheckpointerAdapter extends BaseCheckpointSaver {
         throw new Error(`Failed to cleanup checkpoints: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to cleanup checkpoints:', error);
+      this.logger.error('Failed to cleanup checkpoints', error as Error, { sessionId });
       throw error;
     }
   }

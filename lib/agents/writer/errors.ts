@@ -1,3 +1,5 @@
+import { createServiceLogger } from '@/lib/utils/logger';
+
 export enum WriterErrorCode {
   TIMEOUT = 'WRITER_TIMEOUT',
   DATA_INTEGRATION_FAILED = 'DATA_INTEGRATION_FAILED',
@@ -35,6 +37,7 @@ export class WriterErrorHandler {
   private maxRetries: number = 3
   private baseDelay: number = 1000
   private maxDelay: number = 10000
+  private logger = createServiceLogger('WriterErrorHandler')
 
   async executeWithRetry<T>(
     operation: () => Promise<T>,
@@ -138,7 +141,10 @@ export class WriterErrorHandler {
         window.localStorage.setItem(key, JSON.stringify(data))
       }
     } catch (error) {
-      console.error('Failed to save partial content:', error)
+      this.logger.error('Failed to save partial content', error as Error, {
+        sessionId,
+        phase
+      })
     }
   }
 
@@ -160,7 +166,9 @@ export class WriterErrorHandler {
         }
       }
     } catch (error) {
-      console.error('Failed to load partial content:', error)
+      this.logger.error('Failed to load partial content', error as Error, {
+        sessionId
+      })
     }
     
     return null
@@ -173,7 +181,9 @@ export class WriterErrorHandler {
         window.localStorage.removeItem(key)
       }
     } catch (error) {
-      console.error('Failed to clear partial content:', error)
+      this.logger.error('Failed to clear partial content', error as Error, {
+        sessionId
+      })
     }
   }
 

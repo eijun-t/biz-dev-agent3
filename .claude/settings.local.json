@@ -47,7 +47,8 @@
       "Bash(true)",
       "Bash(find:*)",
       "Bash(source:*)",
-      "Bash(open scripts/browser-test.html)"
+      "Bash(open scripts/browser-test.html)",
+      "Bash(git clone:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

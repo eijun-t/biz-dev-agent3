@@ -26,12 +26,14 @@ import { BaseChatModel } from '@langchain/core/language_models/chat'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { EdgeLogger } from './edge-logger'
 import { EnhancedOutputGenerator } from './enhanced-output-generator'
+import { createAgentLogger } from '@/lib/utils/logger'
 
 /**
  * Production Researcher Agent - Balanced between depth and performance
  */
 export class ProductionResearcherAgent extends BaseAgent {
   private logger: EdgeLogger
+  private structuredLogger = createAgentLogger('ProductionResearcherAgent')
   private resultProcessor: SearchResultProcessor
   private metrics: AgentMetrics = {
     executionTime: 0,
@@ -124,7 +126,10 @@ export class ProductionResearcherAgent extends BaseAgent {
       }
 
     } catch (error) {
-      console.error('Research execution error:', error)
+      this.structuredLogger.error('Research execution error', error as Error, {
+        topic: input.topic,
+        sessionId: input.sessionId
+      })
       
       this.metrics.errors.push({
         timestamp: new Date(),
@@ -212,7 +217,9 @@ export class ProductionResearcherAgent extends BaseAgent {
       }
 
     } catch (error) {
-      console.error('Query generation error:', error)
+      this.structuredLogger.error('Query generation error', error as Error, {
+        topic: input.topic
+      })
       throw new Error(`Failed to generate search queries: ${error.message}`)
     }
   }
@@ -353,7 +360,9 @@ ${JSON.stringify(categorized, null, 2)}
       return JSON.parse(jsonContent)
 
     } catch (error) {
-      console.error('Deep analysis error:', error)
+      this.structuredLogger.error('Deep analysis error', error as Error, {
+        resultsCount: searchResults.length
+      })
       throw new Error(`Failed to perform deep analysis: ${error.message}`)
     }
   }
@@ -408,7 +417,9 @@ ${JSON.stringify(processed.globalInsights, null, 2)}
       }
 
     } catch (error) {
-      console.error('Summary generation error:', error)
+      this.structuredLogger.error('Summary generation error', error as Error, {
+        analysisCount: analysisResults.length
+      })
       throw new Error(`Failed to generate summary: ${error.message}`)
     }
   }
@@ -472,7 +483,10 @@ ${JSON.stringify(processed.globalInsights, null, 2)}
         query: query.query,
         ...query.options
       }).catch(error => {
-        console.error(`Search error for query "${query.query}":`, error)
+        this.structuredLogger.error('Search error for query', error as Error, {
+          query: query.query,
+          category: query.category
+        })
         
         this.metrics.errors.push({
           timestamp: new Date(),
@@ -544,7 +558,9 @@ ${JSON.stringify(processed.globalInsights, null, 2)}
         }
       })
     } catch (error) {
-      console.error('Failed to log execution:', error)
+      this.structuredLogger.error('Failed to log execution', error as Error, {
+        sessionId: metadata.sessionId
+      })
     }
   }
 }
