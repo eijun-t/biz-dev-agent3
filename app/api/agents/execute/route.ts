@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       id: sessionId,
       user_id: userId,
       theme: targetTopic,
+      topic: targetTopic,  // topicフィールドも追加
       status: 'generating',  // 'processing'ではなく'generating'を使用
       progress: 0,
     });
@@ -67,13 +68,24 @@ export async function POST(request: NextRequest) {
 
     // 結果を保存
     if (result.success) {
-      await supabase.from('ideation_sessions')
-        .update({ 
-          status: 'completed',
-          result: result.data?.writer,
-          completed_at: new Date().toISOString()
-        })
+      const updateData = {
+        status: 'completed',
+        result: result.data?.writer,
+        final_report: {
+          idea_count: result.data?.ideator?.ideas?.length || 0,
+          selected_count: result.data?.critic?.selectedIdeas?.length || 0,
+          writer: result.data?.writer
+        },
+        completed_at: new Date().toISOString()
+      };
+      
+      const { error: updateError } = await supabase.from('ideation_sessions')
+        .update(updateData)
         .eq('id', sessionId);
+        
+      if (updateError) {
+        console.error('Failed to update session:', updateError);
+      }
     } else {
       await supabase.from('ideation_sessions')
         .update({ 

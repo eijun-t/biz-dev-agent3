@@ -1,317 +1,323 @@
-'use client';
+'use client'
 
-import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, FileText, TrendingUp, Users, Lightbulb } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { ArrowLeft, Calendar, Clock, FileText, Loader2 } from 'lucide-react'
 
-interface ReportData {
-  id: string;
-  title: string;
-  topic: string;
-  createdAt: string;
-  summary: string;
-  ideas: Array<{
-    title: string;
-    description: string;
-    marketSize?: string;
-    targetAudience?: string;
-    feasibility?: number;
-    uniqueness?: number;
-  }>;
-  marketAnalysis?: {
-    totalMarketSize: string;
-    growthRate: string;
-    keyTrends: string[];
-  };
-  competitiveAnalysis?: {
-    mainCompetitors: string[];
-    marketGaps: string[];
-  };
+interface Report {
+  id: string
+  title: string
+  topic: string
+  created_at: string
+  completed_at?: string
+  status: string
+  result?: any
+  final_report?: any
 }
 
-export default function ReportPage() {
-  const params = useParams();
-  const reportId = params.id as string;
-  const [report, setReport] = useState<ReportData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ReportDetailPage() {
+  const params = useParams()
+  const router = useRouter()
+  const [report, setReport] = useState<Report | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    // シミュレートされたレポートデータを生成
-    setTimeout(() => {
-      const mockReport: ReportData = {
-        id: reportId,
-        title: 'OOH広告メディア事業 - ビジネスアイデアレポート',
-        topic: 'OOH広告メディア事業',
-        createdAt: new Date().toISOString(),
-        summary: 'OOH（Out-of-Home）広告メディア事業に関する5つの革新的なビジネスアイデアを生成しました。デジタルサイネージ、AI技術、位置情報データを活用した新しい広告配信モデルに重点を置いています。',
-        ideas: [
-          {
-            title: 'AI搭載インタラクティブデジタルサイネージネットワーク',
-            description: '顔認識と感情分析AIを搭載したデジタルサイネージで、視聴者の属性や感情に応じてリアルタイムで広告コンテンツを最適化。プライバシー保護に配慮した匿名化技術を採用。',
-            marketSize: '2,500億円',
-            targetAudience: '大手広告主、商業施設オーナー',
-            feasibility: 85,
-            uniqueness: 90
-          },
-          {
-            title: 'モビリティ連動型動的OOH広告プラットフォーム',
-            description: 'バス、タクシー、配送車両の外装をデジタルディスプレイ化し、位置情報と時間帯に応じて広告を動的に変更。移動する広告媒体として新しい価値を創出。',
-            marketSize: '800億円',
-            targetAudience: '地域密着型企業、イベント主催者',
-            feasibility: 70,
-            uniqueness: 95
-          },
-          {
-            title: 'AR/VR統合型OOH広告エコシステム',
-            description: '物理的な看板とAR/VRコンテンツを融合し、スマートフォンアプリを通じてインタラクティブな広告体験を提供。ゲーミフィケーション要素で engagement を向上。',
-            marketSize: '1,200億円',
-            targetAudience: 'Z世代、ミレニアル世代向けブランド',
-            feasibility: 75,
-            uniqueness: 88
-          },
-          {
-            title: 'サステナブルOOH広告ソリューション',
-            description: 'ソーラーパネル搭載の自己発電型デジタルサイネージ。カーボンクレジット取得可能で、SDGs対応を重視する企業向けの環境配慮型広告媒体。',
-            marketSize: '600億円',
-            targetAudience: 'ESG重視企業、自治体',
-            feasibility: 80,
-            uniqueness: 82
-          },
-          {
-            title: 'プログラマティックOOH広告取引所',
-            description: 'リアルタイムビッディング（RTB）システムを活用したOOH広告の自動売買プラットフォーム。在庫管理、価格最適化、効果測定を一元化。',
-            marketSize: '1,800億円',
-            targetAudience: 'メディアエージェンシー、DSP事業者',
-            feasibility: 78,
-            uniqueness: 85
-          }
-        ],
-        marketAnalysis: {
-          totalMarketSize: '6,500億円',
-          growthRate: '年率8.5%',
-          keyTrends: [
-            'デジタル化の加速',
-            'プログラマティック広告の普及',
-            'パーソナライゼーション需要の増加',
-            '環境配慮型メディアへの関心'
-          ]
-        },
-        competitiveAnalysis: {
-          mainCompetitors: [
-            'JCDecaux',
-            'Clear Channel Outdoor',
-            'Lamar Advertising',
-            '東急エージェンシー'
-          ],
-          marketGaps: [
-            'インタラクティブ性の不足',
-            '効果測定の精度',
-            '在庫の可視化',
-            '小規模広告主へのアクセス'
-          ]
-        }
-      };
-      setReport(mockReport);
-      setLoading(false);
-    }, 1000);
-  }, [reportId]);
+    fetchReport()
+  }, [params.id])
+
+  const fetchReport = async () => {
+    try {
+      const response = await fetch(`/api/reports/${params.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setReport(data.report)
+      } else {
+        setError('レポートが見つかりません')
+      }
+    } catch (err) {
+      setError('レポートの取得に失敗しました')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-500">レポートを読み込み中...</p>
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: '#f9fafb'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <Loader2 size={48} style={{ animation: 'spin 1s linear infinite', color: '#3b82f6', margin: '0 auto' }} />
+          <p style={{ marginTop: '16px', color: '#6b7280' }}>レポートを読み込み中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !report) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '40px 20px' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div style={{
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '20px',
+            textAlign: 'center'
+          }}>
+            <p style={{ color: '#991b1b', fontSize: '18px' }}>{error || 'レポートが見つかりません'}</p>
+            <button
+              onClick={() => router.push('/dashboard')}
+              style={{
+                marginTop: '16px',
+                padding: '10px 20px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              ダッシュボードに戻る
+            </button>
           </div>
         </div>
       </div>
-    );
+    )
   }
 
-  if (!report) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="py-12">
-            <p className="text-center text-gray-500">レポートが見つかりません</p>
-            <div className="text-center mt-4">
-              <Link href="/orchestration">
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  ダッシュボードに戻る
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // HTMLコンテンツを取得
+  const htmlContent = report.result?.htmlContent || 
+                      report.result?.htmlReport || 
+                      report.final_report?.writer?.htmlContent ||
+                      report.final_report?.writer?.htmlReport
+
+  // アイデア情報を取得
+  const ideas = report.result?.ideas || report.final_report?.ideas || []
+  const selectedIdeas = report.result?.selectedIdeas || report.final_report?.selectedIdeas || []
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6 flex justify-between items-center">
-        <Link href="/orchestration">
-          <Button variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '40px 20px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* ヘッダー */}
+        <div style={{ marginBottom: '32px' }}>
+          <button
+            onClick={() => router.push('/dashboard')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 16px',
+              backgroundColor: 'white',
+              border: '1px solid #d1d5db',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              color: '#374151',
+              marginBottom: '24px'
+            }}
+          >
+            <ArrowLeft size={16} />
             ダッシュボードに戻る
-          </Button>
-        </Link>
-        <Button>
-          <Download className="w-4 h-4 mr-2" />
-          PDFダウンロード
-        </Button>
-      </div>
+          </button>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
-            <FileText className="w-6 h-6" />
+          <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
             {report.title}
-          </CardTitle>
-          <div className="flex gap-2 mt-2">
-            <Badge variant="secondary">{report.topic}</Badge>
-            <Badge variant="outline">
-              {new Date(report.createdAt).toLocaleDateString('ja-JP')}
-            </Badge>
+          </h1>
+          
+          <div style={{ display: 'flex', gap: '24px', color: '#6b7280', fontSize: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Calendar size={16} />
+              作成日: {formatDate(report.created_at)}
+            </div>
+            {report.completed_at && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={16} />
+                完了日: {formatDate(report.completed_at)}
+              </div>
+            )}
           </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">{report.summary}</p>
-        </CardContent>
-      </Card>
+        </div>
 
-      {report.marketAnalysis && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              市場分析
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4 mb-4">
+        {/* メインコンテンツ */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '24px' }}>
+          {/* レポート本文 */}
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '32px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}>
+            {htmlContent ? (
+              <div 
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+                style={{
+                  lineHeight: '1.8',
+                  fontSize: '16px'
+                }}
+              />
+            ) : (
               <div>
-                <p className="text-sm text-gray-500">市場規模</p>
-                <p className="text-xl font-semibold">{report.marketAnalysis.totalMarketSize}</p>
+                <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '24px' }}>
+                  ビジネスレポート
+                </h2>
+                
+                {ideas.length > 0 && (
+                  <div style={{ marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+                      生成されたアイデア
+                    </h3>
+                    <ul style={{ paddingLeft: '20px' }}>
+                      {ideas.map((idea: string, i: number) => (
+                        <li key={i} style={{ marginBottom: '8px' }}>{idea}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {selectedIdeas.length > 0 && (
+                  <div style={{ marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+                      選定されたアイデア
+                    </h3>
+                    <ul style={{ paddingLeft: '20px' }}>
+                      {selectedIdeas.map((idea: string, i: number) => (
+                        <li key={i} style={{ 
+                          marginBottom: '8px', 
+                          color: '#059669',
+                          fontWeight: '500'
+                        }}>
+                          {idea}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* JSON形式のフォールバック */}
+                {!ideas.length && !selectedIdeas.length && report.result && (
+                  <pre style={{
+                    backgroundColor: '#f9fafb',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    overflow: 'auto',
+                    fontSize: '14px'
+                  }}>
+                    {JSON.stringify(report.result, null, 2)}
+                  </pre>
+                )}
               </div>
-              <div>
-                <p className="text-sm text-gray-500">成長率</p>
-                <p className="text-xl font-semibold">{report.marketAnalysis.growthRate}</p>
+            )}
+          </div>
+
+          {/* サイドバー */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* 統計情報 */}
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>
+                レポート統計
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '4px' }}>
+                    生成アイデア数
+                  </p>
+                  <p style={{ fontSize: '24px', fontWeight: '600', color: '#3b82f6' }}>
+                    {report.final_report?.idea_count || ideas.length || 0}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '4px' }}>
+                    選定アイデア数
+                  </p>
+                  <p style={{ fontSize: '24px', fontWeight: '600', color: '#059669' }}>
+                    {report.final_report?.selected_count || selectedIdeas.length || 0}
+                  </p>
+                </div>
               </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-2">主要トレンド</p>
-              <div className="flex flex-wrap gap-2">
-                {report.marketAnalysis.keyTrends.map((trend, index) => (
-                  <Badge key={index} variant="outline">{trend}</Badge>
-                ))}
+
+            {/* アクション */}
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>
+                アクション
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <button
+                  onClick={() => window.print()}
+                  style={{
+                    padding: '10px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  印刷
+                </button>
+                <button
+                  onClick={() => {
+                    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = `report-${report.id}.json`
+                    a.click()
+                  }}
+                  style={{
+                    padding: '10px',
+                    backgroundColor: 'white',
+                    color: '#374151',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  JSONをダウンロード
+                </button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
-          <Lightbulb className="w-5 h-5" />
-          ビジネスアイデア
-        </h2>
-        {report.ideas.map((idea, index) => (
-          <Card key={index}>
-            <CardHeader>
-              <CardTitle className="text-lg">{index + 1}. {idea.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">{idea.description}</p>
-              <div className="grid md:grid-cols-4 gap-4">
-                {idea.marketSize && (
-                  <div>
-                    <p className="text-sm text-gray-500">推定市場規模</p>
-                    <p className="font-semibold">{idea.marketSize}</p>
-                  </div>
-                )}
-                {idea.targetAudience && (
-                  <div>
-                    <p className="text-sm text-gray-500">ターゲット</p>
-                    <p className="font-semibold">{idea.targetAudience}</p>
-                  </div>
-                )}
-                {idea.feasibility && (
-                  <div>
-                    <p className="text-sm text-gray-500">実現可能性</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-green-500 h-2 rounded-full"
-                          style={{ width: `${idea.feasibility}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold">{idea.feasibility}%</span>
-                    </div>
-                  </div>
-                )}
-                {idea.uniqueness && (
-                  <div>
-                    <p className="text-sm text-gray-500">独自性</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${idea.uniqueness}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold">{idea.uniqueness}%</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+          </div>
+        </div>
       </div>
 
-      {report.competitiveAnalysis && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              競合分析
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm text-gray-500 mb-2">主要競合</p>
-                <ul className="space-y-1">
-                  {report.competitiveAnalysis.mainCompetitors.map((competitor, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                      {competitor}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-2">市場ギャップ</p>
-                <ul className="space-y-1">
-                  {report.competitiveAnalysis.marketGaps.map((gap, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
-                      {gap}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <style jsx>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @media print {
+          button { display: none; }
+        }
+      `}</style>
     </div>
-  );
+  )
 }

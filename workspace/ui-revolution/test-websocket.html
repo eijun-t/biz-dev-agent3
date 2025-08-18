@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Performance Test - 50ms Challenge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .performance-bar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .metric {
+            text-align: center;
+            color: white;
+        }
+        .metric-value {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff88, #00ddff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .agent-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .agent-name {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .agent-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-idle { background: rgba(108,117,125,0.3); color: #e2e8f0; }
+        .status-running { 
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        .status-completed { background: rgba(16,185,129,0.3); color: #10f981; }
+        .status-error { background: rgba(239,68,68,0.3); color: #ef4444; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .progress-container {
+            margin: 15px 0;
+        }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ddff);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,255,136,0.5);
+        }
+        .latency-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        .latency-good { background: #10f981; }
+        .latency-warning { background: #fbbf24; }
+        .latency-bad { background: #ef4444; }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border: none;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #10b981, #14b8a6);
+            border: none;
+        }
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            border: none;
+        }
+        
+        .log-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+            border-left: 3px solid transparent;
+            padding-left: 10px;
+        }
+        .log-success { border-color: #10f981; }
+        .log-error { border-color: #ef4444; }
+        .log-warning { border-color: #fbbf24; }
+        .log-info { border-color: #3b82f6; }
+        
+        .speed-test {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .speed-result {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+        .speed-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .speed-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 WebSocket Performance Test - 50ms Challenge</h1>
+        
+        <!-- パフォーマンスメトリクス -->
+        <div class="performance-bar">
+            <div class="metric">
+                <div class="metric-value" id="avg-latency">0ms</div>
+                <div class="metric-label">平均レイテンシ</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="min-latency">0ms</div>
+                <div class="metric-label">最小レイテンシ</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="max-latency">0ms</div>
+                <div class="metric-label">最大レイテンシ</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="success-rate">100%</div>
+                <div class="metric-label">成功率</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="throughput">0/s</div>
+                <div class="metric-label">スループット</div>
+            </div>
+        </div>
+
+        <!-- コントロール -->
+        <div class="controls">
+            <button class="btn-primary" onclick="connectWS()">🔗 WebSocket接続</button>
+            <button class="btn-success" onclick="startAllAgents()">▶️ 全エージェント開始</button>
+            <button onclick="stopAllAgents()">⏸ 全エージェント停止</button>
+            <button class="btn-danger" onclick="disconnectWS()">🔌 切断</button>
+            <button onclick="runSpeedTest()">⚡ スピードテスト</button>
+            <button onclick="simulateError()">💥 エラーテスト</button>
+            <button onclick="clearLog()">🗑 ログクリア</button>
+        </div>
+
+        <!-- エージェントカード -->
+        <div class="grid">
+            <div class="card agent-card" id="agent-researcher">
+                <div class="agent-header">
+                    <span class="agent-name">🔍 Researcher</span>
+                    <span class="agent-status status-idle">idle</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div style="color: white; margin-top: 5px;">
+                        進捗: <span class="progress-text">0%</span>
+                        <span class="latency-indicator latency-good"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="sendCommand('Researcher', 'start')">開始</button>
+                    <button onclick="sendCommand('Researcher', 'stop')">停止</button>
+                </div>
+            </div>
+
+            <div class="card agent-card" id="agent-ideator">
+                <div class="agent-header">
+                    <span class="agent-name">💡 Ideator</span>
+                    <span class="agent-status status-idle">idle</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div style="color: white; margin-top: 5px;">
+                        進捗: <span class="progress-text">0%</span>
+                        <span class="latency-indicator latency-good"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="sendCommand('Ideator', 'start')">開始</button>
+                    <button onclick="sendCommand('Ideator', 'stop')">停止</button>
+                </div>
+            </div>
+
+            <div class="card agent-card" id="agent-critic">
+                <div class="agent-header">
+                    <span class="agent-name">🎯 Critic</span>
+                    <span class="agent-status status-idle">idle</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div style="color: white; margin-top: 5px;">
+                        進捗: <span class="progress-text">0%</span>
+                        <span class="latency-indicator latency-good"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="sendCommand('Critic', 'start')">開始</button>
+                    <button onclick="sendCommand('Critic', 'stop')">停止</button>
+                </div>
+            </div>
+
+            <div class="card agent-card" id="agent-analyst">
+                <div class="agent-header">
+                    <span class="agent-name">📊 Analyst</span>
+                    <span class="agent-status status-idle">idle</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div style="color: white; margin-top: 5px;">
+                        進捗: <span class="progress-text">0%</span>
+                        <span class="latency-indicator latency-good"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="sendCommand('Analyst', 'start')">開始</button>
+                    <button onclick="sendCommand('Analyst', 'stop')">停止</button>
+                </div>
+            </div>
+
+            <div class="card agent-card" id="agent-writer">
+                <div class="agent-header">
+                    <span class="agent-name">✍️ Writer</span>
+                    <span class="agent-status status-idle">idle</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div style="color: white; margin-top: 5px;">
+                        進捗: <span class="progress-text">0%</span>
+                        <span class="latency-indicator latency-good"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="sendCommand('Writer', 'start')">開始</button>
+                    <button onclick="sendCommand('Writer', 'stop')">停止</button>
+                </div>
+            </div>
+
+            <!-- スピードテスト結果 -->
+            <div class="card">
+                <h3 style="color: white; margin-bottom: 15px;">⚡ Speed Test Results</h3>
+                <div class="speed-test" id="speed-results">
+                    <div class="speed-result">
+                        <div class="speed-value">-</div>
+                        <div class="speed-label">Round Trip</div>
+                    </div>
+                    <div class="speed-result">
+                        <div class="speed-value">-</div>
+                        <div class="speed-label">Messages/sec</div>
+                    </div>
+                    <div class="speed-result">
+                        <div class="speed-value">-</div>
+                        <div class="speed-label">Bandwidth</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ログ -->
+        <div class="card">
+            <h3 style="color: white; margin-bottom: 15px;">📝 Event Log</h3>
+            <div class="log-container" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let sessionId = `test-${Date.now()}`;
+        let messageId = 0;
+        let metrics = {
+            latencies: [],
+            successCount: 0,
+            errorCount: 0,
+            startTime: Date.now()
+        };
+
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logEl.insertBefore(entry, logEl.firstChild);
+        }
+
+        function connectWS() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                log('Already connected', 'warning');
+                return;
+            }
+
+            log('Connecting to WebSocket...', 'info');
+            ws = new WebSocket('ws://localhost:3001');
+
+            ws.onopen = () => {
+                log('WebSocket connected!', 'success');
+                ws.send(JSON.stringify({
+                    type: 'connect',
+                    id: generateId(),
+                    timestamp: new Date().toISOString(),
+                    sessionId: sessionId,
+                    data: { userId: 'test-user' }
+                }));
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleMessage(message);
+            };
+
+            ws.onerror = (error) => {
+                log('WebSocket error', 'error');
+                metrics.errorCount++;
+            };
+
+            ws.onclose = () => {
+                log('WebSocket disconnected', 'warning');
+            };
+        }
+
+        function handleMessage(message) {
+            // レイテンシ計算
+            if (message.metadata && message.metadata.latency) {
+                metrics.latencies.push(message.metadata.latency);
+                updateMetrics();
+            }
+
+            switch (message.type) {
+                case 'agent_status':
+                case 'agent_progress':
+                    updateAgent(message.data);
+                    break;
+                case 'ping':
+                    // Pong送信
+                    ws.send(JSON.stringify({
+                        type: 'pong',
+                        id: generateId(),
+                        timestamp: new Date().toISOString(),
+                        data: { timestamp: message.data.timestamp }
+                    }));
+                    break;
+            }
+
+            log(`Received: ${message.type}`, 'info');
+        }
+
+        function updateAgent(data) {
+            const agentEl = document.getElementById(`agent-${data.agentName.toLowerCase()}`);
+            if (!agentEl) return;
+
+            const statusEl = agentEl.querySelector('.agent-status');
+            const progressEl = agentEl.querySelector('.progress-fill');
+            const progressTextEl = agentEl.querySelector('.progress-text');
+            const latencyEl = agentEl.querySelector('.latency-indicator');
+
+            if (data.status) {
+                statusEl.className = `agent-status status-${data.status}`;
+                statusEl.textContent = data.status;
+            }
+
+            if (data.progress !== undefined) {
+                progressEl.style.width = `${data.progress}%`;
+                progressTextEl.textContent = `${data.progress}%`;
+            }
+
+            // レイテンシインジケーター
+            if (data.processingTime !== undefined) {
+                latencyEl.className = 'latency-indicator ' + 
+                    (data.processingTime < 50 ? 'latency-good' : 
+                     data.processingTime < 100 ? 'latency-warning' : 'latency-bad');
+            }
+        }
+
+        function sendCommand(agentName, command) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocket not connected', 'error');
+                return;
+            }
+
+            const startTime = Date.now();
+            const message = {
+                type: 'agent_command',
+                id: generateId(),
+                timestamp: new Date().toISOString(),
+                sessionId: sessionId,
+                data: { agentName, command }
+            };
+
+            ws.send(JSON.stringify(message));
+            log(`Sent command: ${agentName} ${command}`, 'info');
+
+            // レイテンシ測定
+            setTimeout(() => {
+                const latency = Date.now() - startTime;
+                metrics.latencies.push(latency);
+                updateMetrics();
+            }, 0);
+        }
+
+        function startAllAgents() {
+            ['Researcher', 'Ideator', 'Critic', 'Analyst', 'Writer'].forEach(agent => {
+                setTimeout(() => sendCommand(agent, 'start'), Math.random() * 100);
+            });
+        }
+
+        function stopAllAgents() {
+            ['Researcher', 'Ideator', 'Critic', 'Analyst', 'Writer'].forEach(agent => {
+                sendCommand(agent, 'stop');
+            });
+        }
+
+        function runSpeedTest() {
+            log('Starting speed test...', 'info');
+            const testCount = 100;
+            const results = [];
+            let completed = 0;
+
+            for (let i = 0; i < testCount; i++) {
+                const startTime = Date.now();
+                const testMessage = {
+                    type: 'ping',
+                    id: generateId(),
+                    timestamp: new Date().toISOString(),
+                    data: { test: i, timestamp: startTime }
+                };
+
+                ws.send(JSON.stringify(testMessage));
+
+                setTimeout(() => {
+                    const latency = Date.now() - startTime;
+                    results.push(latency);
+                    completed++;
+
+                    if (completed === testCount) {
+                        displaySpeedResults(results);
+                    }
+                }, 50);
+            }
+        }
+
+        function displaySpeedResults(results) {
+            const avg = results.reduce((a, b) => a + b, 0) / results.length;
+            const min = Math.min(...results);
+            const max = Math.max(...results);
+
+            document.querySelector('#speed-results').innerHTML = `
+                <div class="speed-result">
+                    <div class="speed-value">${avg.toFixed(1)}ms</div>
+                    <div class="speed-label">平均 RTT</div>
+                </div>
+                <div class="speed-result">
+                    <div class="speed-value">${(1000 / avg).toFixed(0)}/s</div>
+                    <div class="speed-label">Messages/sec</div>
+                </div>
+                <div class="speed-result">
+                    <div class="speed-value">${min}ms</div>
+                    <div class="speed-label">最小 RTT</div>
+                </div>
+            `;
+
+            log(`Speed test complete: Avg ${avg.toFixed(1)}ms, Min ${min}ms, Max ${max}ms`, 'success');
+        }
+
+        function updateMetrics() {
+            if (metrics.latencies.length === 0) return;
+
+            const avg = metrics.latencies.reduce((a, b) => a + b, 0) / metrics.latencies.length;
+            const min = Math.min(...metrics.latencies);
+            const max = Math.max(...metrics.latencies);
+            const successRate = (metrics.successCount / (metrics.successCount + metrics.errorCount)) * 100;
+
+            document.getElementById('avg-latency').textContent = `${avg.toFixed(1)}ms`;
+            document.getElementById('min-latency').textContent = `${min}ms`;
+            document.getElementById('max-latency').textContent = `${max}ms`;
+            document.getElementById('success-rate').textContent = `${successRate.toFixed(0)}%`;
+            
+            const elapsed = (Date.now() - metrics.startTime) / 1000;
+            const throughput = metrics.latencies.length / elapsed;
+            document.getElementById('throughput').textContent = `${throughput.toFixed(1)}/s`;
+        }
+
+        function simulateError() {
+            sendCommand('UnknownAgent', 'invalid');
+            log('Simulating error...', 'warning');
+        }
+
+        function disconnectWS() {
+            if (ws) {
+                ws.close();
+                ws = null;
+                log('Disconnected', 'info');
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function generateId() {
+            return `msg-${Date.now()}-${++messageId}`;
+        }
+
+        // 自動接続
+        window.addEventListener('load', () => {
+            log('Test environment ready', 'success');
+            setTimeout(connectWS, 500);
+        });
+    </script>
+</body>
+</html>

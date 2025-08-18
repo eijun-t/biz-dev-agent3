@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Revolution Test App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div id="root" class="min-h-screen">
+        <!-- ヘッダー -->
+        <header class="bg-white dark:bg-gray-800 shadow">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        🚀 UI Revolution Test
+                    </h1>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                        <span id="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- エラー通知コンテナ -->
+        <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+        <!-- メインコンテンツ -->
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            <!-- 接続状態 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4">WebSocket接続テスト</h2>
+                <div class="flex items-center gap-4">
+                    <div id="connection-status" class="flex items-center gap-2">
+                        <div id="status-indicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                        <span id="status-text">未接続</span>
+                    </div>
+                    <button onclick="connectWebSocket()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                        接続
+                    </button>
+                    <button onclick="disconnectWebSocket()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                        切断
+                    </button>
+                </div>
+                <div id="ws-messages" class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg max-h-40 overflow-y-auto text-sm font-mono"></div>
+            </div>
+
+            <!-- エージェント進捗 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4">エージェント進捗</h2>
+                <div id="agents-progress" class="space-y-3"></div>
+            </div>
+
+            <!-- 通知テスト -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4">通知テスト</h2>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <button onclick="showToast('info', '情報', 'テストメッセージ')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                        Info
+                    </button>
+                    <button onclick="showToast('warning', '警告', 'テストメッセージ')" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg">
+                        Warning
+                    </button>
+                    <button onclick="showToast('error', 'エラー', 'テストメッセージ')" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                        Error
+                    </button>
+                    <button onclick="showToast('critical', '重大', 'テストメッセージ')" class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg animate-pulse">
+                        Critical
+                    </button>
+                    <button onclick="showToast('success', '成功', 'テストメッセージ')" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
+                        Success
+                    </button>
+                </div>
+            </div>
+
+            <!-- パフォーマンステスト -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4">パフォーマンステスト</h2>
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div id="latency" class="text-2xl font-bold text-blue-500">0ms</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">レイテンシ</div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div id="fps" class="text-2xl font-bold text-green-500">60fps</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">FPS</div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div id="memory" class="text-2xl font-bold text-purple-500">0MB</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">メモリ</div>
+                    </div>
+                </div>
+                <button onclick="runPerformanceTest()" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg">
+                    パフォーマンステスト実行
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // グローバル変数
+        let ws = null;
+        let messageCount = 0;
+        let agents = [
+            { name: 'Researcher', progress: 0 },
+            { name: 'Ideator', progress: 0 },
+            { name: 'Critic', progress: 0 },
+            { name: 'Analyst', progress: 0 },
+            { name: 'Writer', progress: 0 }
+        ];
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDarkMode();
+            renderAgents();
+            measureFPS();
+        });
+
+        // ダークモード
+        function initializeDarkMode() {
+            const isDark = localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+        }
+
+        // WebSocket
+        function connectWebSocket() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                showToast('warning', '警告', '既に接続されています');
+                return;
+            }
+
+            try {
+                ws = new WebSocket('ws://localhost:3001');
+                
+                ws.onopen = () => {
+                    updateConnectionStatus('connected');
+                    showToast('success', '接続成功', 'WebSocketサーバーに接続しました');
+                    addWSMessage('Connected to server');
+                };
+
+                ws.onmessage = (event) => {
+                    messageCount++;
+                    const data = JSON.parse(event.data);
+                    addWSMessage(`Received: ${JSON.stringify(data)}`);
+                    
+                    if (data.type === 'agent_update') {
+                        updateAgent(data.agent, data.progress);
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    showToast('error', 'エラー', '接続エラーが発生しました');
+                    addWSMessage(`Error: ${error}`);
+                };
+
+                ws.onclose = () => {
+                    updateConnectionStatus('disconnected');
+                    showToast('warning', '切断', 'WebSocketサーバーから切断されました');
+                    addWSMessage('Disconnected from server');
+                };
+            } catch (error) {
+                showToast('error', 'エラー', `接続失敗: ${error.message}`);
+            }
+        }
+
+        function disconnectWebSocket() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+
+        function updateConnectionStatus(status) {
+            const indicator = document.getElementById('status-indicator');
+            const text = document.getElementById('status-text');
+            
+            if (status === 'connected') {
+                indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+                text.textContent = '接続中';
+            } else {
+                indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+                text.textContent = '未接続';
+            }
+        }
+
+        function addWSMessage(message) {
+            const container = document.getElementById('ws-messages');
+            const timestamp = new Date().toLocaleTimeString();
+            container.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // トースト通知
+        function showToast(level, title, message) {
+            const container = document.getElementById('toast-container');
+            const id = `toast-${Date.now()}`;
+            
+            const colors = {
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500',
+                error: 'bg-red-500',
+                critical: 'bg-red-700 animate-pulse',
+                success: 'bg-green-500'
+            };
+            
+            const icons = {
+                info: '💡',
+                warning: '⚠️',
+                error: '❌',
+                critical: '🚨',
+                success: '✅'
+            };
+            
+            const toast = document.createElement('div');
+            toast.id = id;
+            toast.className = `${colors[level]} text-white rounded-lg p-4 min-w-[320px] shadow-lg transform transition-all duration-300`;
+            toast.innerHTML = `
+                <div class="flex items-start">
+                    <span class="text-2xl mr-3">${icons[level]}</span>
+                    <div class="flex-1">
+                        <h4 class="font-bold">${title}</h4>
+                        <p class="text-sm opacity-90">${message}</p>
+                    </div>
+                    <button onclick="removeToast('${id}')" class="ml-3 hover:opacity-75">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // 自動削除
+            if (level !== 'error' && level !== 'critical') {
+                setTimeout(() => removeToast(id), 5000);
+            }
+        }
+
+        function removeToast(id) {
+            const toast = document.getElementById(id);
+            if (toast) {
+                toast.style.transform = 'translateX(100%)';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        // エージェント進捗
+        function renderAgents() {
+            const container = document.getElementById('agents-progress');
+            container.innerHTML = agents.map(agent => `
+                <div class="space-y-1">
+                    <div class="flex justify-between text-sm">
+                        <span class="font-medium">${agent.name}</span>
+                        <span class="text-gray-600 dark:text-gray-400">${agent.progress}%</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 transition-all duration-500" style="width: ${agent.progress}%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateAgent(name, progress) {
+            const agent = agents.find(a => a.name === name);
+            if (agent) {
+                agent.progress = Math.min(100, progress);
+                renderAgents();
+            }
+        }
+
+        // パフォーマンステスト
+        let fpsInterval;
+        function measureFPS() {
+            let lastTime = performance.now();
+            let frames = 0;
+            
+            function updateFPS() {
+                frames++;
+                const currentTime = performance.now();
+                
+                if (currentTime >= lastTime + 1000) {
+                    const fps = Math.round(frames * 1000 / (currentTime - lastTime));
+                    document.getElementById('fps').textContent = fps + 'fps';
+                    frames = 0;
+                    lastTime = currentTime;
+                }
+                
+                requestAnimationFrame(updateFPS);
+            }
+            
+            updateFPS();
+        }
+
+        function runPerformanceTest() {
+            showToast('info', 'テスト開始', 'パフォーマンステストを実行しています...');
+            
+            // レイテンシテスト
+            const startTime = performance.now();
+            setTimeout(() => {
+                const latency = Math.round(performance.now() - startTime);
+                document.getElementById('latency').textContent = latency + 'ms';
+            }, 0);
+            
+            // メモリ使用量
+            if (performance.memory) {
+                const memory = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                document.getElementById('memory').textContent = memory + 'MB';
+            }
+            
+            // エージェント進捗シミュレーション
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                agents.forEach(agent => {
+                    agent.progress = Math.min(100, progress + Math.random() * 10);
+                });
+                renderAgents();
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showToast('success', 'テスト完了', 'パフォーマンステストが完了しました');
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>

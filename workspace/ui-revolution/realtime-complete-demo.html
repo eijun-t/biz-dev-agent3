@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>🎯 Realtime Display 100% Complete Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-enter { animation: slideIn 0.3s ease-out; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-6">
+        <h1 class="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+            🚀 Realtime Display 100% Complete
+        </h1>
+
+        <!-- Error Notification Container -->
+        <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+        <!-- Connection Status -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="connection-indicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                    <span id="connection-status">Disconnected</span>
+                </div>
+                <button onclick="testConnection()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">
+                    Test Connection
+                </button>
+            </div>
+        </div>
+
+        <!-- Pause/Resume Controls -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">⏯ Pause/Resume Control</h2>
+            <div class="flex gap-3 mb-4">
+                <button id="start-btn" onclick="handleStart()" class="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-medium transition-colors">
+                    ▶️ Start
+                </button>
+                <button id="pause-btn" onclick="handlePause()" class="flex-1 px-4 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg font-medium transition-colors" disabled>
+                    ⏸ Pause
+                </button>
+                <button id="resume-btn" onclick="handleResume()" class="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors hidden">
+                    ▶️ Resume
+                </button>
+                <button id="stop-btn" onclick="handleStop()" class="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 rounded-lg font-medium transition-colors">
+                    ⏹ Stop
+                </button>
+            </div>
+
+            <!-- Agent Progress -->
+            <div class="space-y-3" id="agent-progress">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Error Level Testing -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">🚨 Error Notification Testing</h2>
+            <div class="grid grid-cols-5 gap-2">
+                <button onclick="showNotification('info')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg">
+                    Info
+                </button>
+                <button onclick="showNotification('warning')" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg">
+                    Warning
+                </button>
+                <button onclick="showNotification('error')" class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg">
+                    Error
+                </button>
+                <button onclick="showNotification('critical')" class="px-4 py-2 bg-red-700 hover:bg-red-800 rounded-lg pulse">
+                    Critical
+                </button>
+                <button onclick="showNotification('success')" class="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg">
+                    Success
+                </button>
+            </div>
+        </div>
+
+        <!-- Real-time Sync Status -->
+        <div class="bg-gray-800 rounded-lg p-6">
+            <h2 class="text-xl font-bold mb-4">📊 Real-time Sync Status</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-blue-400" id="latency">0ms</div>
+                    <div class="text-sm text-gray-400">Latency</div>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-green-400" id="messages">0</div>
+                    <div class="text-sm text-gray-400">Messages</div>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-purple-400" id="sync-status">100%</div>
+                    <div class="text-sm text-gray-400">Sync Status</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let executionState = 'idle';
+        let agents = [
+            { name: 'Researcher', progress: 0, state: 'idle' },
+            { name: 'Ideator', progress: 0, state: 'idle' },
+            { name: 'Critic', progress: 0, state: 'idle' },
+            { name: 'Analyst', progress: 0, state: 'idle' },
+            { name: 'Writer', progress: 0, state: 'idle' }
+        ];
+        let checkpoints = new Map();
+        let messageCount = 0;
+        let ws = null;
+
+        // Initialize
+        function init() {
+            renderAgentProgress();
+            connectWebSocket();
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:3001');
+            
+            ws.onopen = () => {
+                updateConnectionStatus('connected');
+                showNotification('success', 'Connected', 'WebSocket connection established');
+            };
+
+            ws.onclose = () => {
+                updateConnectionStatus('disconnected');
+                showNotification('warning', 'Disconnected', 'WebSocket connection lost');
+            };
+
+            ws.onerror = (error) => {
+                showNotification('error', 'Connection Error', 'Failed to connect to WebSocket server');
+            };
+
+            ws.onmessage = (event) => {
+                messageCount++;
+                document.getElementById('messages').textContent = messageCount;
+                handleWebSocketMessage(JSON.parse(event.data));
+            };
+        }
+
+        function handleWebSocketMessage(message) {
+            if (message.type === 'agent_update') {
+                updateAgentProgress(message.agent, message.progress);
+            }
+            if (message.latency) {
+                document.getElementById('latency').textContent = message.latency + 'ms';
+            }
+        }
+
+        // Connection status
+        function updateConnectionStatus(status) {
+            const indicator = document.getElementById('connection-indicator');
+            const text = document.getElementById('connection-status');
+            
+            if (status === 'connected') {
+                indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+                text.textContent = 'Connected';
+            } else {
+                indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        function testConnection() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                showNotification('info', 'Connection Test', 'WebSocket is connected and working');
+            } else {
+                showNotification('error', 'Connection Test', 'WebSocket is not connected');
+                connectWebSocket();
+            }
+        }
+
+        // Error Notifications
+        function showNotification(level, title, message) {
+            const container = document.getElementById('toast-container');
+            const id = 'toast-' + Date.now();
+            
+            const colors = {
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500',
+                error: 'bg-red-500',
+                critical: 'bg-red-700 pulse',
+                success: 'bg-green-500'
+            };
+
+            const icons = {
+                info: '💡',
+                warning: '⚠️',
+                error: '❌',
+                critical: '🚨',
+                success: '✅'
+            };
+
+            const toast = document.createElement('div');
+            toast.id = id;
+            toast.className = `${colors[level]} rounded-lg p-4 min-w-[320px] max-w-md toast-enter shadow-2xl border-l-4 border-opacity-50`;
+            toast.innerHTML = `
+                <div class="flex items-start">
+                    <span class="text-2xl mr-3">${icons[level]}</span>
+                    <div class="flex-1">
+                        <h4 class="font-bold">${title}</h4>
+                        <p class="text-sm opacity-90">${message || 'Test notification'}</p>
+                    </div>
+                    <button onclick="removeToast('${id}')" class="ml-3 hover:opacity-75">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+
+            // Auto remove
+            if (level !== 'error' && level !== 'critical') {
+                setTimeout(() => removeToast(id), 5000);
+            }
+        }
+
+        function removeToast(id) {
+            const toast = document.getElementById(id);
+            if (toast) {
+                toast.style.transform = 'translateX(100%)';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        // Pause/Resume Controls
+        function handleStart() {
+            executionState = 'running';
+            updateControlButtons();
+            startSimulation();
+            showNotification('success', 'Started', 'All agents started successfully');
+        }
+
+        function handlePause() {
+            executionState = 'paused';
+            updateControlButtons();
+            
+            // Save checkpoints
+            agents.forEach(agent => {
+                if (agent.state === 'running') {
+                    checkpoints.set(agent.name, {
+                        progress: agent.progress,
+                        timestamp: new Date()
+                    });
+                    agent.state = 'paused';
+                }
+            });
+            
+            renderAgentProgress();
+            showNotification('warning', 'Paused', `${agents.filter(a => a.state === 'paused').length} agents paused`);
+        }
+
+        function handleResume() {
+            executionState = 'running';
+            updateControlButtons();
+            
+            // Restore from checkpoints
+            agents.forEach(agent => {
+                if (agent.state === 'paused') {
+                    const checkpoint = checkpoints.get(agent.name);
+                    if (checkpoint) {
+                        agent.progress = checkpoint.progress;
+                    }
+                    agent.state = 'running';
+                }
+            });
+            
+            renderAgentProgress();
+            resumeSimulation();
+            showNotification('success', 'Resumed', 'Execution resumed from checkpoints');
+        }
+
+        function handleStop() {
+            executionState = 'stopped';
+            updateControlButtons();
+            
+            agents.forEach(agent => {
+                agent.state = 'idle';
+                agent.progress = 0;
+            });
+            
+            checkpoints.clear();
+            renderAgentProgress();
+            showNotification('warning', 'Stopped', 'All agents stopped');
+        }
+
+        function updateControlButtons() {
+            const startBtn = document.getElementById('start-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resumeBtn = document.getElementById('resume-btn');
+            const stopBtn = document.getElementById('stop-btn');
+
+            startBtn.disabled = executionState === 'running';
+            pauseBtn.disabled = executionState !== 'running';
+            stopBtn.disabled = executionState === 'idle' || executionState === 'stopped';
+
+            if (executionState === 'paused') {
+                pauseBtn.classList.add('hidden');
+                resumeBtn.classList.remove('hidden');
+            } else {
+                pauseBtn.classList.remove('hidden');
+                resumeBtn.classList.add('hidden');
+            }
+        }
+
+        // Agent Progress Rendering
+        function renderAgentProgress() {
+            const container = document.getElementById('agent-progress');
+            container.innerHTML = agents.map(agent => `
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-medium w-24">${agent.name}</span>
+                    <div class="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full transition-all duration-500 ${
+                            agent.state === 'running' ? 'bg-blue-500' :
+                            agent.state === 'paused' ? 'bg-yellow-500' :
+                            agent.state === 'completed' ? 'bg-green-500' :
+                            'bg-gray-500'
+                        }" style="width: ${agent.progress}%"></div>
+                    </div>
+                    <span class="text-sm text-gray-400 w-12 text-right">${agent.progress}%</span>
+                    <span class="text-xs px-2 py-1 rounded ${
+                        agent.state === 'running' ? 'bg-blue-500/20 text-blue-400' :
+                        agent.state === 'paused' ? 'bg-yellow-500/20 text-yellow-400' :
+                        agent.state === 'completed' ? 'bg-green-500/20 text-green-400' :
+                        'bg-gray-500/20 text-gray-400'
+                    }">${agent.state}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateAgentProgress(agentName, progress) {
+            const agent = agents.find(a => a.name === agentName);
+            if (agent) {
+                agent.progress = progress;
+                if (progress >= 100) {
+                    agent.state = 'completed';
+                }
+                renderAgentProgress();
+            }
+        }
+
+        // Simulation
+        let simulationInterval = null;
+
+        function startSimulation() {
+            simulationInterval = setInterval(() => {
+                if (executionState !== 'running') return;
+
+                agents.forEach(agent => {
+                    if (agent.state === 'running' && agent.progress < 100) {
+                        agent.progress = Math.min(100, agent.progress + Math.random() * 5);
+                        if (agent.progress >= 100) {
+                            agent.state = 'completed';
+                            showNotification('success', `${agent.name} Complete`, `Agent finished processing`);
+                        }
+                    } else if (agent.state === 'idle') {
+                        agent.state = 'running';
+                    }
+                });
+
+                renderAgentProgress();
+                updateSyncStatus();
+            }, 500);
+        }
+
+        function resumeSimulation() {
+            startSimulation();
+        }
+
+        function updateSyncStatus() {
+            const totalProgress = agents.reduce((sum, a) => sum + a.progress, 0) / agents.length;
+            document.getElementById('sync-status').textContent = Math.round(totalProgress) + '%';
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

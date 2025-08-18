@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Connection Test - Worker3 Integration</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .agent-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+            transition: width 0.3s ease;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-idle { background: #6c757d; }
+        .status-running { background: #007bff; }
+        .status-completed { background: #28a745; }
+        .status-failed { background: #dc3545; }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .metric {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .metric-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .metric-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .controls {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Realtime Connection Test - Worker3 Integration</h1>
+        
+        <div class="controls">
+            <button onclick="startSSE()">Start SSE Stream</button>
+            <button onclick="startDataFlow()">Start DataFlow</button>
+            <button onclick="updateStatus()">Update Random Status</button>
+            <button onclick="stopAll()">Stop All</button>
+        </div>
+
+        <div class="grid">
+            <!-- Researcher Agent -->
+            <div class="card">
+                <div class="agent-status">
+                    <h3>🔍 Researcher</h3>
+                    <span class="status-badge status-idle" id="researcher-status">idle</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="researcher-progress" style="width: 0%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Throughput</div>
+                        <div class="metric-value" id="researcher-throughput">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value" id="researcher-latency">0ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ideator Agent -->
+            <div class="card">
+                <div class="agent-status">
+                    <h3>💡 Ideator</h3>
+                    <span class="status-badge status-idle" id="ideator-status">idle</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="ideator-progress" style="width: 0%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Throughput</div>
+                        <div class="metric-value" id="ideator-throughput">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value" id="ideator-latency">0ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critic Agent -->
+            <div class="card">
+                <div class="agent-status">
+                    <h3>🎯 Critic</h3>
+                    <span class="status-badge status-idle" id="critic-status">idle</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="critic-progress" style="width: 0%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Throughput</div>
+                        <div class="metric-value" id="critic-throughput">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value" id="critic-latency">0ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyst Agent -->
+            <div class="card">
+                <div class="agent-status">
+                    <h3>📊 Analyst</h3>
+                    <span class="status-badge status-idle" id="analyst-status">idle</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="analyst-progress" style="width: 0%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Throughput</div>
+                        <div class="metric-value" id="analyst-throughput">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value" id="analyst-latency">0ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Writer Agent -->
+            <div class="card">
+                <div class="agent-status">
+                    <h3>✍️ Writer</h3>
+                    <span class="status-badge status-idle" id="writer-status">idle</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="writer-progress" style="width: 0%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Throughput</div>
+                        <div class="metric-value" id="writer-throughput">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value" id="writer-latency">0ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Metrics -->
+            <div class="card">
+                <h3>📈 System Metrics</h3>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Total Progress</div>
+                        <div class="metric-value" id="total-progress">0%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value" id="success-rate">0%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Flow Rate</div>
+                        <div class="metric-value" id="flow-rate">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Error Rate</div>
+                        <div class="metric-value" id="error-rate">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <h3>📝 Event Log</h3>
+            <div class="log" id="event-log"></div>
+        </div>
+    </div>
+
+    <script>
+        let eventSource = null;
+        let dataFlowReader = null;
+        const sessionId = 'test-session-' + Date.now();
+        const agents = ['researcher', 'ideator', 'critic', 'analyst', 'writer'];
+
+        function log(message) {
+            const logEl = document.getElementById('event-log');
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            logEl.innerHTML = `[${timestamp}] ${message}<br>` + logEl.innerHTML;
+        }
+
+        async function startSSE() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            log('🔗 Connecting to SSE stream...');
+            eventSource = new EventSource(`/api/agents/stream?sessionId=${sessionId}`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleStreamData(data);
+            };
+
+            eventSource.onerror = (error) => {
+                log('❌ SSE Error: ' + error);
+            };
+        }
+
+        async function startDataFlow() {
+            log('🔗 Connecting to DataFlow stream...');
+            
+            try {
+                const response = await fetch(`/api/agents/dataflow?sessionId=${sessionId}`);
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const lines = decoder.decode(value).split('\n').filter(line => line.trim());
+                    for (const line of lines) {
+                        try {
+                            const packet = JSON.parse(line);
+                            handleDataFlowPacket(packet);
+                        } catch (e) {
+                            // Ignore parse errors
+                        }
+                    }
+                }
+            } catch (error) {
+                log('❌ DataFlow Error: ' + error.message);
+            }
+        }
+
+        function handleStreamData(data) {
+            log(`📦 Received: ${data.type}`);
+
+            if (data.type === 'progress' && data.data.agents) {
+                data.data.agents.forEach(agent => {
+                    updateAgent(agent.name.toLowerCase(), agent.status, agent.progress);
+                });
+
+                if (data.data.totalProgress !== undefined) {
+                    document.getElementById('total-progress').textContent = 
+                        Math.round(data.data.totalProgress) + '%';
+                }
+            }
+        }
+
+        function handleDataFlowPacket(packet) {
+            log(`🌊 DataFlow: ${packet.flowType}`);
+
+            if (packet.data.agents) {
+                packet.data.agents.forEach(agent => {
+                    updateAgent(agent.name.toLowerCase(), agent.status, agent.progress);
+                    
+                    if (agent.throughput !== undefined) {
+                        document.getElementById(`${agent.id}-throughput`).textContent = 
+                            Math.round(agent.throughput);
+                    }
+                    if (agent.latency !== undefined) {
+                        document.getElementById(`${agent.id}-latency`).textContent = 
+                            Math.round(agent.latency) + 'ms';
+                    }
+                });
+            }
+
+            if (packet.data.metrics) {
+                document.getElementById('success-rate').textContent = 
+                    Math.round(packet.data.metrics.successRate) + '%';
+                document.getElementById('error-rate').textContent = 
+                    Math.round(packet.data.metrics.errorRate) + '%';
+            }
+
+            if (packet.data.pipeline) {
+                document.getElementById('flow-rate').textContent = 
+                    Math.round(packet.data.pipeline.flowRate);
+            }
+        }
+
+        function updateAgent(name, status, progress) {
+            const statusEl = document.getElementById(`${name}-status`);
+            const progressEl = document.getElementById(`${name}-progress`);
+
+            if (statusEl) {
+                statusEl.textContent = status;
+                statusEl.className = `status-badge status-${status}`;
+            }
+
+            if (progressEl) {
+                progressEl.style.width = progress + '%';
+            }
+        }
+
+        async function updateStatus() {
+            const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+            const randomStatus = ['idle', 'running', 'completed'][Math.floor(Math.random() * 3)];
+            const randomProgress = Math.floor(Math.random() * 100);
+
+            log(`📤 Updating ${randomAgent}: ${randomStatus} (${randomProgress}%)`);
+
+            const response = await fetch('/api/agents/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId,
+                    agentName: randomAgent.charAt(0).toUpperCase() + randomAgent.slice(1),
+                    status: randomStatus,
+                    progress: randomProgress,
+                    currentTask: `Task ${Math.floor(Math.random() * 10)}`
+                })
+            });
+
+            if (response.ok) {
+                log('✅ Status updated successfully');
+            }
+        }
+
+        function stopAll() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            log('🛑 All connections stopped');
+        }
+
+        // Auto-start on load
+        window.addEventListener('load', () => {
+            log('🎉 Test client ready. Session: ' + sessionId);
+        });
+    </script>
+</body>
+</html>

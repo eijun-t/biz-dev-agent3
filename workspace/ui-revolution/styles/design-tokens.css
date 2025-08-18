@@ -1,0 +1,323 @@
+/* Design Tokens - モダンUI統一スタイル定義 */
+
+:root {
+  /* カラーパレット - WCAG AAA準拠 */
+  --color-primary: hsl(222, 47%, 40%);
+  --color-primary-light: hsl(222, 47%, 50%);
+  --color-primary-dark: hsl(222, 47%, 30%);
+  --color-primary-contrast: hsl(0, 0%, 100%);
+
+  --color-secondary: hsl(210, 40%, 96%);
+  --color-secondary-dark: hsl(210, 40%, 86%);
+  --color-secondary-contrast: hsl(222, 47%, 11%);
+
+  --color-success: hsl(142, 71%, 45%);
+  --color-success-light: hsl(142, 71%, 55%);
+  --color-success-contrast: hsl(0, 0%, 100%);
+
+  --color-warning: hsl(38, 92%, 50%);
+  --color-warning-light: hsl(38, 92%, 60%);
+  --color-warning-contrast: hsl(0, 0%, 0%);
+
+  --color-danger: hsl(0, 84%, 60%);
+  --color-danger-light: hsl(0, 84%, 70%);
+  --color-danger-contrast: hsl(0, 0%, 100%);
+
+  --color-info: hsl(201, 89%, 48%);
+  --color-info-light: hsl(201, 89%, 58%);
+  --color-info-contrast: hsl(0, 0%, 100%);
+
+  /* グレースケール */
+  --color-gray-50: hsl(210, 20%, 98%);
+  --color-gray-100: hsl(210, 20%, 96%);
+  --color-gray-200: hsl(210, 20%, 93%);
+  --color-gray-300: hsl(210, 20%, 88%);
+  --color-gray-400: hsl(210, 20%, 70%);
+  --color-gray-500: hsl(210, 20%, 50%);
+  --color-gray-600: hsl(210, 20%, 40%);
+  --color-gray-700: hsl(210, 20%, 30%);
+  --color-gray-800: hsl(210, 20%, 20%);
+  --color-gray-900: hsl(210, 20%, 10%);
+
+  /* タイポグラフィ */
+  --font-sans: 'Inter', 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.5rem);
+  --font-size-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* スペーシング（8pxグリッドシステム） */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;  /* 4px */
+  --spacing-2: 0.5rem;   /* 8px */
+  --spacing-3: 0.75rem;  /* 12px */
+  --spacing-4: 1rem;     /* 16px */
+  --spacing-5: 1.25rem;  /* 20px */
+  --spacing-6: 1.5rem;   /* 24px */
+  --spacing-8: 2rem;     /* 32px */
+  --spacing-10: 2.5rem;  /* 40px */
+  --spacing-12: 3rem;    /* 48px */
+  --spacing-16: 4rem;    /* 64px */
+  --spacing-20: 5rem;    /* 80px */
+  --spacing-24: 6rem;    /* 96px */
+
+  /* 角丸 */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;  /* 2px */
+  --radius-base: 0.25rem; /* 4px */
+  --radius-md: 0.375rem;  /* 6px */
+  --radius-lg: 0.5rem;    /* 8px */
+  --radius-xl: 0.75rem;   /* 12px */
+  --radius-2xl: 1rem;     /* 16px */
+  --radius-3xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;
+
+  /* シャドウ */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-base: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-2xl: 0 35px 60px -15px rgb(0 0 0 / 0.3);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* アニメーション */
+  --duration-instant: 50ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+  --duration-slowest: 1000ms;
+
+  --easing-linear: linear;
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Z-index */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+}
+
+/* ダークモード */
+[data-theme="dark"] {
+  --color-primary: hsl(222, 47%, 60%);
+  --color-primary-light: hsl(222, 47%, 70%);
+  --color-primary-dark: hsl(222, 47%, 50%);
+  --color-primary-contrast: hsl(0, 0%, 0%);
+
+  --color-secondary: hsl(210, 40%, 10%);
+  --color-secondary-dark: hsl(210, 40%, 5%);
+  --color-secondary-contrast: hsl(0, 0%, 100%);
+
+  --color-success: hsl(142, 71%, 55%);
+  --color-warning: hsl(38, 92%, 60%);
+  --color-danger: hsl(0, 84%, 70%);
+  --color-info: hsl(201, 89%, 58%);
+
+  /* ダークモード用グレースケール（反転） */
+  --color-gray-50: hsl(210, 20%, 10%);
+  --color-gray-100: hsl(210, 20%, 12%);
+  --color-gray-200: hsl(210, 20%, 15%);
+  --color-gray-300: hsl(210, 20%, 20%);
+  --color-gray-400: hsl(210, 20%, 30%);
+  --color-gray-500: hsl(210, 20%, 50%);
+  --color-gray-600: hsl(210, 20%, 60%);
+  --color-gray-700: hsl(210, 20%, 70%);
+  --color-gray-800: hsl(210, 20%, 80%);
+  --color-gray-900: hsl(210, 20%, 90%);
+
+  /* ダークモード用シャドウ */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-base: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+  --shadow-2xl: 0 35px 60px -15px rgb(0 0 0 / 0.6);
+}
+
+/* ユーティリティクラス */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* フォーカススタイル（アクセシビリティ） */
+.focus-visible-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-visible-ring:focus-visible {
+  outline-color: var(--color-primary);
+}
+
+/* スクロールバーカスタマイズ */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--radius-lg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-gray-100);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* アニメーション */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* プリントスタイル */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
+
+/* モーション設定 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ハイコントラストモード */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary: hsl(222, 100%, 30%);
+    --color-gray-400: hsl(210, 20%, 50%);
+    --shadow-base: 0 0 0 1px currentColor;
+  }
+}

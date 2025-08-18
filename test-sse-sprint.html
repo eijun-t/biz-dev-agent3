@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Sprint Test - 30分実装</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #38bdf8;
+            text-align: center;
+        }
+        .status {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .agents {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .agent {
+            background: #1e293b;
+            border: 2px solid #334155;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .agent.running {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .agent.completed {
+            border-color: #10b981;
+            background: #064e3b;
+        }
+        .agent-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .progress-bar {
+            background: #334155;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: width 0.3s;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .log {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SSE Sprint Test - リアルタイム配信</h1>
+        
+        <div class="status">
+            <div>
+                <span id="connection-status">⚫ 未接続</span>
+                <span style="margin-left: 20px">セッション: <span id="session-id">-</span></span>
+            </div>
+            <div id="timer">00:00</div>
+        </div>
+
+        <div class="controls">
+            <button onclick="startSSE()">🔗 SSE接続開始</button>
+            <button onclick="stopSSE()">⏹ 接続停止</button>
+            <button onclick="clearLog()">🗑 ログクリア</button>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value" id="total-progress">0%</div>
+                <div class="metric-label">全体進捗</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="active-count">0</div>
+                <div class="metric-label">実行中</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="completed-count">0</div>
+                <div class="metric-label">完了</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="update-rate">0</div>
+                <div class="metric-label">更新/秒</div>
+            </div>
+        </div>
+
+        <div class="agents" id="agents-container">
+            <!-- エージェントカードは動的に生成 -->
+        </div>
+
+        <div class="log" id="event-log"></div>
+    </div>
+
+    <script>
+        let eventSource = null;
+        let sessionId = `test-${Date.now()}`;
+        let startTime = null;
+        let updateCount = 0;
+        let lastUpdateTime = Date.now();
+
+        // 初期化
+        document.getElementById('session-id').textContent = sessionId;
+
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('event-log');
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#64748b';
+            logEl.innerHTML = `<div style="color: ${color}">[${timestamp}] ${message}</div>` + logEl.innerHTML;
+        }
+
+        function startSSE() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            log('🔗 SSE接続を開始...', 'info');
+            startTime = Date.now();
+            updateCount = 0;
+
+            // シンプルなエンドポイントに接続
+            eventSource = new EventSource(`/api/agents/stream-simple?sessionId=${sessionId}`);
+            
+            eventSource.onopen = () => {
+                document.getElementById('connection-status').textContent = '🟢 接続中';
+                log('✅ SSE接続成功！', 'success');
+            };
+
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleStreamData(data);
+                    
+                    // 更新レート計算
+                    updateCount++;
+                    const now = Date.now();
+                    if (now - lastUpdateTime > 1000) {
+                        document.getElementById('update-rate').textContent = updateCount;
+                        updateCount = 0;
+                        lastUpdateTime = now;
+                    }
+                } catch (error) {
+                    log('❌ データ解析エラー: ' + error.message, 'error');
+                }
+            };
+
+            eventSource.onerror = (error) => {
+                document.getElementById('connection-status').textContent = '🔴 エラー';
+                log('❌ SSE接続エラー', 'error');
+            };
+
+            // タイマー更新
+            setInterval(() => {
+                if (startTime) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('timer').textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function handleStreamData(data) {
+            log(`📦 ${data.type}: ${data.agent || 'system'}`);
+
+            if (data.type === 'init' && data.data.agents) {
+                // エージェントカードを生成
+                const container = document.getElementById('agents-container');
+                container.innerHTML = '';
+                data.data.agents.forEach(agent => {
+                    const card = createAgentCard(agent);
+                    container.appendChild(card);
+                });
+            }
+
+            if (data.type === 'progress' && data.data.agents) {
+                // エージェント状態を更新
+                data.data.agents.forEach(agent => {
+                    updateAgentCard(agent);
+                });
+
+                // メトリクス更新
+                if (data.data.totalProgress !== undefined) {
+                    document.getElementById('total-progress').textContent = 
+                        Math.round(data.data.totalProgress) + '%';
+                }
+
+                const activeCount = data.data.agents.filter(a => a.status === 'running').length;
+                const completedCount = data.data.agents.filter(a => a.status === 'completed').length;
+                document.getElementById('active-count').textContent = activeCount;
+                document.getElementById('completed-count').textContent = completedCount;
+            }
+
+            if (data.type === 'complete') {
+                log('🎉 全エージェント完了！', 'success');
+                document.getElementById('connection-status').textContent = '✅ 完了';
+            }
+        }
+
+        function createAgentCard(agent) {
+            const card = document.createElement('div');
+            card.className = 'agent';
+            card.id = `agent-${agent.name.toLowerCase()}`;
+            card.innerHTML = `
+                <div class="agent-name">${agent.name}</div>
+                <div class="agent-status">状態: <span id="${agent.name.toLowerCase()}-status">${agent.status}</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="${agent.name.toLowerCase()}-progress" style="width: ${agent.progress}%"></div>
+                </div>
+                <div class="agent-progress">進捗: <span id="${agent.name.toLowerCase()}-percent">${agent.progress}%</span></div>
+            `;
+            return card;
+        }
+
+        function updateAgentCard(agent) {
+            const card = document.getElementById(`agent-${agent.name.toLowerCase()}`);
+            if (card) {
+                // カードのクラスを更新
+                card.className = `agent ${agent.status}`;
+                
+                // 状態とプログレスを更新
+                document.getElementById(`${agent.name.toLowerCase()}-status`).textContent = agent.status;
+                document.getElementById(`${agent.name.toLowerCase()}-progress`).style.width = agent.progress + '%';
+                document.getElementById(`${agent.name.toLowerCase()}-percent`).textContent = agent.progress + '%';
+            }
+        }
+
+        function stopSSE() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+                document.getElementById('connection-status').textContent = '⚫ 切断';
+                log('⏹ SSE接続を停止しました');
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('event-log').innerHTML = '';
+        }
+
+        // ページロード時に自動接続
+        window.addEventListener('load', () => {
+            log('🎉 テストクライアント準備完了');
+            // 自動的に接続開始
+            setTimeout(() => startSSE(), 1000);
+        });
+    </script>
+</body>
+</html>

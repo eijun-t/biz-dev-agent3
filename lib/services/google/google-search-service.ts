@@ -10,7 +10,7 @@ const googleSearchResponseSchema = z.object({
   items: z.array(z.object({
     title: z.string(),
     link: z.string(),
-    snippet: z.string(),
+    snippet: z.string().optional(), // snippetをオプショナルに変更
     htmlSnippet: z.string().optional(),
   })).optional(),
   searchInformation: z.object({
@@ -123,8 +123,8 @@ export class GoogleSearchService {
       const searchResults: SearchResult[] = (validatedData.items || []).map(item => ({
         title: item.title,
         url: item.link,
-        snippet: item.snippet,
-        content: item.snippet, // Google APIでは全文は取得できない
+        snippet: item.snippet || '', // snippetが存在しない場合は空文字列
+        content: item.snippet || '', // Google APIでは全文は取得できない
       }));
 
       // キャッシュに保存

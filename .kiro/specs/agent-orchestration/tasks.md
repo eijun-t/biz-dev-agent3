@@ -2,20 +2,20 @@
 
 ## Task 1: プロジェクト構造とコアインターフェース定義
 
-- [ ] 1.1 オーケストレーション用ディレクトリ構造の作成
+- [x] 1.1 オーケストレーション用ディレクトリ構造の作成
   - lib/agents/orchestration/ディレクトリを作成
   - lib/services/ディレクトリ配下にjob-queue.ts、progress-tracker.tsを配置
   - lib/types/orchestration.tsで型定義ファイルを作成
   - __tests__/orchestration/ディレクトリでテスト構造を準備
   - _Requirements: 1.1, 2.1_
 
-- [ ] 1.2 LangGraph依存関係のインストールと設定
+- [x] 1.2 LangGraph依存関係のインストールと設定
   - package.jsonに@langchain/langgraph依存関係を追加
   - tsconfig.jsonでLangGraph型定義の設定を確認
   - Edge Runtime互換性の確認（fs依存がないことを確認）
   - _Requirements: 1.1, 6.1_
 
-- [ ] 1.3 オーケストレーション用TypeScript型定義の作成
+- [x] 1.3 オーケストレーション用TypeScript型定義の作成
   - lib/types/orchestration.tsにGraphState、Job、Checkpoint、ProgressEvent型を定義
   - 各エージェントの出力型インターフェースを定義（ResearcherOutput等）
   - エラー型とリカバリーアクション型を定義
@@ -23,14 +23,14 @@
 
 ## Task 2: データベーススキーマとマイグレーション実装
 
-- [ ] 2.1 generation_jobsテーブルのマイグレーション作成
+- [x] 2.1 generation_jobsテーブルのマイグレーション作成
   - supabase/migrations/に新規マイグレーションファイルを作成
   - generation_jobsテーブルのCREATE文を実装（status、priority、input/output JSONB含む）
   - インデックス作成（status、user_id、created_at）
   - RLSポリシーの設定（user_idベースのアクセス制御）
   - _Requirements: 3.1, 6.1, 8.1_
 
-- [ ] 2.2 checkpointsテーブルのマイグレーション作成
+- [x] 2.2 checkpointsテーブルのマイグレーション作成
   - checkpointsテーブルのCREATE文を実装（state JSONB含む）
   - session_idとcreated_atの複合インデックス作成
   - RLSポリシーの設定（session経由のアクセス制御）
@@ -39,13 +39,13 @@
 
 ## Task 3: Zodスキーマとバリデーション実装
 
-- [ ] 3.1 オーケストレーション用Zodスキーマの作成
+- [x] 3.1 オーケストレーション用Zodスキーマの作成
   - lib/validations/orchestration.tsを作成
   - GraphStateSchema、JobInputSchema、ProgressEventSchemaを定義
   - 各エージェント入出力のバリデーションスキーマを作成
   - _Requirements: 2.2, 2.3_
 
-- [ ] 3.2 バリデーションユニットテストの作成
+- [x] 3.2 バリデーションユニットテストの作成
   - __tests__/validations/orchestration.test.tsを作成
   - 正常系・異常系のバリデーションテストを実装
   - 型エラーメッセージの検証テストを追加
@@ -53,13 +53,13 @@
 
 ## Task 4: StateManagerサービスの実装
 
-- [ ] 4.1 StateManagerクラスの基本実装
+- [x] 4.1 StateManagerクラスの基本実装
   - lib/agents/orchestration/state-manager.tsを作成
   - validateInput、transformOutput、mergeStateメソッドを実装
   - serializeForCheckpointメソッドでJSONシリアライズを実装
   - _Requirements: 2.1, 2.2, 2.4_
 
-- [ ] 4.2 StateManagerのユニットテスト作成
+- [x] 4.2 StateManagerのユニットテスト作成
   - __tests__/orchestration/state-manager.test.tsを作成
   - 各メソッドの正常系テストを実装
   - エージェント間のデータ変換テストを追加
@@ -67,20 +67,20 @@
 
 ## Task 5: JobQueueServiceの実装
 
-- [ ] 5.1 JobQueueServiceクラスの基本実装
+- [x] 5.1 JobQueueServiceクラスの基本実装
   - lib/services/job-queue.tsを作成
   - enqueue、dequeue、updateStatusメソッドを実装
   - FIFOキューロジックとpriority処理を実装
   - getActiveJobsで並行実行数チェック機能を追加
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 5.2 並行処理制御とキャンセル機能の実装
+- [x] 5.2 並行処理制御とキャンセル機能の実装
   - ConcurrencyControllerクラスを実装（MAX_CONCURRENT=5）
   - cancelJobメソッドで実行中ジョブの安全な停止を実装
   - waitForSlotメソッドでキュー待機処理を実装
   - _Requirements: 3.3, 3.7, 7.4_
 
-- [ ] 5.3 JobQueueServiceの統合テスト作成
+- [x] 5.3 JobQueueServiceの統合テスト作成
   - __tests__/services/job-queue.test.tsを作成
   - 並行実行制限のテスト（5ジョブ同時実行）
   - FIFO順序保証のテスト
@@ -89,27 +89,27 @@
 
 ## Task 6: LangGraph AgentGraphの実装
 
-- [ ] 6.1 AgentGraphクラスの基本構造実装
+- [x] 6.1 AgentGraphクラスの基本構造実装
   - lib/agents/orchestration/agent-graph.tsを作成
   - LangGraphのStateGraphを使用してエージェントノードを定義
   - Researcher → Ideator → Critic → Analyst → Writerの順序でedgeを設定
   - compileメソッドでグラフをコンパイル
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 6.2 エージェント実行とデータ受け渡しの実装
+- [x] 6.2 エージェント実行とデータ受け渡しの実装
   - executeメソッドで各エージェントを順次実行
   - 各エージェント間でGraphStateを介してデータを受け渡し
   - current_phaseとprogressの更新ロジックを実装
   - agent_logsテーブルへの記録処理を追加
   - _Requirements: 1.2, 1.3, 1.5, 2.4_
 
-- [ ] 6.3 チェックポイント機能の実装
+- [x] 6.3 チェックポイント機能の実装
   - checkpointメソッドで中間状態を保存
   - resumeメソッドでチェックポイントからの再開を実装
   - CheckpointerAdapterでSupabaseとの連携を実装
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 6.4 AgentGraphの統合テスト作成
+- [x] 6.4 AgentGraphの統合テスト作成
   - __tests__/orchestration/agent-graph.test.tsを作成
   - エージェント実行順序のテスト
   - チェックポイントからの再開テスト
